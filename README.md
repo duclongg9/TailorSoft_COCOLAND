@@ -11,3 +11,4 @@
 
 ## Xây dựng
 Chạy `ant compile` để biên dịch dự án và `ant test` để chạy các kiểm thử mặc định. Điều chỉnh thông tin kết nối trong `src/java/dao/connect/DBConnect.java` cho môi trường của bạn.
+
