@@ -1,9 +1,117 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <web-app xmlns="https://jakarta.ee/xml/ns/jakartaee"
-	 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd"
-	 version="6.0">
+         version="6.0">
     <display-name>TailorSoft COCOLAND</display-name>
+
+    <servlet>
+        <servlet-name>CustomerListController</servlet-name>
+        <servlet-class>controller.customer.CustomerListController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>CustomerListController</servlet-name>
+        <url-pattern>/customers</url-pattern>
+</servlet-mapping>
+
+    <servlet>
+        <servlet-name>ProductTypeListController</servlet-name>
+        <servlet-class>controller.producttype.ProductTypeListController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ProductTypeListController</servlet-name>
+        <url-pattern>/product-types</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>ProductTypeCreateController</servlet-name>
+        <servlet-class>controller.producttype.ProductTypeCreateController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ProductTypeCreateController</servlet-name>
+        <url-pattern>/product-types/create</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>MaterialListController</servlet-name>
+        <servlet-class>controller.material.MaterialListController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>MaterialListController</servlet-name>
+        <url-pattern>/materials</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>MaterialCreateController</servlet-name>
+        <servlet-class>controller.material.MaterialCreateController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>MaterialCreateController</servlet-name>
+        <url-pattern>/materials/create</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>OrderListController</servlet-name>
+        <servlet-class>controller.order.OrderListController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>OrderListController</servlet-name>
+        <url-pattern>/orders</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>OrderDetailController</servlet-name>
+        <servlet-class>controller.order.OrderDetailController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>OrderDetailController</servlet-name>
+        <url-pattern>/orders/detail</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>OrderCreateController</servlet-name>
+        <servlet-class>controller.order.OrderCreateController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>OrderCreateController</servlet-name>
+        <url-pattern>/orders/create</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>MeasurementListController</servlet-name>
+        <servlet-class>controller.measurement.MeasurementListController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>MeasurementListController</servlet-name>
+        <url-pattern>/measurements</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>MeasurementCreateController</servlet-name>
+        <servlet-class>controller.measurement.MeasurementCreateController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>MeasurementCreateController</servlet-name>
+        <url-pattern>/measurements/create</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>CustomerCreateController</servlet-name>
+        <servlet-class>controller.customer.CustomerCreateController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>CustomerCreateController</servlet-name>
+        <url-pattern>/customers/create</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>CustomerUpdateController</servlet-name>
+        <servlet-class>controller.customer.CustomerUpdateController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>CustomerUpdateController</servlet-name>
+        <url-pattern>/customers/update</url-pattern>
+    </servlet-mapping>
 
 </web-app>
