@@ -11,15 +11,16 @@ public class CustomerDAO {
 
     public List<Customer> findAll() {
         List<Customer> list = new ArrayList<>();
-        String sql = "SELECT id, name, phone, email FROM customer";
+        // Table khach_hang stores customer information
+        String sql = "SELECT ma_khach, ho_ten, so_dien_thoai, email FROM khach_hang";
         try (Connection conn = DBConnect.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 Customer c = new Customer();
-                c.setId(rs.getInt("id"));
-                c.setName(rs.getString("name"));
-                c.setPhone(rs.getString("phone"));
+                c.setId(rs.getInt("ma_khach"));
+                c.setName(rs.getString("ho_ten"));
+                c.setPhone(rs.getString("so_dien_thoai"));
                 c.setEmail(rs.getString("email"));
                 list.add(c);
             }
@@ -30,7 +31,7 @@ public class CustomerDAO {
     }
 
     public void insert(Customer customer) {
-        String sql = "INSERT INTO customer(name, phone, email) VALUES(?,?,?)";
+        String sql = "INSERT INTO khach_hang(ho_ten, so_dien_thoai, email) VALUES(?,?,?)";
         try (Connection conn = DBConnect.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, customer.getName());
@@ -43,16 +44,16 @@ public class CustomerDAO {
     }
 
     public Customer findById(int id) {
-        String sql = "SELECT id, name, phone, email FROM customer WHERE id=?";
+        String sql = "SELECT ma_khach, ho_ten, so_dien_thoai, email FROM khach_hang WHERE ma_khach=?";
         try (Connection conn = DBConnect.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, id);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     Customer c = new Customer();
-                    c.setId(rs.getInt("id"));
-                    c.setName(rs.getString("name"));
-                    c.setPhone(rs.getString("phone"));
+                    c.setId(rs.getInt("ma_khach"));
+                    c.setName(rs.getString("ho_ten"));
+                    c.setPhone(rs.getString("so_dien_thoai"));
                     c.setEmail(rs.getString("email"));
                     return c;
                 }
@@ -64,7 +65,7 @@ public class CustomerDAO {
     }
 
     public void update(Customer customer) {
-        String sql = "UPDATE customer SET name=?, phone=?, email=? WHERE id=?";
+        String sql = "UPDATE khach_hang SET ho_ten=?, so_dien_thoai=?, email=? WHERE ma_khach=?";
         try (Connection conn = DBConnect.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, customer.getName());
