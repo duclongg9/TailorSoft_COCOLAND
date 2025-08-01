@@ -1,4 +1,15 @@
 ```
+# TailorSoft COCOLAND
+
+This project is a prototype web application for managing tailoring orders. It now includes a simple JSP page that reads customer data from the provided MySQL schema.
+
+## Contents
+- `web/index.html` – initial landing page
+- `web/customers.jsp` – list customers from the database using JSTL
+- `db/cocoland_schema.sql` – MySQL schema and seed data
+
+## Building
+The project was created with NetBeans and uses `ant` for builds. A minimal `WEB-INF` directory and a JSTL JAR are now included. You may need to adjust the database connection in `customers.jsp` to match your local MySQL credentials.
 COCOLAND_TailorSystem/
 ├── src/
 │   └── java/
