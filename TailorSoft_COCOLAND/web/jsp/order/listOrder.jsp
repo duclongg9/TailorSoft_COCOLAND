@@ -2,19 +2,19 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html>
 <head>
-    <title>Orders</title>
+    <title>Danh sách đơn hàng</title>
 </head>
 <body>
-<h2>Orders</h2>
+<h2>Danh sách đơn hàng</h2>
 <table border="1">
     <tr>
-        <th>ID</th>
-        <th>Customer</th>
-        <th>Order Date</th>
-        <th>Delivery Date</th>
-        <th>Status</th>
-        <th>Total</th>
-        <th>Deposit</th>
+        <th>Mã</th>
+        <th>Khách hàng</th>
+        <th>Ngày đặt</th>
+        <th>Ngày giao</th>
+        <th>Trạng thái</th>
+        <th>Tổng tiền</th>
+        <th>Đã cọc</th>
         <th></th>
     </tr>
     <c:forEach var="o" items="${orders}">
@@ -26,7 +26,7 @@
             <td>${o.status}</td>
             <td>${o.total}</td>
             <td>${o.deposit}</td>
-            <td><a href="<c:url value='/orders/detail?id=${o.id}'/>">View</a></td>
+            <td><a href="<c:url value='/orders/detail?id=${o.id}'/>">Xem</a></td>
         </tr>
     </c:forEach>
 </table>

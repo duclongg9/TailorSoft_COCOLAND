@@ -24,7 +24,12 @@ public class MeasurementCreateController extends HttpServlet {
         int measurementTypeId = Integer.parseInt(request.getParameter("measurementTypeId"));
         double value = Double.parseDouble(request.getParameter("value"));
         String note = request.getParameter("note");
-        Measurement m = new Measurement(0, customerId, productTypeId, measurementTypeId, value, note);
+        Measurement m = new Measurement();
+        m.setCustomerId(customerId);
+        m.setProductTypeId(productTypeId);
+        m.setMeasurementTypeId(measurementTypeId);
+        m.setValue(value);
+        m.setNote(note);
         measurementDAO.insert(m);
         response.sendRedirect(request.getContextPath() + "/measurements");
     }

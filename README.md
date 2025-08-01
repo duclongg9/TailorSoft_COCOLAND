@@ -1,6 +1,6 @@
 # TailorSoft COCOLAND
 
-This project is a minimal Java web application for managing tailoring orders. It demonstrates basic CRUD operations using servlets, simple DAO classes and JSP views. The sample MySQL schema is provided in `db/cocoland_schema.sql`.
+This project is a minimal Java web application for managing tailoring orders. It demonstrates basic CRUD operations using servlets, simple DAO classes and JSP views. All JSP pages currently display labels in Vietnamese. The sample MySQL schema is provided in `db/cocoland_schema.sql`.
 
 ## Modules
 - **Customers** – list, create and update customers

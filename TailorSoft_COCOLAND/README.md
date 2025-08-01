@@ -1,1 +1,1 @@
-This directory contains the source code of the TailorSoft COCOLAND web application. Modules are separated into packages for customers, materials, orders and measurements with corresponding DAOs and simple JSP views.
+This directory contains the source code of the TailorSoft COCOLAND web application. Modules are separated into packages for customers, materials, orders and measurements with corresponding DAOs and simple JSP views. Tất cả giao diện JSP đều dùng tiếng Việt.
