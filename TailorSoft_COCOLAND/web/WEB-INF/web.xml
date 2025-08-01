@@ -52,6 +52,15 @@
     </servlet-mapping>
 
     <servlet>
+        <servlet-name>OrderCreateController</servlet-name>
+        <servlet-class>controller.order.OrderCreateController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>OrderCreateController</servlet-name>
+        <url-pattern>/orders/create</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
         <servlet-name>MeasurementListController</servlet-name>
         <servlet-class>controller.measurement.MeasurementListController</servlet-class>
     </servlet>

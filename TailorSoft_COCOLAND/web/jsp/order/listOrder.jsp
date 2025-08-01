@@ -6,6 +6,7 @@
 </head>
 <body>
 <h2>Danh sách đơn hàng</h2>
+<a href="<c:url value='/orders/create'/>">Thêm đơn hàng</a>
 <table border="1">
     <tr>
         <th>Mã</th>
