@@ -2,26 +2,26 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html>
 <head>
-    <title>Measurements</title>
+    <title>Danh sách số đo</title>
 </head>
 <body>
-<h2>Measurements</h2>
-<a href="<c:url value='/measurements/create'/>">Create Measurement</a>
+<h2>Danh sách số đo</h2>
+<a href="<c:url value='/measurements/create'/>">Thêm số đo</a>
 <table border="1">
     <tr>
-        <th>ID</th>
-        <th>Customer</th>
-        <th>Product Type</th>
-        <th>Measurement Type</th>
-        <th>Value</th>
-        <th>Note</th>
+        <th>Mã</th>
+        <th>Khách hàng</th>
+        <th>Loại sản phẩm</th>
+        <th>Thông số</th>
+        <th>Giá trị</th>
+        <th>Ghi chú</th>
     </tr>
     <c:forEach var="m" items="${measurements}">
         <tr>
             <td>${m.id}</td>
-            <td>${m.customerId}</td>
-            <td>${m.productTypeId}</td>
-            <td>${m.measurementTypeId}</td>
+            <td>${m.customerName}</td>
+            <td>${m.productTypeName}</td>
+            <td>${m.measurementTypeName}</td>
             <td>${m.value}</td>
             <td>${m.note}</td>
         </tr>

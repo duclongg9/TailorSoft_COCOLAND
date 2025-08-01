@@ -16,6 +16,24 @@
 </servlet-mapping>
 
     <servlet>
+        <servlet-name>ProductTypeListController</servlet-name>
+        <servlet-class>controller.producttype.ProductTypeListController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ProductTypeListController</servlet-name>
+        <url-pattern>/product-types</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>ProductTypeCreateController</servlet-name>
+        <servlet-class>controller.producttype.ProductTypeCreateController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ProductTypeCreateController</servlet-name>
+        <url-pattern>/product-types/create</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
         <servlet-name>MaterialListController</servlet-name>
         <servlet-class>controller.material.MaterialListController</servlet-class>
     </servlet>
@@ -49,6 +67,15 @@
     <servlet-mapping>
         <servlet-name>OrderDetailController</servlet-name>
         <url-pattern>/orders/detail</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>OrderCreateController</servlet-name>
+        <servlet-class>controller.order.OrderCreateController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>OrderCreateController</servlet-name>
+        <url-pattern>/orders/create</url-pattern>
     </servlet-mapping>
 
     <servlet>

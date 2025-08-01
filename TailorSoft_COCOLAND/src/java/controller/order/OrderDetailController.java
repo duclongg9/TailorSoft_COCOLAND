@@ -19,9 +19,8 @@ public class OrderDetailController extends HttpServlet {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);
             return;
         }
-        // For simplicity, reuse DAO findAll() and filter
         int id = Integer.parseInt(idStr);
-        Order order = orderDAO.findAll().stream().filter(o -> o.getId() == id).findFirst().orElse(null);
+        Order order = orderDAO.findById(id);
         if (order == null) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
