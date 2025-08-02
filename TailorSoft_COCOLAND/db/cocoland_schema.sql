@@ -3,14 +3,17 @@ use cocoland_schema;
 -- BẢNG LOẠI SẢN PHẨM
 CREATE TABLE loai_san_pham (
     ma_loai INT PRIMARY KEY AUTO_INCREMENT,
-    ten_loai VARCHAR(100) NOT NULL
+    ten_loai VARCHAR(100) NOT NULL,
+    ky_hieu VARCHAR(50)
 );
 
 -- BẢNG LOẠI THÔNG SỐ
 CREATE TABLE loai_thong_so (
     ma_thong_so INT PRIMARY KEY AUTO_INCREMENT,
     ten_thong_so VARCHAR(100) NOT NULL,
-    don_vi VARCHAR(10) DEFAULT 'cm'
+    don_vi VARCHAR(10) DEFAULT 'cm',
+    bo_phan VARCHAR(50),
+    ghi_chu TEXT
 );
 
 -- QUAN HỆ LOẠI SẢN PHẨM – THÔNG SỐ
@@ -85,12 +88,19 @@ CREATE TABLE kho_vai (
 -- DỮ LIỆU MẪU
 
 -- 1. Loại sản phẩm
-INSERT INTO loai_san_pham (ten_loai) VALUES
-('Vest'), ('Áo sơ mi'), ('Quần âu');
+INSERT INTO loai_san_pham (ten_loai, ky_hieu) VALUES
+('Vest','V'), ('Áo sơ mi','ASM'), ('Quần âu','QA');
 
 -- 2. Loại thông số
-INSERT INTO loai_thong_so (ten_thong_so) VALUES
-('Vòng cổ'), ('Dài tay'), ('Vai'), ('Ngực'), ('Eo'), ('Mông'), ('Ống quần'), ('Dài quần');
+INSERT INTO loai_thong_so (ten_thong_so, bo_phan) VALUES
+('Vòng cổ','Thân trên'),
+('Dài tay','Tay'),
+('Vai','Thân trên'),
+('Ngực','Thân trên'),
+('Eo','Thân dưới'),
+('Mông','Thân dưới'),
+('Ống quần','Thân dưới'),
+('Dài quần','Thân dưới');
 
 -- 3. Ánh xạ loại sản phẩm - thông số
 INSERT INTO loai_sp_thong_so VALUES
