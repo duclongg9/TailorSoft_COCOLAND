@@ -79,6 +79,15 @@
     </servlet-mapping>
 
     <servlet>
+        <servlet-name>OrderHistoryController</servlet-name>
+        <servlet-class>controller.order.OrderHistoryController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>OrderHistoryController</servlet-name>
+        <url-pattern>/customers/history</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
         <servlet-name>MeasurementListController</servlet-name>
         <servlet-class>controller.measurement.MeasurementListController</servlet-class>
     </servlet>

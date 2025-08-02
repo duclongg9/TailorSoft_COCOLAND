@@ -5,15 +5,21 @@ public class Customer {
     private String name;
     private String phone;
     private String email;
+    private java.util.Date createdAt;
 
     public Customer() {
     }
 
     public Customer(int id, String name, String phone, String email) {
+        this(id, name, phone, email, null);
+    }
+
+    public Customer(int id, String name, String phone, String email, java.util.Date createdAt) {
         this.id = id;
         this.name = name;
         this.phone = phone;
         this.email = email;
+        this.createdAt = createdAt;
     }
 
     public int getId() {
@@ -46,5 +52,13 @@ public class Customer {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public java.util.Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(java.util.Date createdAt) {
+        this.createdAt = createdAt;
     }
 }
