@@ -12,7 +12,7 @@ public class CustomerDAO {
     public List<Customer> findAll() {
         List<Customer> list = new ArrayList<>();
         // Table khach_hang stores customer information
-        String sql = "SELECT ma_khach, ho_ten, so_dien_thoai, email FROM khach_hang";
+        String sql = "SELECT ma_khach, ho_ten, so_dien_thoai, email, ngay_tao FROM khach_hang";
         try (Connection conn = DBConnect.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
@@ -22,6 +22,7 @@ public class CustomerDAO {
                 c.setName(rs.getString("ho_ten"));
                 c.setPhone(rs.getString("so_dien_thoai"));
                 c.setEmail(rs.getString("email"));
+                c.setCreatedAt(rs.getTimestamp("ngay_tao"));
                 list.add(c);
             }
         } catch (SQLException e) {
@@ -44,7 +45,7 @@ public class CustomerDAO {
     }
 
     public Customer findById(int id) {
-        String sql = "SELECT ma_khach, ho_ten, so_dien_thoai, email FROM khach_hang WHERE ma_khach=?";
+        String sql = "SELECT ma_khach, ho_ten, so_dien_thoai, email, ngay_tao FROM khach_hang WHERE ma_khach=?";
         try (Connection conn = DBConnect.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, id);
@@ -55,6 +56,7 @@ public class CustomerDAO {
                     c.setName(rs.getString("ho_ten"));
                     c.setPhone(rs.getString("so_dien_thoai"));
                     c.setEmail(rs.getString("email"));
+                    c.setCreatedAt(rs.getTimestamp("ngay_tao"));
                     return c;
                 }
             }

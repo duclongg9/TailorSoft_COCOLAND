@@ -3,10 +3,10 @@
 Đây là ứng dụng web Java đơn giản giúp quản lý các công việc may đo. Ứng dụng minh họa các thao tác CRUD cơ bản thông qua servlet, các lớp DAO và trang JSP. Toàn bộ giao diện đã được Việt hóa. Cơ sở dữ liệu mẫu nằm tại `db/cocoland_schema.sql`.
 
 ## Chức năng
-- **Khách hàng** – liệt kê, thêm mới và cập nhật khách hàng
+- **Khách hàng** – liệt kê, thêm mới, cập nhật và xem lịch sử đặt may theo từng sản phẩm với nút xem chi tiết đơn hàng; bảng khách hàng hiển thị thêm ngày tạo và liên kết tới lịch sử đặt may
 - **Kho vải** – quản lý các loại vải trong kho
 - **Đơn hàng** – theo dõi danh sách và chi tiết đơn hàng
-- **Số đo** – lưu trữ các số đo của khách hàng
+- **Số đo** – quản lý danh mục các loại số đo (tạo, cập nhật, xóa, liệt kê); đây là danh mục định nghĩa chung không lưu số đo theo từng khách hàng
 - **Loại sản phẩm** – quản lý loại sản phẩm và các thông số đi kèm
 
 ## Xây dựng

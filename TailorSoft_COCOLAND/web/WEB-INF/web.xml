@@ -79,6 +79,15 @@
     </servlet-mapping>
 
     <servlet>
+        <servlet-name>OrderHistoryController</servlet-name>
+        <servlet-class>controller.order.OrderHistoryController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>OrderHistoryController</servlet-name>
+        <url-pattern>/customers/history</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
         <servlet-name>MeasurementListController</servlet-name>
         <servlet-class>controller.measurement.MeasurementListController</servlet-class>
     </servlet>
@@ -94,6 +103,42 @@
     <servlet-mapping>
         <servlet-name>MeasurementCreateController</servlet-name>
         <url-pattern>/measurements/create</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>MeasurementTypeListController</servlet-name>
+        <servlet-class>controller.measurementtype.MeasurementTypeListController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>MeasurementTypeListController</servlet-name>
+        <url-pattern>/measurement-types</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>MeasurementTypeCreateController</servlet-name>
+        <servlet-class>controller.measurementtype.MeasurementTypeCreateController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>MeasurementTypeCreateController</servlet-name>
+        <url-pattern>/measurement-types/create</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>MeasurementTypeUpdateController</servlet-name>
+        <servlet-class>controller.measurementtype.MeasurementTypeUpdateController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>MeasurementTypeUpdateController</servlet-name>
+        <url-pattern>/measurement-types/update</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>MeasurementTypeDeleteController</servlet-name>
+        <servlet-class>controller.measurementtype.MeasurementTypeDeleteController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>MeasurementTypeDeleteController</servlet-name>
+        <url-pattern>/measurement-types/delete</url-pattern>
     </servlet-mapping>
 
     <servlet>

@@ -13,7 +13,9 @@
         <th>Họ tên</th>
         <th>Số điện thoại</th>
         <th>Email</th>
-        <th></th>
+        <th>Ngày tạo</th>
+        <th>Lịch sử đặt may</th>
+        <th>Sửa</th>
     </tr>
     <c:forEach var="c" items="${customers}">
         <tr>
@@ -21,6 +23,8 @@
             <td>${c.name}</td>
             <td>${c.phone}</td>
             <td>${c.email}</td>
+            <td>${c.createdAt}</td>
+            <td><a href="<c:url value='/customers/history?id=${c.id}'/>">Xem lịch sử</a></td>
             <td><a href="<c:url value='/customers/update?id=${c.id}'/>">Sửa</a></td>
         </tr>
     </c:forEach>
