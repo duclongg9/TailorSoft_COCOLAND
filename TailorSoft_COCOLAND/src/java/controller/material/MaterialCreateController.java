@@ -34,7 +34,10 @@ public class MaterialCreateController extends HttpServlet {
         Part invoicePart = request.getPart("invoiceImage");
         String fileName = null;
         if (invoicePart != null && invoicePart.getSize() > 0) {
-            fileName = Path.of(invoicePart.getSubmittedFileName()).getFileName().toString();
+            String original = Path.of(invoicePart.getSubmittedFileName()).getFileName().toString();
+            String prefix = String.valueOf(System.currentTimeMillis());
+            fileName = prefix + "_" + original;
+
             String uploadDir = request.getServletContext().getRealPath("/uploads");
             Files.createDirectories(Path.of(uploadDir));
             invoicePart.write(uploadDir + File.separator + fileName);

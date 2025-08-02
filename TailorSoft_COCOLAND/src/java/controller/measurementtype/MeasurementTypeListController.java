@@ -15,8 +15,12 @@ public class MeasurementTypeListController extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        List<MeasurementType> list = measurementTypeDAO.findAll();
+        String bodyPart = request.getParameter("bodyPart");
+        String q = request.getParameter("q");
+        List<MeasurementType> list = measurementTypeDAO.search(bodyPart, q);
+        List<String> bodyParts = measurementTypeDAO.findBodyParts();
         request.setAttribute("measurementTypes", list);
+        request.setAttribute("bodyParts", bodyParts);
         request.getRequestDispatcher("/jsp/measurementtype/listMeasurementType.jsp").forward(request, response);
     }
 }

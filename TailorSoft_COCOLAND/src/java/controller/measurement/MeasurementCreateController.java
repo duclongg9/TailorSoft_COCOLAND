@@ -19,17 +19,8 @@ public class MeasurementCreateController extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String ptParam = request.getParameter("productTypeId");
         List<ProductType> pts = productTypeDAO.findAll();
         request.setAttribute("productTypes", pts);
-        if (ptParam != null && !ptParam.isEmpty()) {
-            try {
-                int ptId = Integer.parseInt(ptParam);
-                List<MeasurementType> mts = productTypeDAO.findMeasurementTypes(ptId);
-                request.setAttribute("selectedProductType", ptId);
-                request.setAttribute("measurementTypes", mts);
-            } catch (NumberFormatException ignored) {}
-        }
         request.getRequestDispatcher("/jsp/measurement/createMeasurement.jsp").forward(request, response);
     }
 

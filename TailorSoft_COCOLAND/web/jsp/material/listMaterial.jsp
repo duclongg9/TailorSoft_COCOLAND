@@ -43,7 +43,11 @@
             <td>${m.origin}</td>
             <td class="text-end"><fmt:formatNumber value="${m.price}" type="number" pattern="#,##0"/> ₫</td>
             <td class="text-end"><fmt:formatNumber value="${m.quantity}" type="number" pattern="#,##0.##"/> m</td>
-            <td><c:if test="${not empty m.invoiceImage}"><a href="<c:url value='/uploads/${m.invoiceImage}'/>" target="_blank">Xem</a></c:if></td>
+            <td>
+                <c:if test="${not empty m.invoiceImage}">
+                    <img src="<c:url value='/uploads/${m.invoiceImage}'/>" alt="Hóa đơn" style="height:40px;">
+                </c:if>
+            </td>
         </tr>
     </c:forEach>
     </tbody>
