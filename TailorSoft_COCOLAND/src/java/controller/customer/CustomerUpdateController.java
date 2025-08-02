@@ -35,8 +35,9 @@ public class CustomerUpdateController extends HttpServlet {
         String name = request.getParameter("name");
         String phone = request.getParameter("phone");
         String email = request.getParameter("email");
-        Customer customer = new Customer(id, name, phone, email);
+        String address = request.getParameter("address");
+        Customer customer = new Customer(id, name, phone, email, address);
         customerDAO.update(customer);
-        response.sendRedirect(request.getContextPath() + "/customers");
+        response.sendRedirect(request.getContextPath() + "/customers?msg=updated");
     }
 }
