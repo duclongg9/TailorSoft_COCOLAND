@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page pageEncoding="UTF-8" contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html>
 <head>
@@ -21,14 +21,13 @@
     <form action="" method="post">
         <input type="hidden" name="customerId" value="${param.customerId}"/>
         <input type="hidden" name="productTypeId" value="${selectedProductType}"/>
-        Thông số:
-        <select name="measurementTypeId">
-            <c:forEach var="mt" items="${measurementTypes}">
-                <option value="${mt.id}">${mt.name}</option>
-            </c:forEach>
-        </select><br/>
-        Giá trị: <input type="text" name="value"/><br/>
-        Ghi chú: <input type="text" name="note"/><br/>
+        <c:forEach var="mt" items="${measurementTypes}">
+            <div>
+                <label>${mt.name} (${mt.unit})</label>
+                <input type="number" step="0.1" name="value_${mt.id}"/><br/>
+                <input type="text" name="note_${mt.id}" placeholder="Ghi chú"/><br/>
+            </div>
+        </c:forEach>
         <input type="submit" value="Lưu"/>
     </form>
 </c:if>

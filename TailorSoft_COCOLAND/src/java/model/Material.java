@@ -7,16 +7,18 @@ public class Material {
     private String origin;
     private double price;
     private double quantity;
+    private String invoiceImage;
 
     public Material() {}
 
-    public Material(int id, String name, String color, String origin, double price, double quantity) {
+    public Material(int id, String name, String color, String origin, double price, double quantity, String invoiceImage) {
         this.id = id;
         this.name = name;
         this.color = color;
         this.origin = origin;
         this.price = price;
         this.quantity = quantity;
+        this.invoiceImage = invoiceImage;
     }
 
     public int getId() { return id; }
@@ -31,4 +33,6 @@ public class Material {
     public void setPrice(double price) { this.price = price; }
     public double getQuantity() { return quantity; }
     public void setQuantity(double quantity) { this.quantity = quantity; }
+    public String getInvoiceImage() { return invoiceImage; }
+    public void setInvoiceImage(String invoiceImage) { this.invoiceImage = invoiceImage; }
 }
