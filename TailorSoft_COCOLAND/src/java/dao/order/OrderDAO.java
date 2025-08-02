@@ -10,7 +10,8 @@ import java.util.List;
 public class OrderDAO {
     public List<Order> findAll() {
         List<Order> list = new ArrayList<>();
-        String sql = "SELECT ma_don, ma_khach, ngay_dat, ngay_giao, trang_thai, tong_tien, da_coc FROM don_hang";
+        String sql = "SELECT dh.ma_don, dh.ma_khach, kh.ho_ten, kh.so_dien_thoai, kh.email, dh.ngay_dat, dh.ngay_giao, dh.trang_thai, dh.tong_tien, dh.da_coc " +
+                "FROM don_hang dh JOIN khach_hang kh ON dh.ma_khach = kh.ma_khach";
         try (Connection conn = DBConnect.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
@@ -18,6 +19,9 @@ public class OrderDAO {
                 Order o = new Order();
                 o.setId(rs.getInt("ma_don"));
                 o.setCustomerId(rs.getInt("ma_khach"));
+                o.setCustomerName(rs.getString("ho_ten"));
+                o.setCustomerPhone(rs.getString("so_dien_thoai"));
+                o.setCustomerEmail(rs.getString("email"));
                 o.setOrderDate(rs.getDate("ngay_dat"));
                 o.setDeliveryDate(rs.getDate("ngay_giao"));
                 o.setStatus(rs.getString("trang_thai"));
@@ -32,7 +36,8 @@ public class OrderDAO {
     }
 
     public Order findById(int id) {
-        String sql = "SELECT ma_don, ma_khach, ngay_dat, ngay_giao, trang_thai, tong_tien, da_coc FROM don_hang WHERE ma_don=?";
+        String sql = "SELECT dh.ma_don, dh.ma_khach, kh.ho_ten, kh.so_dien_thoai, kh.email, dh.ngay_dat, dh.ngay_giao, dh.trang_thai, dh.tong_tien, dh.da_coc " +
+                "FROM don_hang dh JOIN khach_hang kh ON dh.ma_khach = kh.ma_khach WHERE dh.ma_don=?";
         try (Connection conn = DBConnect.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, id);
@@ -41,6 +46,9 @@ public class OrderDAO {
                     Order o = new Order();
                     o.setId(rs.getInt("ma_don"));
                     o.setCustomerId(rs.getInt("ma_khach"));
+                    o.setCustomerName(rs.getString("ho_ten"));
+                    o.setCustomerPhone(rs.getString("so_dien_thoai"));
+                    o.setCustomerEmail(rs.getString("email"));
                     o.setOrderDate(rs.getDate("ngay_dat"));
                     o.setDeliveryDate(rs.getDate("ngay_giao"));
                     o.setStatus(rs.getString("trang_thai"));
