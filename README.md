@@ -6,7 +6,7 @@
 - **Khách hàng** – liệt kê, thêm mới và cập nhật khách hàng
 - **Kho vải** – quản lý các loại vải trong kho
 - **Đơn hàng** – theo dõi danh sách và chi tiết đơn hàng
-- **Số đo** – lưu trữ các số đo của khách hàng
+- **Số đo** – quản lý danh mục các loại số đo (tạo, cập nhật, xóa, liệt kê)
 - **Loại sản phẩm** – quản lý loại sản phẩm và các thông số đi kèm
 
 - **Loại số đo** – quản lý các loại thông số đo (tạo, cập nhật, xóa, liệt kê)
