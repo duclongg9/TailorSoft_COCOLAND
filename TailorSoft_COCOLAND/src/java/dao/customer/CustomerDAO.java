@@ -11,8 +11,11 @@ public class CustomerDAO {
 
     public List<Customer> findAll() {
         List<Customer> list = new ArrayList<>();
-        // Table khach_hang stores customer information
-        String sql = "SELECT ma_khach, ho_ten, so_dien_thoai, email, dia_chi FROM khach_hang";
+        String sql = "SELECT kh.ma_khach, kh.ho_ten, kh.so_dien_thoai, kh.email, kh.dia_chi, " +
+                "COUNT(dh.ma_don) AS total_orders, " +
+                "SUM(CASE WHEN dh.trang_thai IS NOT NULL AND dh.trang_thai <> 'Hoàn thành' THEN 1 ELSE 0 END) AS pending_orders " +
+                "FROM khach_hang kh LEFT JOIN don_hang dh ON kh.ma_khach = dh.ma_khach " +
+                "GROUP BY kh.ma_khach, kh.ho_ten, kh.so_dien_thoai, kh.email, kh.dia_chi";
         try (Connection conn = DBConnect.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
@@ -23,6 +26,8 @@ public class CustomerDAO {
                 c.setPhone(rs.getString("so_dien_thoai"));
                 c.setEmail(rs.getString("email"));
                 c.setAddress(rs.getString("dia_chi"));
+                c.setTotalOrders(rs.getInt("total_orders"));
+                c.setPendingOrders(rs.getInt("pending_orders"));
                 list.add(c);
             }
         } catch (SQLException e) {
@@ -46,7 +51,11 @@ public class CustomerDAO {
     }
 
     public Customer findById(int id) {
-        String sql = "SELECT ma_khach, ho_ten, so_dien_thoai, email, dia_chi FROM khach_hang WHERE ma_khach=?";
+        String sql = "SELECT kh.ma_khach, kh.ho_ten, kh.so_dien_thoai, kh.email, kh.dia_chi, " +
+                "COUNT(dh.ma_don) AS total_orders, " +
+                "SUM(CASE WHEN dh.trang_thai IS NOT NULL AND dh.trang_thai <> 'Hoàn thành' THEN 1 ELSE 0 END) AS pending_orders " +
+                "FROM khach_hang kh LEFT JOIN don_hang dh ON kh.ma_khach = dh.ma_khach WHERE kh.ma_khach=? " +
+                "GROUP BY kh.ma_khach, kh.ho_ten, kh.so_dien_thoai, kh.email, kh.dia_chi";
         try (Connection conn = DBConnect.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, id);
@@ -58,6 +67,8 @@ public class CustomerDAO {
                     c.setPhone(rs.getString("so_dien_thoai"));
                     c.setEmail(rs.getString("email"));
                     c.setAddress(rs.getString("dia_chi"));
+                    c.setTotalOrders(rs.getInt("total_orders"));
+                    c.setPendingOrders(rs.getInt("pending_orders"));
                     return c;
                 }
             }

@@ -105,4 +105,32 @@ public class OrderDAO {
         }
         return list;
     }
+
+    public List<Order> findByCustomer(int customerId) {
+        List<Order> list = new ArrayList<>();
+        String sql = "SELECT dh.ma_don, dh.ngay_dat, dh.ngay_giao, dh.trang_thai, dh.tong_tien, " +
+                "GROUP_CONCAT(ct.loai_sp SEPARATOR ', ') AS san_pham " +
+                "FROM don_hang dh LEFT JOIN chi_tiet_don ct ON dh.ma_don = ct.ma_don " +
+                "WHERE dh.ma_khach = ? GROUP BY dh.ma_don, dh.ngay_dat, dh.ngay_giao, dh.trang_thai, dh.tong_tien " +
+                "ORDER BY dh.ma_don DESC";
+        try (Connection conn = DBConnect.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, customerId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Order o = new Order();
+                    o.setId(rs.getInt("ma_don"));
+                    o.setOrderDate(rs.getDate("ngay_dat"));
+                    o.setDeliveryDate(rs.getDate("ngay_giao"));
+                    o.setStatus(rs.getString("trang_thai"));
+                    o.setTotal(rs.getDouble("tong_tien"));
+                    o.setProductType(rs.getString("san_pham"));
+                    list.add(o);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
 }

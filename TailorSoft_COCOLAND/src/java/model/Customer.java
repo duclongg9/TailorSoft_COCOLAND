@@ -6,6 +6,8 @@ public class Customer {
     private String phone;
     private String email;
     private String address;
+    private int totalOrders;
+    private int pendingOrders;
 
     public Customer() {
     }
@@ -56,5 +58,21 @@ public class Customer {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public int getTotalOrders() {
+        return totalOrders;
+    }
+
+    public void setTotalOrders(int totalOrders) {
+        this.totalOrders = totalOrders;
+    }
+
+    public int getPendingOrders() {
+        return pendingOrders;
+    }
+
+    public void setPendingOrders(int pendingOrders) {
+        this.pendingOrders = pendingOrders;
     }
 }

@@ -13,6 +13,7 @@ public class Order {
     private String status;
     private double total;
     private double deposit;
+    private String productType;
 
     public Order() {}
 
@@ -46,4 +47,6 @@ public class Order {
     public void setTotal(double total) { this.total = total; }
     public double getDeposit() { return deposit; }
     public void setDeposit(double deposit) { this.deposit = deposit; }
+    public String getProductType() { return productType; }
+    public void setProductType(String productType) { this.productType = productType; }
 }
