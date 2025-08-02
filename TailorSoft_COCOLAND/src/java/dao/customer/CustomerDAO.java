@@ -12,7 +12,7 @@ public class CustomerDAO {
     public List<Customer> findAll() {
         List<Customer> list = new ArrayList<>();
         // Table khach_hang stores customer information
-        String sql = "SELECT ma_khach, ho_ten, so_dien_thoai, email FROM khach_hang";
+        String sql = "SELECT ma_khach, ho_ten, so_dien_thoai, email, dia_chi FROM khach_hang";
         try (Connection conn = DBConnect.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
@@ -22,6 +22,7 @@ public class CustomerDAO {
                 c.setName(rs.getString("ho_ten"));
                 c.setPhone(rs.getString("so_dien_thoai"));
                 c.setEmail(rs.getString("email"));
+                c.setAddress(rs.getString("dia_chi"));
                 list.add(c);
             }
         } catch (SQLException e) {
@@ -31,12 +32,13 @@ public class CustomerDAO {
     }
 
     public void insert(Customer customer) {
-        String sql = "INSERT INTO khach_hang(ho_ten, so_dien_thoai, email) VALUES(?,?,?)";
+        String sql = "INSERT INTO khach_hang(ho_ten, so_dien_thoai, email, dia_chi) VALUES(?,?,?,?)";
         try (Connection conn = DBConnect.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, customer.getName());
             ps.setString(2, customer.getPhone());
             ps.setString(3, customer.getEmail());
+            ps.setString(4, customer.getAddress());
             ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -44,7 +46,7 @@ public class CustomerDAO {
     }
 
     public Customer findById(int id) {
-        String sql = "SELECT ma_khach, ho_ten, so_dien_thoai, email FROM khach_hang WHERE ma_khach=?";
+        String sql = "SELECT ma_khach, ho_ten, so_dien_thoai, email, dia_chi FROM khach_hang WHERE ma_khach=?";
         try (Connection conn = DBConnect.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, id);
@@ -55,6 +57,7 @@ public class CustomerDAO {
                     c.setName(rs.getString("ho_ten"));
                     c.setPhone(rs.getString("so_dien_thoai"));
                     c.setEmail(rs.getString("email"));
+                    c.setAddress(rs.getString("dia_chi"));
                     return c;
                 }
             }
@@ -65,13 +68,14 @@ public class CustomerDAO {
     }
 
     public void update(Customer customer) {
-        String sql = "UPDATE khach_hang SET ho_ten=?, so_dien_thoai=?, email=? WHERE ma_khach=?";
+        String sql = "UPDATE khach_hang SET ho_ten=?, so_dien_thoai=?, email=?, dia_chi=? WHERE ma_khach=?";
         try (Connection conn = DBConnect.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, customer.getName());
             ps.setString(2, customer.getPhone());
             ps.setString(3, customer.getEmail());
-            ps.setInt(4, customer.getId());
+            ps.setString(4, customer.getAddress());
+            ps.setInt(5, customer.getId());
             ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
