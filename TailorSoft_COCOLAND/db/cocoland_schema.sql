@@ -1,5 +1,8 @@
-create database cocoland_schema;
-use cocoland_schema;
+
+DROP DATABASE IF EXISTS cocoland_schema;
+CREATE DATABASE cocoland_schema CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE cocoland_schema;
+
 -- BẢNG LOẠI SẢN PHẨM
 CREATE TABLE loai_san_pham (
     ma_loai INT PRIMARY KEY AUTO_INCREMENT,
