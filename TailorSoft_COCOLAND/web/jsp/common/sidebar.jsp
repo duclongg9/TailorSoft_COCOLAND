@@ -1,3 +1,4 @@
+<%@ page pageEncoding="UTF-8" contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <nav class="bg-dark text-white p-3" style="min-height:100vh; width:220px;">
     <h4 class="text-white">TailorSoft</h4>
