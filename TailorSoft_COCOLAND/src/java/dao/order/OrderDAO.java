@@ -2,6 +2,7 @@ package dao.order;
 
 import dao.connect.DBConnect;
 import model.Order;
+import model.OrderDetail;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -77,5 +78,31 @@ public class OrderDAO {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    public List<OrderDetail> findDetailsByCustomer(int customerId) {
+        List<OrderDetail> list = new ArrayList<>();
+        String sql = "SELECT ct.ma_ct, ct.ma_don, ct.loai_sp, ct.ten_vai, ct.don_gia, ct.so_luong, ct.ghi_chu " +
+                     "FROM chi_tiet_don ct JOIN don_hang dh ON ct.ma_don = dh.ma_don WHERE dh.ma_khach = ?";
+        try (Connection conn = DBConnect.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, customerId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    OrderDetail d = new OrderDetail();
+                    d.setId(rs.getInt("ma_ct"));
+                    d.setOrderId(rs.getInt("ma_don"));
+                    d.setProductType(rs.getString("loai_sp"));
+                    d.setMaterialName(rs.getString("ten_vai"));
+                    d.setUnitPrice(rs.getDouble("don_gia"));
+                    d.setQuantity(rs.getInt("so_luong"));
+                    d.setNote(rs.getString("ghi_chu"));
+                    list.add(d);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
     }
 }
