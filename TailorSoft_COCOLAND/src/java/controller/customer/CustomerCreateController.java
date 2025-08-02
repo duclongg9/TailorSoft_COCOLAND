@@ -23,8 +23,9 @@ public class CustomerCreateController extends HttpServlet {
         String name = request.getParameter("name");
         String phone = request.getParameter("phone");
         String email = request.getParameter("email");
-        Customer c = new Customer(0, name, phone, email);
+        String address = request.getParameter("address");
+        Customer c = new Customer(0, name, phone, email, address);
         customerDAO.insert(c);
-        response.sendRedirect(request.getContextPath() + "/customers");
+        response.sendRedirect(request.getContextPath() + "/customers?msg=created");
     }
 }
