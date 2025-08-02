@@ -26,4 +26,16 @@ public class MeasurementTypeDAO {
         }
         return list;
     }
+
+    public void insert(MeasurementType mt) {
+        String sql = "INSERT INTO loai_thong_so(ten_thong_so, don_vi) VALUES(?,?)";
+        try (Connection conn = DBConnect.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, mt.getName());
+            ps.setString(2, mt.getUnit());
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }
