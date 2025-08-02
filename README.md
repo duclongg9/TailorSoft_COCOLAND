@@ -8,7 +8,9 @@
 - **Đơn hàng** – theo dõi danh sách và chi tiết đơn hàng
 - **Số đo** – lưu trữ các số đo của khách hàng
 - **Loại sản phẩm** – quản lý loại sản phẩm và các thông số đi kèm
-- **Loại số đo** – tạo và liệt kê các loại thông số đo
+
+- **Loại số đo** – quản lý các loại thông số đo (tạo, cập nhật, xóa, liệt kê)
+
 
 ## Xây dựng
 Chạy `ant compile` để biên dịch dự án và `ant test` để chạy các kiểm thử mặc định. Điều chỉnh thông tin kết nối trong `src/java/dao/connect/DBConnect.java` cho môi trường của bạn.

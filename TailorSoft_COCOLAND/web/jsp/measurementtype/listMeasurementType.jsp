@@ -12,12 +12,18 @@
         <th>Mã</th>
         <th>Tên thông số</th>
         <th>Đơn vị</th>
+        <th>Sửa</th>
+        <th>Xóa</th>
+
     </tr>
     <c:forEach var="mt" items="${measurementTypes}">
         <tr>
             <td>${mt.id}</td>
             <td>${mt.name}</td>
             <td>${mt.unit}</td>
+            <td><a href="${pageContext.request.contextPath}/measurement-types/update?id=${mt.id}">Sửa</a></td>
+            <td><a href="${pageContext.request.contextPath}/measurement-types/delete?id=${mt.id}" onclick="return confirm('Bạn có chắc muốn xóa?');">Xóa</a></td>
+
         </tr>
     </c:forEach>
 </table>
