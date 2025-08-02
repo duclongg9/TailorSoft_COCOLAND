@@ -1,8 +1,7 @@
 package filter;
 
 import jakarta.servlet.*;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 
 public class UTF8Filter implements Filter {
@@ -16,6 +15,7 @@ public class UTF8Filter implements Filter {
             request.setCharacterEncoding("UTF-8");
         }
         response.setCharacterEncoding("UTF-8");
+        response.setContentType("text/html;charset=UTF-8");
         chain.doFilter(request, response);
     }
 
