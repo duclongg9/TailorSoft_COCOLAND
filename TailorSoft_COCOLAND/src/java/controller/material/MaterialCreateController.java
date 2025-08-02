@@ -4,11 +4,17 @@ import dao.material.MaterialDAO;
 import model.Material;
 
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.Part;
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
+@MultipartConfig
 public class MaterialCreateController extends HttpServlet {
     private final MaterialDAO materialDAO = new MaterialDAO();
 
@@ -24,7 +30,17 @@ public class MaterialCreateController extends HttpServlet {
         String origin = request.getParameter("origin");
         double price = Double.parseDouble(request.getParameter("price"));
         double quantity = Double.parseDouble(request.getParameter("quantity"));
-        Material m = new Material(0, name, color, origin, price, quantity);
+
+        Part invoicePart = request.getPart("invoiceImage");
+        String fileName = null;
+        if (invoicePart != null && invoicePart.getSize() > 0) {
+            fileName = Path.of(invoicePart.getSubmittedFileName()).getFileName().toString();
+            String uploadDir = request.getServletContext().getRealPath("/uploads");
+            Files.createDirectories(Path.of(uploadDir));
+            invoicePart.write(uploadDir + File.separator + fileName);
+        }
+
+        Material m = new Material(0, name, color, origin, price, quantity, fileName);
         materialDAO.insert(m);
         response.sendRedirect(request.getContextPath() + "/materials?msg=created");
     }

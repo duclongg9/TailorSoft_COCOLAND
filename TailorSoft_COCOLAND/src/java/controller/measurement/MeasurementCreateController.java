@@ -37,16 +37,23 @@ public class MeasurementCreateController extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         int customerId = Integer.parseInt(request.getParameter("customerId"));
         int productTypeId = Integer.parseInt(request.getParameter("productTypeId"));
-        int measurementTypeId = Integer.parseInt(request.getParameter("measurementTypeId"));
-        double value = Double.parseDouble(request.getParameter("value"));
-        String note = request.getParameter("note");
-        Measurement m = new Measurement();
-        m.setCustomerId(customerId);
-        m.setProductTypeId(productTypeId);
-        m.setMeasurementTypeId(measurementTypeId);
-        m.setValue(value);
-        m.setNote(note);
-        measurementDAO.insert(m);
-        response.sendRedirect(request.getContextPath() + "/measurements");
+        List<MeasurementType> mts = productTypeDAO.findMeasurementTypes(productTypeId);
+        for (MeasurementType mt : mts) {
+            String valStr = request.getParameter("value_" + mt.getId());
+            if (valStr != null && !valStr.isBlank()) {
+                try {
+                    double value = Double.parseDouble(valStr);
+                    String note = request.getParameter("note_" + mt.getId());
+                    Measurement m = new Measurement();
+                    m.setCustomerId(customerId);
+                    m.setProductTypeId(productTypeId);
+                    m.setMeasurementTypeId(mt.getId());
+                    m.setValue(value);
+                    m.setNote(note);
+                    measurementDAO.insert(m);
+                } catch (NumberFormatException ignored) {}
+            }
+        }
+        response.sendRedirect(request.getContextPath() + "/measurements?msg=created");
     }
 }
