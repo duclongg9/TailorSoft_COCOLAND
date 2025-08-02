@@ -7,6 +7,8 @@
         <li class="nav-item"><a href="<c:url value='/customers'/>" class="nav-link text-white">Khách hàng</a></li>
         <li class="nav-item"><a href="<c:url value='/materials'/>" class="nav-link text-white">Kho vải</a></li>
         <li class="nav-item"><a href="<c:url value='/orders'/>" class="nav-link text-white">Đơn hàng</a></li>
+        <li class="nav-item"><a href="<c:url value='/measurement-types'/>" class="nav-link text-white">Loại số đo</a></li>
+        <li class="nav-item"><a href="<c:url value='/product-types'/>" class="nav-link text-white">Loại sản phẩm</a></li>
     </ul>
 </nav>
 <main class="flex-grow-1 p-4">

@@ -43,6 +43,15 @@
     </servlet-mapping>
 
     <servlet>
+        <servlet-name>ProductTypeUpdateController</servlet-name>
+        <servlet-class>controller.producttype.ProductTypeUpdateController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ProductTypeUpdateController</servlet-name>
+        <url-pattern>/product-types/update</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
         <servlet-name>MaterialListController</servlet-name>
         <servlet-class>controller.material.MaterialListController</servlet-class>
     </servlet>

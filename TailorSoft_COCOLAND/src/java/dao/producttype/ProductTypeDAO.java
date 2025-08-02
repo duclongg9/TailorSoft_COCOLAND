@@ -28,6 +28,26 @@ public class ProductTypeDAO {
         return list;
     }
 
+    public ProductType findById(int id) {
+        String sql = "SELECT ma_loai, ten_loai, ky_hieu FROM loai_san_pham WHERE ma_loai = ?";
+        try (Connection conn = DBConnect.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    ProductType pt = new ProductType();
+                    pt.setId(rs.getInt("ma_loai"));
+                    pt.setName(rs.getString("ten_loai"));
+                    pt.setCode(rs.getString("ky_hieu"));
+                    return pt;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public void insert(ProductType pt, List<Integer> measurementTypeIds) {
         String sql = "INSERT INTO loai_san_pham(ten_loai, ky_hieu) VALUES(?,?)";
         try (Connection conn = DBConnect.getConnection();
@@ -77,5 +97,34 @@ public class ProductTypeDAO {
             e.printStackTrace();
         }
         return list;
+    }
+
+    public void update(ProductType pt, List<Integer> measurementTypeIds) {
+        String sql = "UPDATE loai_san_pham SET ten_loai = ?, ky_hieu = ? WHERE ma_loai = ?";
+        try (Connection conn = DBConnect.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, pt.getName());
+            ps.setString(2, pt.getCode());
+            ps.setInt(3, pt.getId());
+            ps.executeUpdate();
+            sql = "DELETE FROM loai_sp_thong_so WHERE ma_loai = ?";
+            try (PreparedStatement psDel = conn.prepareStatement(sql)) {
+                psDel.setInt(1, pt.getId());
+                psDel.executeUpdate();
+            }
+            if (measurementTypeIds != null) {
+                sql = "INSERT INTO loai_sp_thong_so(ma_loai, ma_thong_so) VALUES(?,?)";
+                try (PreparedStatement psIns = conn.prepareStatement(sql)) {
+                    for (int mtId : measurementTypeIds) {
+                        psIns.setInt(1, pt.getId());
+                        psIns.setInt(2, mtId);
+                        psIns.addBatch();
+                    }
+                    psIns.executeBatch();
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }
