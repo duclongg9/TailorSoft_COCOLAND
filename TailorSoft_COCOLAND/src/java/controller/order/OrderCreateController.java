@@ -2,6 +2,7 @@ package controller.order;
 
 import dao.order.OrderDAO;
 import dao.customer.CustomerDAO;
+import dao.producttype.ProductTypeDAO;
 import model.Order;
 import model.Customer;
 
@@ -17,11 +18,13 @@ import java.util.Date;
 public class OrderCreateController extends HttpServlet {
     private final OrderDAO orderDAO = new OrderDAO();
     private final CustomerDAO customerDAO = new CustomerDAO();
+    private final ProductTypeDAO productTypeDAO = new ProductTypeDAO();
     private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setAttribute("customers", customerDAO.findAll());
+        request.setAttribute("productTypes", productTypeDAO.findAll());
         request.getRequestDispatcher("/jsp/order/createOrder.jsp").forward(request, response);
     }
 

@@ -11,12 +11,12 @@ import java.util.List;
 public class ProductTypeDAO {
     public List<ProductType> findAll() {
         List<ProductType> list = new ArrayList<>();
-        String sql = "SELECT ma_loai, ten_loai FROM loai_san_pham";
+        String sql = "SELECT ma_loai, ten_loai, ky_hieu FROM loai_san_pham";
         try (Connection conn = DBConnect.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
-                list.add(new ProductType(rs.getInt("ma_loai"), rs.getString("ten_loai")));
+                list.add(new ProductType(rs.getInt("ma_loai"), rs.getString("ten_loai"), rs.getString("ky_hieu")));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -25,10 +25,11 @@ public class ProductTypeDAO {
     }
 
     public void insert(ProductType pt, List<Integer> measurementTypeIds) {
-        String sql = "INSERT INTO loai_san_pham(ten_loai) VALUES(?)";
+        String sql = "INSERT INTO loai_san_pham(ten_loai, ky_hieu) VALUES(?,?)";
         try (Connection conn = DBConnect.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, pt.getName());
+            ps.setString(2, pt.getCode());
             ps.executeUpdate();
             try (ResultSet rs = ps.getGeneratedKeys()) {
                 if (rs.next()) {

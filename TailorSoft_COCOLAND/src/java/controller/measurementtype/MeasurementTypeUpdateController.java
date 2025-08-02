@@ -30,10 +30,14 @@ public class MeasurementTypeUpdateController extends HttpServlet {
         int id = Integer.parseInt(request.getParameter("id"));
         String name = request.getParameter("name");
         String unit = request.getParameter("unit");
+        String bodyPart = request.getParameter("bodyPart");
+        String note = request.getParameter("note");
         MeasurementType mt = new MeasurementType();
         mt.setId(id);
         mt.setName(name);
         mt.setUnit(unit);
+        mt.setBodyPart(bodyPart);
+        mt.setNote(note);
         measurementTypeDAO.update(mt);
         response.sendRedirect(request.getContextPath() + "/measurement-types");
     }

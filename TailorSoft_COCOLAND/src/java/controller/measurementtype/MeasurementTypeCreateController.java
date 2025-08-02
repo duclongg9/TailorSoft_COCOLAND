@@ -21,9 +21,13 @@ public class MeasurementTypeCreateController extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String name = request.getParameter("name");
         String unit = request.getParameter("unit");
+        String bodyPart = request.getParameter("bodyPart");
+        String note = request.getParameter("note");
         MeasurementType mt = new MeasurementType();
         mt.setName(name);
         mt.setUnit(unit);
+        mt.setBodyPart(bodyPart);
+        mt.setNote(note);
         measurementTypeDAO.insert(mt);
         response.sendRedirect(request.getContextPath() + "/measurement-types");
     }
