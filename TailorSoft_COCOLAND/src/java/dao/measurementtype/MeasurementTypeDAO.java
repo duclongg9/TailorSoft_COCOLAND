@@ -39,6 +39,7 @@ public class MeasurementTypeDAO {
         }
     }
 
+
     public MeasurementType findById(int id) {
         String sql = "SELECT ma_thong_so, ten_thong_so, don_vi FROM loai_thong_so WHERE ma_thong_so = ?";
         try (Connection conn = DBConnect.getConnection();
