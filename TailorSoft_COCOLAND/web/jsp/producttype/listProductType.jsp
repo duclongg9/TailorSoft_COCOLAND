@@ -15,6 +15,8 @@
                     <th>Mã</th>
                     <th>Tên loại</th>
                     <th>Ký hiệu</th>
+                    <th>Số đo áp dụng</th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
@@ -23,6 +25,12 @@
                         <td>${pt.id}</td>
                         <td>${pt.name}</td>
                         <td>${pt.code}</td>
+                        <td>
+                            <c:forEach var="mt" items="${productMeasurements[pt.id]}">
+                                <span class="badge bg-info text-dark me-1">${mt.name}</span>
+                            </c:forEach>
+                        </td>
+                        <td><a href="<c:url value='/product-types/update?id=${pt.id}'/>" class="btn btn-sm btn-outline-primary">Sửa</a></td>
                     </tr>
                 </c:forEach>
             </tbody>
