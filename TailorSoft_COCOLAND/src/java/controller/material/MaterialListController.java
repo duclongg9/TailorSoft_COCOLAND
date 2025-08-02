@@ -17,6 +17,10 @@ public class MaterialListController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         List<Material> materials = materialDAO.findAll();
         request.setAttribute("materials", materials);
+        String msg = request.getParameter("msg");
+        if (msg != null) {
+            request.setAttribute("msg", msg);
+        }
         request.getRequestDispatcher("/jsp/material/listMaterial.jsp").forward(request, response);
     }
 }

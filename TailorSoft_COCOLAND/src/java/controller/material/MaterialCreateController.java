@@ -26,6 +26,6 @@ public class MaterialCreateController extends HttpServlet {
         double quantity = Double.parseDouble(request.getParameter("quantity"));
         Material m = new Material(0, name, color, origin, price, quantity);
         materialDAO.insert(m);
-        response.sendRedirect(request.getContextPath() + "/materials");
+        response.sendRedirect(request.getContextPath() + "/materials?msg=created");
     }
 }

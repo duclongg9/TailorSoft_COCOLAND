@@ -133,6 +133,15 @@
     </servlet-mapping>
 
     <servlet>
+        <servlet-name>DashboardController</servlet-name>
+        <servlet-class>controller.DashboardController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>DashboardController</servlet-name>
+        <url-pattern>/dashboard</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
         <servlet-name>CustomerCreateController</servlet-name>
         <servlet-class>controller.customer.CustomerCreateController</servlet-class>
     </servlet>

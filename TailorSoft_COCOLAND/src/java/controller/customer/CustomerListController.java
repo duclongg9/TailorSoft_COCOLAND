@@ -18,6 +18,10 @@ public class CustomerListController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         List<Customer> customers = customerDAO.findAll();
         request.setAttribute("customers", customers);
+        String msg = request.getParameter("msg");
+        if (msg != null) {
+            request.setAttribute("msg", msg);
+        }
         request.getRequestDispatcher("/jsp/customer/listCustomer.jsp").forward(request, response);
     }
 }
