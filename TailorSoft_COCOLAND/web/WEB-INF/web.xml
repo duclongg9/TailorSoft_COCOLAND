@@ -115,6 +115,7 @@
     </servlet-mapping>
 
     <servlet>
+
         <servlet-name>MeasurementTypeUpdateController</servlet-name>
         <servlet-class>controller.measurementtype.MeasurementTypeUpdateController</servlet-class>
     </servlet>
@@ -133,6 +134,7 @@
     </servlet-mapping>
 
     <servlet>
+
         <servlet-name>CustomerCreateController</servlet-name>
         <servlet-class>controller.customer.CustomerCreateController</servlet-class>
     </servlet>
