@@ -35,17 +35,30 @@
                     </div>
                 </div>
                 <div class="tab-pane fade" id="step2" role="tabpanel">
-                    <p>Thêm sản phẩm (demo):</p>
-                    <table class="table" id="itemsTable">
-                        <thead><tr><th>Loại SP</th><th>Số lượng</th><th>Số đo</th></tr></thead>
-                        <tbody>
-                        <tr>
-                            <td><input type="text" class="form-control" name="productType" placeholder="Vest"/></td>
-                            <td><input type="number" class="form-control" name="qty" value="1" min="1"/></td>
-                            <td><button type="button" class="btn btn-sm btn-outline-secondary" disabled>Nhập số đo</button></td>
-                        </tr>
-                        </tbody>
-                    </table>
+                    <div id="itemsContainer"></div>
+                    <button type="button" class="btn btn-outline-primary mt-2" id="addItemBtn">+ Thêm sản phẩm khác</button>
+                    <template id="itemTemplate">
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Loại sản phẩm</label>
+                                        <select class="form-select productTypeSelect" name="productTypeId__INDEX__" required>
+                                            <option value="">--Chọn loại--</option>
+                                            <c:forEach var="pt" items="${productTypes}">
+                                                <option value="${pt.id}">${pt.name}</option>
+                                            </c:forEach>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label class="form-label">Số lượng</label>
+                                        <input type="number" class="form-control" name="quantity__INDEX__" value="1" min="1" required/>
+                                    </div>
+                                </div>
+                                <div class="row measurement-fields"></div>
+                            </div>
+                        </div>
+                    </template>
                 </div>
                 <div class="tab-pane fade" id="step3" role="tabpanel">
                     <div class="row">
@@ -107,5 +120,37 @@
     showStep(0);
     document.getElementById('nextBtn').addEventListener('click',()=>{if(current<3){current++;showStep(current);}});
     document.getElementById('prevBtn').addEventListener('click',()=>{if(current>0){current--;showStep(current);}});
+
+    const mtUrl = '<c:url value="/product-types/measurement-types"/>';
+    let itemIndex = 0;
+    function addItem(){
+        const idx = itemIndex;
+        const tpl = document.getElementById('itemTemplate').innerHTML.replace(/__INDEX__/g, idx);
+        const div = document.createElement('div');
+        div.innerHTML = tpl;
+        const item = div.firstElementChild;
+        document.getElementById('itemsContainer').appendChild(item);
+        const select = item.querySelector('.productTypeSelect');
+        select.addEventListener('change', function(){
+            const ptId = this.value;
+            const fields = item.querySelector('.measurement-fields');
+            fields.innerHTML = '';
+            if(!ptId) return;
+            fetch(mtUrl + '?productTypeId=' + ptId)
+                .then(res => res.json())
+                .then(data => {
+                    data.forEach(mt => {
+                        const col = document.createElement('div');
+                        col.className = 'col-md-6 mb-3';
+                        col.innerHTML = `<label class="form-label">${mt.name} (${mt.unit})</label>`+
+                            `<input type="number" step="0.1" class="form-control" name="item${idx}_m${mt.id}" placeholder="cm">`;
+                        fields.appendChild(col);
+                    });
+                });
+        });
+        itemIndex++;
+    }
+    document.getElementById('addItemBtn').addEventListener('click', addItem);
+    addItem();
 </script>
 <jsp:include page="/jsp/common/footer.jsp"/>

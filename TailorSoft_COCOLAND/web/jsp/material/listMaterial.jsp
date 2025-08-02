@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page pageEncoding="UTF-8" contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <c:set var="pageTitle" value="Danh sách vải"/>
@@ -31,6 +31,7 @@
         <th>Xuất xứ</th>
         <th class="text-end">Giá (₫)</th>
         <th class="text-end">Số lượng (m)</th>
+        <th>Hóa đơn</th>
     </tr>
     </thead>
     <tbody>
@@ -42,6 +43,11 @@
             <td>${m.origin}</td>
             <td class="text-end"><fmt:formatNumber value="${m.price}" type="number" pattern="#,##0"/> ₫</td>
             <td class="text-end"><fmt:formatNumber value="${m.quantity}" type="number" pattern="#,##0.##"/> m</td>
+            <td>
+                <c:if test="${not empty m.invoiceImage}">
+                    <img src="<c:url value='/uploads/${m.invoiceImage}'/>" alt="Hóa đơn" style="height:40px;">
+                </c:if>
+            </td>
         </tr>
     </c:forEach>
     </tbody>

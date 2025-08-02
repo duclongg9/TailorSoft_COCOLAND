@@ -19,14 +19,16 @@ public class ProductTypeCreateController extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        List<MeasurementType> mts = measurementTypeDAO.findAll();
+        List<MeasurementType> mts = measurementTypeDAO.search(null, null);
         request.setAttribute("measurementTypes", mts);
+        request.setAttribute("bodyParts", measurementTypeDAO.findBodyParts());
         request.getRequestDispatcher("/jsp/producttype/createProductType.jsp").forward(request, response);
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String name = request.getParameter("name");
+        String code = request.getParameter("code");
         String[] mtIds = request.getParameterValues("measurementTypeId");
         List<Integer> ids = new ArrayList<>();
         if (mtIds != null) {
@@ -36,6 +38,7 @@ public class ProductTypeCreateController extends HttpServlet {
         }
         ProductType pt = new ProductType();
         pt.setName(name);
+        pt.setCode(code);
         productTypeDAO.insert(pt, ids);
         response.sendRedirect(request.getContextPath() + "/product-types");
     }
