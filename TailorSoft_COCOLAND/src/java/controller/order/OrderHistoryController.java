@@ -1,7 +1,9 @@
 package controller.order;
 
+import dao.customer.CustomerDAO;
 import dao.order.OrderDAO;
-import model.OrderDetail;
+import model.Customer;
+import model.Order;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -12,6 +14,7 @@ import java.util.List;
 
 public class OrderHistoryController extends HttpServlet {
     private final OrderDAO orderDAO = new OrderDAO();
+    private final CustomerDAO customerDAO = new CustomerDAO();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -21,8 +24,21 @@ public class OrderHistoryController extends HttpServlet {
             return;
         }
         int customerId = Integer.parseInt(idStr);
-        List<OrderDetail> details = orderDAO.findDetailsByCustomer(customerId);
-        request.setAttribute("details", details);
+        Customer customer = customerDAO.findById(customerId);
+        if (customer == null) {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
+        List<Order> orders = orderDAO.findByCustomer(customerId);
+        int total = orders.size();
+        long pending = orders.stream()
+                .filter(o -> o.getStatus() == null || !"Hoàn thành".equalsIgnoreCase(o.getStatus()))
+                .count();
+        request.setAttribute("customer", customer);
+        request.setAttribute("orders", orders);
+        request.setAttribute("totalOrders", total);
+        request.setAttribute("pendingOrders", pending);
+        request.setAttribute("completedOrders", total - pending);
         request.getRequestDispatcher("/jsp/order/customerOrderHistory.jsp").forward(request, response);
     }
 }

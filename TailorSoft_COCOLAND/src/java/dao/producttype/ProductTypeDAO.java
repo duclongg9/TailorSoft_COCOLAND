@@ -16,7 +16,11 @@ public class ProductTypeDAO {
              PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
-                list.add(new ProductType(rs.getInt("ma_loai"), rs.getString("ten_loai"), rs.getString("ky_hieu")));
+                ProductType pt = new ProductType();
+                pt.setId(rs.getInt("ma_loai"));
+                pt.setName(rs.getString("ten_loai"));
+                pt.setCode(rs.getString("ky_hieu"));
+                list.add(pt);
             }
         } catch (SQLException e) {
             e.printStackTrace();
