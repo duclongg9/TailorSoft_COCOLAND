@@ -43,3 +43,4 @@ Dưới đây là bố cục đề xuất cho bước "Thêm sản phẩm" trong
 - JSP/Thymeleaf: dùng `<c:forEach>` render danh sách số đo.
 - Front-end: Bootstrap 5 `row` + `col-md-6` cho 2 cột; trên màn hình nhỏ tự xuống hàng.
 - AJAX endpoint `/measurements/byProductType?id=…` trả JSON `[{"id":1,"name":"Vòng cổ"}, …]`.
+- JS: lắng nghe phím Enter để tự chuyển focus sang ô nhập kế tiếp.
