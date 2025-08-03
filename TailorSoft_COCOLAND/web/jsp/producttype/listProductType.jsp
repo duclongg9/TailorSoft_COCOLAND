@@ -22,7 +22,7 @@
             <tbody>
                 <c:forEach var="pt" items="${productTypes}" varStatus="status">
                     <tr>
-                        <td>${status.index + 1}</td>
+                        <td>${status.count}</td>
                         <td>${pt.name}</td>
                         <td>${pt.code}</td>
                         <td>

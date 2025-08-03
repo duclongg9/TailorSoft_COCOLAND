@@ -17,7 +17,7 @@
         <table class="table table-striped table-hover">
             <thead>
             <tr>
-                <th>#</th>
+                <th>STT</th>
                 <th>Ngày đặt</th>
                 <th>Ngày giao</th>
                 <th>Sản phẩm</th>
@@ -29,7 +29,7 @@
             <tbody>
             <c:forEach var="o" items="${orders}" varStatus="st">
                 <tr>
-                    <td>${st.index + 1}</td>
+                    <td>${st.count}</td>
                     <td><fmt:formatDate value="${o.orderDate}" pattern="yyyy-MM-dd"/></td>
                     <td><fmt:formatDate value="${o.deliveryDate}" pattern="yyyy-MM-dd"/></td>
                     <td>${o.productType}</td>
