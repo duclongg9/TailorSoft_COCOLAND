@@ -7,6 +7,7 @@
     <div class="mt-4">
 <h2>Thêm vải</h2>
 <form action="" method="post" enctype="multipart/form-data">
+    <input type="hidden" name="returnUrl" value="${param.returnUrl}"/>
     <div class="row">
         <div class="col-md-6">
             <div class="mb-3">
