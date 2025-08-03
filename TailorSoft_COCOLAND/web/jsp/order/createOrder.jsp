@@ -72,7 +72,20 @@
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Chọn vải</label>
-                            <input type="text" class="form-control" placeholder="Tìm vải..." disabled>
+                            <div id="materialsContainer"></div>
+                            <button type="button" class="btn btn-outline-primary mt-2" id="addMaterialBtn">+ Thêm vải khác</button>
+                            <div class="form-text"><a href="<c:url value='/materials/create'/>" target="_blank">Thêm vải mới</a></div>
+                            <template id="materialTemplate">
+                                <div class="input-group mb-2">
+                                    <select class="form-select" name="materialId__INDEX__" required>
+                                        <option value="">--Chọn vải--</option>
+                                        <c:forEach var="m" items="${materials}">
+                                            <option value="${m.id}">${m.name}</option>
+                                        </c:forEach>
+                                    </select>
+                                    <input type="number" class="form-control" name="materialQty__INDEX__" placeholder="Số lượng" min="0.1" step="0.1" required>
+                                </div>
+                            </template>
                         </div>
                     </div>
                 </div>
@@ -182,7 +195,17 @@
     }
     totalInput.addEventListener('input', updateSummary);
     depositInput.addEventListener('input', updateSummary);
+    let materialIndex = 0;
+    function addMaterial(){
+        const tpl = document.getElementById('materialTemplate').innerHTML.replace(/__INDEX__/g, materialIndex);
+        const div = document.createElement('div');
+        div.innerHTML = tpl;
+        document.getElementById('materialsContainer').appendChild(div.firstElementChild);
+        materialIndex++;
+    }
+    document.getElementById('addMaterialBtn').addEventListener('click', addMaterial);
     addItem();
+    addMaterial();
     updateSummary();
     document.getElementById('finishBtn').addEventListener('click', function(e){
         if(!confirm('Xác nhận đã thanh toán đơn hàng?')){

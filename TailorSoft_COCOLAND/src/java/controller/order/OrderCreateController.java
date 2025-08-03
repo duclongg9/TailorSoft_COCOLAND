@@ -4,6 +4,7 @@ import dao.order.OrderDAO;
 import dao.customer.CustomerDAO;
 import dao.producttype.ProductTypeDAO;
 import dao.measurement.MeasurementDAO;
+import dao.material.MaterialDAO;
 import model.Order;
 import model.OrderDetail;
 import model.Measurement;
@@ -23,12 +24,14 @@ public class OrderCreateController extends HttpServlet {
     private final CustomerDAO customerDAO = new CustomerDAO();
     private final ProductTypeDAO productTypeDAO = new ProductTypeDAO();
     private final MeasurementDAO measurementDAO = new MeasurementDAO();
+    private final MaterialDAO materialDAO = new MaterialDAO();
     private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setAttribute("customers", customerDAO.findAll());
         request.setAttribute("productTypes", productTypeDAO.findAll());
+        request.setAttribute("materials", materialDAO.findAll());
         request.getRequestDispatcher("/jsp/order/createOrder.jsp").forward(request, response);
     }
 
@@ -59,7 +62,7 @@ public class OrderCreateController extends HttpServlet {
                         orderDAO.insertDetail(detail);
 
                         String prefix = "item" + idx + "_m";
-                        params.keySet().stream()
+                    params.keySet().stream()
                                 .filter(k -> k.startsWith(prefix))
                                 .forEach(k -> {
                                     int mtId = Integer.parseInt(k.substring(prefix.length()));
@@ -71,6 +74,15 @@ public class OrderCreateController extends HttpServlet {
                                     m.setValue(value);
                                     measurementDAO.insert(m);
                                 });
+                    });
+
+            params.keySet().stream()
+                    .filter(p -> p.startsWith("materialId_"))
+                    .forEach(p -> {
+                        String idx = p.substring("materialId_".length());
+                        int mId = Integer.parseInt(request.getParameter(p));
+                        double used = Double.parseDouble(request.getParameter("materialQty_" + idx));
+                        materialDAO.decreaseQuantity(mId, used);
                     });
 
             response.sendRedirect(request.getContextPath() + "/orders?msg=created");

@@ -46,4 +46,16 @@ public class MaterialDAO {
             e.printStackTrace();
         }
     }
+
+    public void decreaseQuantity(int id, double amount) {
+        String sql = "UPDATE kho_vai SET so_luong = so_luong - ? WHERE ma_vai = ?";
+        try (Connection conn = DBConnect.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setDouble(1, amount);
+            ps.setInt(2, id);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }
