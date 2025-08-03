@@ -123,7 +123,7 @@
                         </select>
                     </div>
                     <div class="text-center mb-3">
-                        <img src="<c:url value='/img/payment-qr.jpg'/>" alt="QR Code" class="img-fluid" style="max-width:200px;">
+                        <img src="<c:url value='/img/payment-qr.jpg'/>" alt="QR Code" class="img-fluid" style="max-width:300px;">
                     </div>
                     <div class="alert alert-secondary">Tổng: <span id="summaryTotal">0</span> ₫ - Đã cọc: <span id="summaryDeposit">0</span> ₫</div>
                 </div>
