@@ -52,6 +52,7 @@
     </c:forEach>
     </tbody>
 </table>
+<jsp:include page="/jsp/common/pagination.jsp"/>
 <script>
     document.getElementById('materialSearch').addEventListener('keyup', function () {
         const filter = this.value.toLowerCase();

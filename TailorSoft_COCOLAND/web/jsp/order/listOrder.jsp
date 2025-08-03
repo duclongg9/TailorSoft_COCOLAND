@@ -84,6 +84,7 @@
             </c:forEach>
             </tbody>
         </table>
+        <jsp:include page="/jsp/common/pagination.jsp"/>
         <script>
             function applyFilters() {
                 const search = document.getElementById('orderSearch').value.toLowerCase();
