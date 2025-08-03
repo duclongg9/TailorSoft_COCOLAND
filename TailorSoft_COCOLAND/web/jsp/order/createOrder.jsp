@@ -141,19 +141,25 @@
 </style>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-<<<<<<< Updated upstream
+    if (typeof $ === 'function' && $.fn.select2) {
+        document.addEventListener('DOMContentLoaded', function () {
     if (typeof $ === 'function' && $.fn.select2) {
         $('#customerSelect').select2({placeholder:'Chọn khách hàng',width:'100%'});
     }
-=======
-    $('#customerSelect').select2({placeholder:'Chọn khách hàng',width:'100%'});
->>>>>>> Stashed changes
     let current = 0;
     const orderTabs = ['step1','step2','step3','step4'];
     function showStep(i){
         const tabEl = document.querySelector(`#${orderTabs[i]}-tab`);
         if (window.bootstrap && window.bootstrap.Tab) {
+            if (window.bootstrap && window.bootstrap.Tab) {
             new bootstrap.Tab(tabEl).show();
+        } else {
+            document.querySelectorAll('#orderWizard .nav-link').forEach(l => l.classList.remove('active'));
+            document.querySelectorAll('#orderWizardContent .tab-pane').forEach(p => p.classList.remove('show','active'));
+            tabEl.classList.add('active');
+            const pane = document.getElementById(orderTabs[i]);
+            if (pane) pane.classList.add('show','active');
+        }
         } else {
             document.querySelectorAll('#orderWizard .nav-link').forEach(l => l.classList.remove('active'));
             document.querySelectorAll('#orderWizardContent .tab-pane').forEach(p => p.classList.remove('show','active'));
@@ -166,6 +172,21 @@
         document.getElementById('finishBtn').classList.toggle('d-none', i!==orderTabs.length-1);
     }
     function validateStep(i){
+        // Bước 1 dùng Select2 nên cần kiểm tra thủ công
+        if(i === 0){
+            const customer = document.getElementById('customerSelect');
+            if(!customer.value){
+                // Thông báo thân thiện khi chưa chọn khách hàng
+                alert('Vui lòng chọn khách hàng');
+                if(customer.nextElementSibling){
+                    customer.nextElementSibling.focus();
+                } else {
+                    customer.focus();
+                }
+                return false;
+            }
+            return true;
+        }
         const pane = document.getElementById(orderTabs[i]);
         const inputs = pane.querySelectorAll('input, select');
         for(const el of inputs){
