@@ -7,6 +7,7 @@
     <div class="mt-4">
 <h2>Thêm khách hàng</h2>
 <form action="" method="post">
+    <input type="hidden" name="returnUrl" value="${param.returnUrl}"/>
     <div class="mb-3">
         <label class="form-label">Họ tên</label>
         <input type="text" name="name" class="form-control" required/>

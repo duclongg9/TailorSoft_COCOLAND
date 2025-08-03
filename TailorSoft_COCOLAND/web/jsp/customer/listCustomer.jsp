@@ -41,7 +41,7 @@
 <table id="customerTable" class="table table-striped table-hover">
     <thead>
     <tr>
-        <th>#</th>
+        <th>STT</th>
         <th>Họ tên</th>
         <th>Số điện thoại</th>
         <th>Email</th>

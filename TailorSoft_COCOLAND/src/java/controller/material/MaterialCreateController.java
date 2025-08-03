@@ -44,6 +44,11 @@ public class MaterialCreateController extends HttpServlet {
 
         Material m = new Material(0, name, color, origin, price, quantity, fileName);
         materialDAO.insert(m);
-        response.sendRedirect(request.getContextPath() + "/materials?msg=created");
+        String returnUrl = request.getParameter("returnUrl");
+        if (returnUrl != null && !returnUrl.isEmpty()) {
+            response.sendRedirect(request.getContextPath() + returnUrl);
+        } else {
+            response.sendRedirect(request.getContextPath() + "/materials?msg=created");
+        }
     }
 }

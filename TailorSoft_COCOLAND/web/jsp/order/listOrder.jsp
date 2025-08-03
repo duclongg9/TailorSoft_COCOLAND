@@ -47,7 +47,8 @@
         <table id="orderTable" class="table table-striped table-hover">
             <thead>
             <tr>
-                <th class="d-none">Mã</th>
+                <th>STT</th>
+                <th class="d-none">ID</th>
                 <th>Khách hàng</th>
                 <th>Ngày đặt</th>
                 <th>Ngày giao</th>
@@ -59,9 +60,10 @@
             </tr>
             </thead>
             <tbody>
-            <c:forEach var="o" items="${orders}">
+            <c:forEach var="o" items="${orders}" varStatus="st">
                 <c:set var="orderMonth"><fmt:formatDate value="${o.orderDate}" pattern="yyyy-MM"/></c:set>
                 <tr data-status="${o.status}" data-order-date="${orderMonth}" data-customer-id="${o.customerId}">
+                    <td>${st.index + 1}</td>
                     <td class="d-none">${o.id}</td>
                     <td><span data-bs-toggle="tooltip" title="${o.customerPhone} / ${o.customerEmail}">${o.customerName}</span></td>
                     <td><fmt:formatDate value="${o.orderDate}" pattern="dd-MM-yyyy"/></td>
