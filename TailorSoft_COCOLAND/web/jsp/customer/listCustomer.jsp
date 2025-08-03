@@ -71,6 +71,7 @@
     </c:forEach>
     </tbody>
 </table>
+<jsp:include page="/jsp/common/pagination.jsp"/>
 
 <!-- Modal cập nhật khách hàng -->
 <div class="modal fade" id="editCustomerModal" tabindex="-1" aria-hidden="true">

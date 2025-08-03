@@ -33,6 +33,7 @@
             </c:forEach>
             </tbody>
         </table>
+        <jsp:include page="/jsp/common/pagination.jsp"/>
     </div>
 </div>
 <jsp:include page="/jsp/common/footer.jsp"/>
