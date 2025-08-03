@@ -31,12 +31,15 @@
                                 <option value="${c.id}">${c.name} - ${c.phone}</option>
                             </c:forEach>
                         </select>
-                        <div class="form-text"><a href="<c:url value='/customers/create'/>" target="_blank">Thêm khách mới</a></div>
+                        <c:url var="customerCreateUrl" value="/customers/create">
+                            <c:param name="returnUrl" value="/orders/create"/>
+                        </c:url>
+                        <div class="form-text"><a href="${customerCreateUrl}">Thêm khách mới</a></div>
                     </div>
                 </div>
                 <div class="tab-pane fade" id="step2" role="tabpanel">
                     <div id="itemsContainer">
-                        <button type="button" class="btn btn-outline-primary mt-2" id="addItemBtn">+ Thêm sản phẩm khác</button>
+                        <button type="button" class="btn btn-outline-primary mt-2" id="addItemBtn">+ Chọn sản phẩm</button>
                     </div>
                     <template id="itemTemplate">
                         <div class="card mb-3">
@@ -53,6 +56,10 @@
                                                 <option value="${pt.id}">${pt.name}</option>
                                             </c:forEach>
                                         </select>
+                                        <c:url var="ptCreateUrl" value="/product-types/create">
+                                            <c:param name="returnUrl" value="/orders/create"/>
+                                        </c:url>
+                                        <div class="form-text"><a href="${ptCreateUrl}">Thêm loại sản phẩm</a></div>
                                     </div>
                                     <div class="col-md-2">
                                         <label class="form-label">Số lượng</label>
@@ -74,7 +81,10 @@
                             <label class="form-label">Chọn vải</label>
                             <div id="materialsContainer"></div>
                             <button type="button" class="btn btn-outline-primary mt-2" id="addMaterialBtn">+ Thêm vải khác</button>
-                            <div class="form-text"><a href="<c:url value='/materials/create'/>" target="_blank">Thêm vải mới</a></div>
+                            <c:url var="materialCreateUrl" value="/materials/create">
+                                <c:param name="returnUrl" value="/orders/create"/>
+                            </c:url>
+                            <div class="form-text"><a href="${materialCreateUrl}">Thêm vải mới</a></div>
                             <template id="materialTemplate">
                                 <div class="input-group mb-2">
                                     <select class="form-select" name="materialId__INDEX__" required>
@@ -84,6 +94,7 @@
                                         </c:forEach>
                                     </select>
                                     <input type="number" class="form-control" name="materialQty__INDEX__" placeholder="Số lượng" min="0.1" step="0.1" required>
+                                    <button type="button" class="btn btn-outline-danger remove-material">&times;</button>
                                 </div>
                             </template>
                         </div>
@@ -145,15 +156,21 @@
 
     const mtUrl = '<c:url value="/product-types/measurement-types"/>';
     let itemIndex = 0;
+    const addItemBtn = document.getElementById('addItemBtn');
+    function updateAddItemBtn(){
+        const hasItem = document.querySelectorAll('#itemsContainer .card').length > 0;
+        addItemBtn.textContent = hasItem ? '+ Thêm sản phẩm khác' : '+ Chọn sản phẩm';
+    }
     function addItem(){
         const idx = itemIndex;
         const tpl = document.getElementById('itemTemplate').innerHTML.replace(/__INDEX__/g, idx);
         const div = document.createElement('div');
         div.innerHTML = tpl;
         const item = div.firstElementChild;
+
         const container = document.getElementById('itemsContainer');
-        container.insertBefore(item, document.getElementById('addItemBtn'));
-        item.querySelector('.remove-item').addEventListener('click', () => item.remove());
+        container.insertBefore(item, addItemBtn);
+        item.querySelector('.remove-item').addEventListener('click', () => { item.remove(); updateAddItemBtn(); });
         const select = item.querySelector('.productTypeSelect');
         select.addEventListener('change', function(){
             const ptId = this.value;
@@ -168,7 +185,7 @@
                         const col = document.createElement('div');
                         col.className = 'col-md-6 mb-3';
                         col.innerHTML = `<label class="form-label">${mt.name} (${mt.unit})</label>`+
-                            `<input type=\"number\" step=\"0.1\" class=\"form-control measurement-input\" name=\"item${idx}_m${mt.id}\" placeholder=\"cm\" required>`;
+                            `<input type=\"number\" step=\"0.1\" class=\"form-control measurement-input\" name=\"item${idx}_m${mt.id}\" placeholder=\"${mt.unit}\" required>`;
                         fields.appendChild(col);
                     });
                     fields.classList.remove('d-none');
@@ -185,9 +202,11 @@
                 });
         });
         itemIndex++;
+        updateAddItemBtn();
     }
-    document.getElementById('addItemBtn').addEventListener('click', addItem);
-   const totalInput = document.querySelector('input[name="total"]');
+    addItemBtn.addEventListener('click', addItem);
+    addItem();
+    const totalInput = document.querySelector('input[name="total"]');
     const depositInput = document.querySelector('input[name="deposit"]');
     function updateSummary(){
         document.getElementById('summaryTotal').textContent = totalInput.value || 0;
@@ -200,11 +219,12 @@
         const tpl = document.getElementById('materialTemplate').innerHTML.replace(/__INDEX__/g, materialIndex);
         const div = document.createElement('div');
         div.innerHTML = tpl;
-        document.getElementById('materialsContainer').appendChild(div.firstElementChild);
+        const row = div.firstElementChild;
+        row.querySelector('.remove-material').addEventListener('click', () => row.remove());
+        document.getElementById('materialsContainer').appendChild(row);
         materialIndex++;
     }
     document.getElementById('addMaterialBtn').addEventListener('click', addMaterial);
-    addItem();
     addMaterial();
     updateSummary();
     document.getElementById('finishBtn').addEventListener('click', function(e){

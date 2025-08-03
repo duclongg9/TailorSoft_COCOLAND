@@ -37,7 +37,9 @@
     <tbody>
     <c:forEach var="m" items="${materials}" varStatus="status">
         <tr class="${m.quantity < lowStockThreshold ? 'table-danger' : ''}">
+
             <td>${status.count}</td>
+
             <td>${m.name}</td>
             <td class="text-truncate" style="max-width:150px;">${m.color}</td>
             <td>${m.origin}</td>
