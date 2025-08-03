@@ -102,6 +102,31 @@ public class OrderDAO {
         }
     }
 
+    public List<OrderDetail> findDetailsByOrder(int orderId) {
+        List<OrderDetail> list = new ArrayList<>();
+        String sql = "SELECT ma_ct, ma_don, loai_sp, ten_vai, don_gia, so_luong, ghi_chu FROM chi_tiet_don WHERE ma_don = ?";
+        try (Connection conn = DBConnect.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, orderId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    OrderDetail d = new OrderDetail();
+                    d.setId(rs.getInt("ma_ct"));
+                    d.setOrderId(rs.getInt("ma_don"));
+                    d.setProductType(rs.getString("loai_sp"));
+                    d.setMaterialName(rs.getString("ten_vai"));
+                    d.setUnitPrice(rs.getDouble("don_gia"));
+                    d.setQuantity(rs.getInt("so_luong"));
+                    d.setNote(rs.getString("ghi_chu"));
+                    list.add(d);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
     public List<OrderDetail> findDetailsByCustomer(int customerId) {
         List<OrderDetail> list = new ArrayList<>();
         String sql = "SELECT ct.ma_ct, ct.ma_don, ct.loai_sp, ct.ten_vai, ct.don_gia, ct.so_luong, ct.ghi_chu " +

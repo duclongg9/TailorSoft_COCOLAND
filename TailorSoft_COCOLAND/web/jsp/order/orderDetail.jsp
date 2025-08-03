@@ -26,6 +26,30 @@
                     </div>
                 </div>
             </div>
+            <c:if test="${not empty details}">
+                <table class="table table-striped mb-4">
+                    <thead>
+                    <tr>
+                        <th>Sản phẩm</th>
+                        <th>Tên vải</th>
+                        <th>Đơn giá</th>
+                        <th>Số lượng</th>
+                        <th>Ghi chú</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <c:forEach var="d" items="${details}">
+                        <tr>
+                            <td>${d.productType}</td>
+                            <td>${d.materialName}</td>
+                            <td><fmt:formatNumber value="${d.unitPrice}" type="number" groupingUsed="true"/> ₫</td>
+                            <td>${d.quantity}</td>
+                            <td>${d.note}</td>
+                        </tr>
+                    </c:forEach>
+                    </tbody>
+                </table>
+            </c:if>
             <div class="d-flex gap-2 mb-3">
                 <a href="#" class="btn btn-outline-primary btn-sm"><i class="fa fa-pen"></i> Cập nhật trạng thái</a>
                 <a href="#" class="btn btn-outline-success btn-sm"><i class="fa fa-coins"></i> Thêm thanh toán</a>
