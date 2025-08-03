@@ -55,7 +55,7 @@
                                         <input type="number" class="form-control" name="quantity__INDEX__" value="1" min="1" required/>
                                     </div>
                                 </div>
-                                <div class="row measurement-fields"></div>
+                                <div class="row measurement-fields d-none"></div>
                             </div>
                         </div>
                     </template>
@@ -135,6 +135,7 @@
             const ptId = this.value;
             const fields = item.querySelector('.measurement-fields');
             fields.innerHTML = '';
+            fields.classList.add('d-none');
             if(!ptId) return;
             fetch(mtUrl + '?productTypeId=' + ptId)
                 .then(res => res.json())
@@ -143,8 +144,19 @@
                         const col = document.createElement('div');
                         col.className = 'col-md-6 mb-3';
                         col.innerHTML = `<label class="form-label">${mt.name} (${mt.unit})</label>`+
-                            `<input type="number" step="0.1" class="form-control" name="item${idx}_m${mt.id}" placeholder="cm">`;
+                            `<input type=\"number\" step=\"0.1\" class=\"form-control measurement-input\" name=\"item${idx}_m${mt.id}\" placeholder=\"cm\" required>`;
                         fields.appendChild(col);
+                    });
+                    fields.classList.remove('d-none');
+                    const inputs = fields.querySelectorAll('.measurement-input');
+                    inputs.forEach((inp, i) => {
+                        inp.addEventListener('keydown', e => {
+                            if(e.key === 'Enter'){
+                                e.preventDefault();
+                                const next = inputs[i+1];
+                                if(next){ next.focus(); }
+                            }
+                        });
                     });
                 });
         });
