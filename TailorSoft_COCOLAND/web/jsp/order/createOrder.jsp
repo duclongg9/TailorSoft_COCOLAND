@@ -94,6 +94,7 @@
                                         </c:forEach>
                                     </select>
                                     <input type="number" class="form-control" name="materialQty__INDEX__" placeholder="Số lượng" min="0.1" step="0.1" required>
+                                    <button type="button" class="btn btn-outline-danger remove-material">&times;</button>
                                 </div>
                             </template>
                         </div>
@@ -166,6 +167,7 @@
         const div = document.createElement('div');
         div.innerHTML = tpl;
         const item = div.firstElementChild;
+
         const container = document.getElementById('itemsContainer');
         container.insertBefore(item, addItemBtn);
         item.querySelector('.remove-item').addEventListener('click', () => { item.remove(); updateAddItemBtn(); });
@@ -217,7 +219,9 @@
         const tpl = document.getElementById('materialTemplate').innerHTML.replace(/__INDEX__/g, materialIndex);
         const div = document.createElement('div');
         div.innerHTML = tpl;
-        document.getElementById('materialsContainer').appendChild(div.firstElementChild);
+        const row = div.firstElementChild;
+        row.querySelector('.remove-material').addEventListener('click', () => row.remove());
+        document.getElementById('materialsContainer').appendChild(row);
         materialIndex++;
     }
     document.getElementById('addMaterialBtn').addEventListener('click', addMaterial);
