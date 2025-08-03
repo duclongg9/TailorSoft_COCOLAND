@@ -3,8 +3,11 @@ package controller.order;
 import dao.order.OrderDAO;
 import dao.customer.CustomerDAO;
 import dao.producttype.ProductTypeDAO;
+import dao.measurement.MeasurementDAO;
 import model.Order;
-import model.Customer;
+import model.OrderDetail;
+import model.Measurement;
+import model.ProductType;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -19,6 +22,7 @@ public class OrderCreateController extends HttpServlet {
     private final OrderDAO orderDAO = new OrderDAO();
     private final CustomerDAO customerDAO = new CustomerDAO();
     private final ProductTypeDAO productTypeDAO = new ProductTypeDAO();
+    private final MeasurementDAO measurementDAO = new MeasurementDAO();
     private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
     @Override
@@ -38,7 +42,37 @@ public class OrderCreateController extends HttpServlet {
             double total = Double.parseDouble(request.getParameter("total"));
             double deposit = Double.parseDouble(request.getParameter("deposit"));
             Order order = new Order(0, customerId, orderDate, deliveryDate, status, total, deposit);
-            orderDAO.insert(order);
+            int orderId = orderDAO.insert(order);
+
+            java.util.Map<String, String[]> params = request.getParameterMap();
+            params.keySet().stream()
+                    .filter(p -> p.startsWith("productTypeId_"))
+                    .forEach(p -> {
+                        String idx = p.substring("productTypeId_".length());
+                        int ptId = Integer.parseInt(request.getParameter(p));
+                        int qty = Integer.parseInt(request.getParameter("quantity_" + idx));
+                        ProductType pt = productTypeDAO.findById(ptId);
+                        OrderDetail detail = new OrderDetail();
+                        detail.setOrderId(orderId);
+                        detail.setProductType(pt != null ? pt.getName() : "");
+                        detail.setQuantity(qty);
+                        orderDAO.insertDetail(detail);
+
+                        String prefix = "item" + idx + "_m";
+                        params.keySet().stream()
+                                .filter(k -> k.startsWith(prefix))
+                                .forEach(k -> {
+                                    int mtId = Integer.parseInt(k.substring(prefix.length()));
+                                    double value = Double.parseDouble(request.getParameter(k));
+                                    Measurement m = new Measurement();
+                                    m.setCustomerId(customerId);
+                                    m.setProductTypeId(ptId);
+                                    m.setMeasurementTypeId(mtId);
+                                    m.setValue(value);
+                                    measurementDAO.insert(m);
+                                });
+                    });
+
             response.sendRedirect(request.getContextPath() + "/orders?msg=created");
         } catch (ParseException | NumberFormatException e) {
             throw new ServletException(e);

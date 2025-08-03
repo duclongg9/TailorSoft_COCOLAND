@@ -9,9 +9,9 @@ Dưới đây là bố cục đề xuất cho bước "Thêm sản phẩm" trong
 └───────────────────────────────────────────────────────────────────────────────┘
 
 ┌───────────────────────────────────────────────────────────────────────────────┐
-│  Loại sản phẩm : [ Vest ▼ ]   Số lượng : [ 1 ]                               │
+│  Loại sản phẩm : [ --Chọn loại-- ▼ ]   Số lượng : [ 1 ]                       │
 │                                                                              │
-│  → Khi dropdown “Loại sản phẩm” đổi từ Vest → Quần (hoặc khác)               │
+│  → Sau khi chọn "Vest" hoặc "Quần"…                                         │
 │    vùng “Thông tin số đo” bên dưới **tự động hiển thị đúng các trường**.     │
 ├───────────────────────────────────────────────────────────────────────────────┤
 │  Thông tin số đo (Vest)                                                      │
@@ -32,8 +32,8 @@ Dưới đây là bố cục đề xuất cho bước "Thêm sản phẩm" trong
 
 | Khu vực | Ý nghĩa & hành vi |
 | --- | --- |
-| Dropdown “Loại sản phẩm” | Lấy dữ liệu `product_type`; khi thay đổi → gọi AJAX để lấy danh sách `measurement_type` đã liên kết và render vùng số đo. |
-| Bảng lưới số đo | Hiển thị dạng 2 cột (hoặc 3 tùy màn hình); mỗi ô gồm Label + Input. Label lấy từ `measurement_type.name`; Input `type="number"` `step="0.1"` và placeholder cm. |
+| Dropdown “Loại sản phẩm” | Lấy dữ liệu `product_type`, mặc định hiển thị `--Chọn loại--`; khi người dùng chọn một loại → gọi AJAX lấy danh sách `measurement_type` đã liên kết và render vùng số đo. |
+| Bảng lưới số đo | Chỉ xuất hiện sau khi đã chọn loại sản phẩm; hiển thị dạng 2 cột (hoặc 3 tùy màn hình), mỗi ô gồm Label + Input. Label lấy từ `measurement_type.name`; Input `type="number"` `step="0.1"` và placeholder cm. |
 | Nhiều sản phẩm | Nếu đơn hàng có 2 Vest + 1 Quần: nhấn “+ Thêm sản phẩm khác” để nhân bản khung; mỗi khung có dropdown riêng. |
 | Responsive | Trên mobile: lưới chuyển thành 1 cột dọc để dễ nhập bằng ngón tay. |
 | UX detail | Tô viền đỏ nếu bỏ trống. Tooltip giải thích “Hạ eo đo từ…”. Phím Enter chuyển sang input kế tiếp. |
@@ -43,3 +43,4 @@ Dưới đây là bố cục đề xuất cho bước "Thêm sản phẩm" trong
 - JSP/Thymeleaf: dùng `<c:forEach>` render danh sách số đo.
 - Front-end: Bootstrap 5 `row` + `col-md-6` cho 2 cột; trên màn hình nhỏ tự xuống hàng.
 - AJAX endpoint `/measurements/byProductType?id=…` trả JSON `[{"id":1,"name":"Vòng cổ"}, …]`.
+- JS: lắng nghe phím Enter để tự chuyển focus sang ô nhập kế tiếp.
