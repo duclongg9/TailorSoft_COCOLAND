@@ -35,9 +35,8 @@
                     </div>
                 </div>
                 <div class="tab-pane fade" id="step2" role="tabpanel">
-                    <div id="itemsContainer">
-                        <button type="button" class="btn btn-outline-primary mt-2" id="addItemBtn">+ Thêm sản phẩm khác</button>
-                    </div>
+                    <div id="itemsContainer"></div>
+                    <button type="button" class="btn btn-outline-primary mt-2" id="addItemBtn">+ Thêm sản phẩm khác</button>
                     <template id="itemTemplate">
                         <div class="card mb-3">
                             <div class="card-body">
@@ -84,6 +83,7 @@
                                         </c:forEach>
                                     </select>
                                     <input type="number" class="form-control" name="materialQty__INDEX__" placeholder="Số lượng" min="0.1" step="0.1" required>
+                                    <button type="button" class="btn btn-outline-danger remove-material">&times;</button>
                                 </div>
                             </template>
                         </div>
@@ -129,12 +129,14 @@
     .measurement-input:invalid { border-color: #dc3545; }
 </style>
 <script>
-    $('#customerSelect').select2({placeholder:'Chọn khách hàng',width:'100%'});
+    if(window.jQuery && $.fn.select2){
+        $('#customerSelect').select2({placeholder:'Chọn khách hàng',width:'100%'});
+    }
     let current = 0;
     const orderTabs = ['step1','step2','step3','step4'];
     function showStep(i){
         const tabEl = document.querySelector(`#${orderTabs[i]}-tab`);
-        new bootstrap.Tab(tabEl).show();
+        bootstrap.Tab.getOrCreateInstance(tabEl).show();
         document.getElementById('prevBtn').style.display = i===0?'none':'inline-block';
         document.getElementById('nextBtn').classList.toggle('d-none', i===orderTabs.length-1);
         document.getElementById('finishBtn').classList.toggle('d-none', i!==orderTabs.length-1);
@@ -151,8 +153,7 @@
         const div = document.createElement('div');
         div.innerHTML = tpl;
         const item = div.firstElementChild;
-        const container = document.getElementById('itemsContainer');
-        container.insertBefore(item, document.getElementById('addItemBtn'));
+        document.getElementById('itemsContainer').appendChild(item);
         item.querySelector('.remove-item').addEventListener('click', () => item.remove());
         const select = item.querySelector('.productTypeSelect');
         select.addEventListener('change', function(){
@@ -186,8 +187,18 @@
         });
         itemIndex++;
     }
-    document.getElementById('addItemBtn').addEventListener('click', addItem);
-   const totalInput = document.querySelector('input[name="total"]');
+    document.getElementById('addItemBtn').addEventListener('click', () => {
+        const items = document.querySelectorAll('#itemsContainer .card');
+        if(items.length){
+            const lastSelect = items[items.length-1].querySelector('.productTypeSelect');
+            if(!lastSelect.value){
+                lastSelect.focus();
+                return alert('Vui lòng chọn loại sản phẩm trước khi thêm.');
+            }
+        }
+        addItem();
+    });
+    const totalInput = document.querySelector('input[name="total"]');
     const depositInput = document.querySelector('input[name="deposit"]');
     function updateSummary(){
         document.getElementById('summaryTotal').textContent = totalInput.value || 0;
@@ -200,10 +211,22 @@
         const tpl = document.getElementById('materialTemplate').innerHTML.replace(/__INDEX__/g, materialIndex);
         const div = document.createElement('div');
         div.innerHTML = tpl;
-        document.getElementById('materialsContainer').appendChild(div.firstElementChild);
+        const row = div.firstElementChild;
+        row.querySelector('.remove-material').addEventListener('click', () => row.remove());
+        document.getElementById('materialsContainer').appendChild(row);
         materialIndex++;
     }
-    document.getElementById('addMaterialBtn').addEventListener('click', addMaterial);
+    document.getElementById('addMaterialBtn').addEventListener('click', () => {
+        const mats = document.querySelectorAll('#materialsContainer .input-group');
+        if(mats.length){
+            const lastSelect = mats[mats.length-1].querySelector('select');
+            if(!lastSelect.value){
+                lastSelect.focus();
+                return alert('Vui lòng chọn vải trước khi thêm.');
+            }
+        }
+        addMaterial();
+    });
     addItem();
     addMaterial();
     updateSummary();
