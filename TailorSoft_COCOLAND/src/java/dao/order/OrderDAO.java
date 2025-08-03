@@ -64,16 +64,38 @@ public class OrderDAO {
         return null;
     }
 
-    public void insert(Order order) {
+    public int insert(Order order) {
         String sql = "INSERT INTO don_hang(ma_khach, ngay_dat, ngay_giao, trang_thai, tong_tien, da_coc) VALUES(?,?,?,?,?,?)";
         try (Connection conn = DBConnect.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+             PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setInt(1, order.getCustomerId());
             ps.setDate(2, new java.sql.Date(order.getOrderDate().getTime()));
             ps.setDate(3, new java.sql.Date(order.getDeliveryDate().getTime()));
             ps.setString(4, order.getStatus());
             ps.setDouble(5, order.getTotal());
             ps.setDouble(6, order.getDeposit());
+            ps.executeUpdate();
+            try (ResultSet rs = ps.getGeneratedKeys()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
+
+    public void insertDetail(OrderDetail detail) {
+        String sql = "INSERT INTO chi_tiet_don(ma_don, loai_sp, ten_vai, don_gia, so_luong, ghi_chu) VALUES(?,?,?,?,?,?)";
+        try (Connection conn = DBConnect.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, detail.getOrderId());
+            ps.setString(2, detail.getProductType());
+            ps.setString(3, detail.getMaterialName());
+            ps.setDouble(4, detail.getUnitPrice());
+            ps.setInt(5, detail.getQuantity());
+            ps.setString(6, detail.getNote());
             ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
