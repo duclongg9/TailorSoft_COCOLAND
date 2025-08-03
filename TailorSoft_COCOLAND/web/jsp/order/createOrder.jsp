@@ -38,8 +38,9 @@
                     </div>
                 </div>
                 <div class="tab-pane fade" id="step2" role="tabpanel">
-                    <div id="itemsContainer"></div>
-                    <button type="button" class="btn btn-outline-primary mt-2" id="addItemBtn">+ Thêm sản phẩm khác</button>
+                    <div id="itemsContainer">
+                        <button type="button" class="btn btn-outline-primary mt-2" id="addItemBtn">+ Chọn sản phẩm</button>
+                    </div>
                     <template id="itemTemplate">
                         <div class="card mb-3">
                             <div class="card-body">
@@ -155,14 +156,21 @@
 
     const mtUrl = '<c:url value="/product-types/measurement-types"/>';
     let itemIndex = 0;
+    const addItemBtn = document.getElementById('addItemBtn');
+    function updateAddItemBtn(){
+        const hasItem = document.querySelectorAll('#itemsContainer .card').length > 0;
+        addItemBtn.textContent = hasItem ? '+ Thêm sản phẩm khác' : '+ Chọn sản phẩm';
+    }
     function addItem(){
         const idx = itemIndex;
         const tpl = document.getElementById('itemTemplate').innerHTML.replace(/__INDEX__/g, idx);
         const div = document.createElement('div');
         div.innerHTML = tpl;
         const item = div.firstElementChild;
-        document.getElementById('itemsContainer').appendChild(item);
-        item.querySelector('.remove-item').addEventListener('click', () => item.remove());
+
+        const container = document.getElementById('itemsContainer');
+        container.insertBefore(item, addItemBtn);
+        item.querySelector('.remove-item').addEventListener('click', () => { item.remove(); updateAddItemBtn(); });
         const select = item.querySelector('.productTypeSelect');
         select.addEventListener('change', function(){
             const ptId = this.value;
@@ -177,7 +185,7 @@
                         const col = document.createElement('div');
                         col.className = 'col-md-6 mb-3';
                         col.innerHTML = `<label class="form-label">${mt.name} (${mt.unit})</label>`+
-                            `<input type=\"number\" step=\"0.1\" class=\"form-control measurement-input\" name=\"item${idx}_m${mt.id}\" placeholder=\"cm\" required>`;
+                            `<input type=\"number\" step=\"0.1\" class=\"form-control measurement-input\" name=\"item${idx}_m${mt.id}\" placeholder=\"${mt.unit}\" required>`;
                         fields.appendChild(col);
                     });
                     fields.classList.remove('d-none');
@@ -194,19 +202,11 @@
                 });
         });
         itemIndex++;
+        updateAddItemBtn();
     }
-    document.getElementById('addItemBtn').addEventListener('click', () => {
-        const items = document.querySelectorAll('#itemsContainer .card');
-        if(items.length){
-            const lastSelect = items[items.length-1].querySelector('.productTypeSelect');
-            if(!lastSelect.value){
-                lastSelect.focus();
-                return alert('Vui lòng chọn loại sản phẩm trước khi thêm.');
-            }
-        }
-        addItem();
-    });
-   const totalInput = document.querySelector('input[name="total"]');
+    addItemBtn.addEventListener('click', addItem);
+    addItem();
+    const totalInput = document.querySelector('input[name="total"]');
     const depositInput = document.querySelector('input[name="deposit"]');
     function updateSummary(){
         document.getElementById('summaryTotal').textContent = totalInput.value || 0;
@@ -224,18 +224,7 @@
         document.getElementById('materialsContainer').appendChild(row);
         materialIndex++;
     }
-    document.getElementById('addMaterialBtn').addEventListener('click', () => {
-        const mats = document.querySelectorAll('#materialsContainer .input-group');
-        if(mats.length){
-            const lastSelect = mats[mats.length-1].querySelector('select');
-            if(!lastSelect.value){
-                lastSelect.focus();
-                return alert('Vui lòng chọn vải trước khi thêm.');
-            }
-        }
-        addMaterial();
-    });
-    addItem();
+    document.getElementById('addMaterialBtn').addEventListener('click', addMaterial);
     addMaterial();
     updateSummary();
     document.getElementById('finishBtn').addEventListener('click', function(e){
