@@ -140,19 +140,66 @@
     .measurement-input:invalid { border-color: #dc3545; }
 </style>
 <script>
-    $('#customerSelect').select2({placeholder:'Chọn khách hàng',width:'100%'});
+    document.addEventListener('DOMContentLoaded', function () {
+    if (typeof $ === 'function' && $.fn.select2) {
+        $('#customerSelect').select2({placeholder:'Chọn khách hàng',width:'100%'});
+    }
     let current = 0;
     const orderTabs = ['step1','step2','step3','step4'];
     function showStep(i){
         const tabEl = document.querySelector(`#${orderTabs[i]}-tab`);
-        new bootstrap.Tab(tabEl).show();
+        if (window.bootstrap && window.bootstrap.Tab) {
+            new bootstrap.Tab(tabEl).show();
+        } else {
+            document.querySelectorAll('#orderWizard .nav-link').forEach(l => l.classList.remove('active'));
+            document.querySelectorAll('#orderWizardContent .tab-pane').forEach(p => p.classList.remove('show','active'));
+            tabEl.classList.add('active');
+            const pane = document.getElementById(orderTabs[i]);
+            if (pane) pane.classList.add('show','active');
+        }
         document.getElementById('prevBtn').style.display = i===0?'none':'inline-block';
         document.getElementById('nextBtn').classList.toggle('d-none', i===orderTabs.length-1);
         document.getElementById('finishBtn').classList.toggle('d-none', i!==orderTabs.length-1);
     }
+    function validateStep(i){
+        // Bước 1 dùng Select2 nên cần kiểm tra thủ công
+        if(i === 0){
+            const customer = document.getElementById('customerSelect');
+            if(!customer.value){
+                // Thông báo thân thiện khi chưa chọn khách hàng
+                alert('Vui lòng chọn khách hàng');
+                if(customer.nextElementSibling){
+                    customer.nextElementSibling.focus();
+                } else {
+                    customer.focus();
+                }
+                return false;
+            }
+            return true;
+        }
+        const pane = document.getElementById(orderTabs[i]);
+        const inputs = pane.querySelectorAll('input, select');
+        for(const el of inputs){
+            if(!el.checkValidity()){
+                el.reportValidity();
+                return false;
+            }
+        }
+        return true;
+    }
     showStep(0);
-    document.getElementById('nextBtn').addEventListener('click',()=>{if(current<3){current++;showStep(current);}});
-    document.getElementById('prevBtn').addEventListener('click',()=>{if(current>0){current--;showStep(current);}});
+    document.getElementById('nextBtn').addEventListener('click',()=>{
+        if(current<orderTabs.length-1 && validateStep(current)){
+            current++;
+            showStep(current);
+        }
+    });
+    document.getElementById('prevBtn').addEventListener('click',()=>{
+        if(current>0){
+            current--;
+            showStep(current);
+        }
+    });
 
     const mtUrl = '<c:url value="/product-types/measurement-types"/>';
     let itemIndex = 0;
@@ -179,13 +226,13 @@
             fields.classList.add('d-none');
             if(!ptId) return;
             fetch(mtUrl + '?productTypeId=' + ptId)
-                .then(res => res.json())
+                .then(res => { if(!res.ok) throw new Error(); return res.json(); })
                 .then(data => {
                     data.forEach(mt => {
                         const col = document.createElement('div');
                         col.className = 'col-md-6 mb-3';
-                        col.innerHTML = `<label class="form-label">${mt.name} (${mt.unit})</label>`+
-                            `<input type=\"number\" step=\"0.1\" class=\"form-control measurement-input\" name=\"item${idx}_m${mt.id}\" placeholder=\"${mt.unit}\" required>`;
+                        col.innerHTML = `<label class="form-label">${mt.name} (${mt.unit})</label>` +
+                            `<input type="number" step="0.1" class="form-control measurement-input" name="item${idx}_m${mt.id}" placeholder="${mt.unit}" required>`;
                         fields.appendChild(col);
                     });
                     fields.classList.remove('d-none');
@@ -199,6 +246,10 @@
                             }
                         });
                     });
+                })
+                .catch(() => {
+                    fields.innerHTML = '<div class="text-danger">Không lấy được kích thước</div>';
+                    fields.classList.remove('d-none');
                 });
         });
         itemIndex++;
@@ -208,7 +259,15 @@
     addItem();
     const totalInput = document.querySelector('input[name="total"]');
     const depositInput = document.querySelector('input[name="deposit"]');
+    function validatePayment(){
+        if(Number(depositInput.value) > Number(totalInput.value)){
+            depositInput.setCustomValidity('Đã cọc không được vượt quá tổng tiền');
+        }else{
+            depositInput.setCustomValidity('');
+        }
+    }
     function updateSummary(){
+        validatePayment();
         document.getElementById('summaryTotal').textContent = totalInput.value || 0;
         document.getElementById('summaryDeposit').textContent = depositInput.value || 0;
     }
@@ -227,10 +286,22 @@
     document.getElementById('addMaterialBtn').addEventListener('click', addMaterial);
     addMaterial();
     updateSummary();
-    document.getElementById('finishBtn').addEventListener('click', function(e){
+    const orderForm = document.getElementById('orderForm');
+    orderForm.addEventListener('keydown', e => {
+        if(e.key === 'Enter' && e.target.tagName !== 'TEXTAREA'){
+            e.preventDefault();
+        }
+    });
+    orderForm.addEventListener('submit', function(e){
+        if(!validateStep(current) || !this.checkValidity()){
+            e.preventDefault();
+            this.reportValidity();
+            return;
+        }
         if(!confirm('Xác nhận đã thanh toán đơn hàng?')){
             e.preventDefault();
         }
+    });
     });
 </script>
 <jsp:include page="/jsp/common/footer.jsp"/>
