@@ -105,9 +105,11 @@
         </form>
     </div>
 </div>
+<style>
+    .measurement-input:invalid { border-color: #dc3545; }
+</style>
 <script>
     $('#customerSelect').select2({placeholder:'Chọn khách hàng',width:'100%'});
-    const tabs = new bootstrap.Tab(document.querySelector('#step1-tab'));
     let current = 0;
     const orderTabs = ['step1','step2','step3','step4'];
     function showStep(i){
@@ -163,6 +165,15 @@
         itemIndex++;
     }
     document.getElementById('addItemBtn').addEventListener('click', addItem);
+    const totalInput = document.querySelector('input[name="total"]');
+    const depositInput = document.querySelector('input[name="deposit"]');
+    function updateSummary(){
+        document.getElementById('summaryTotal').textContent = totalInput.value || 0;
+        document.getElementById('summaryDeposit').textContent = depositInput.value || 0;
+    }
+    totalInput.addEventListener('input', updateSummary);
+    depositInput.addEventListener('input', updateSummary);
     addItem();
+    updateSummary();
 </script>
 <jsp:include page="/jsp/common/footer.jsp"/>
