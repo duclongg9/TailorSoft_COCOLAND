@@ -35,9 +35,8 @@
                     </div>
                 </div>
                 <div class="tab-pane fade" id="step2" role="tabpanel">
-                    <div id="itemsContainer">
-                        <button type="button" class="btn btn-outline-primary mt-2" id="addItemBtn">+ Thêm sản phẩm khác</button>
-                    </div>
+                    <div id="itemsContainer"></div>
+                    <button type="button" class="btn btn-outline-primary mt-2" id="addItemBtn">+ Thêm sản phẩm khác</button>
                     <template id="itemTemplate">
                         <div class="card mb-3">
                             <div class="card-body">
@@ -84,6 +83,7 @@
                                         </c:forEach>
                                     </select>
                                     <input type="number" class="form-control" name="materialQty__INDEX__" placeholder="Số lượng" min="0.1" step="0.1" required>
+                                    <button type="button" class="btn btn-outline-danger remove-material">&times;</button>
                                 </div>
                             </template>
                         </div>
@@ -151,8 +151,7 @@
         const div = document.createElement('div');
         div.innerHTML = tpl;
         const item = div.firstElementChild;
-        const container = document.getElementById('itemsContainer');
-        container.insertBefore(item, document.getElementById('addItemBtn'));
+        document.getElementById('itemsContainer').appendChild(item);
         item.querySelector('.remove-item').addEventListener('click', () => item.remove());
         const select = item.querySelector('.productTypeSelect');
         select.addEventListener('change', function(){
@@ -186,7 +185,17 @@
         });
         itemIndex++;
     }
-    document.getElementById('addItemBtn').addEventListener('click', addItem);
+    document.getElementById('addItemBtn').addEventListener('click', () => {
+        const items = document.querySelectorAll('#itemsContainer .card');
+        if(items.length){
+            const lastSelect = items[items.length-1].querySelector('.productTypeSelect');
+            if(!lastSelect.value){
+                lastSelect.focus();
+                return alert('Vui lòng chọn loại sản phẩm trước khi thêm.');
+            }
+        }
+        addItem();
+    });
    const totalInput = document.querySelector('input[name="total"]');
     const depositInput = document.querySelector('input[name="deposit"]');
     function updateSummary(){
@@ -200,10 +209,22 @@
         const tpl = document.getElementById('materialTemplate').innerHTML.replace(/__INDEX__/g, materialIndex);
         const div = document.createElement('div');
         div.innerHTML = tpl;
-        document.getElementById('materialsContainer').appendChild(div.firstElementChild);
+        const row = div.firstElementChild;
+        row.querySelector('.remove-material').addEventListener('click', () => row.remove());
+        document.getElementById('materialsContainer').appendChild(row);
         materialIndex++;
     }
-    document.getElementById('addMaterialBtn').addEventListener('click', addMaterial);
+    document.getElementById('addMaterialBtn').addEventListener('click', () => {
+        const mats = document.querySelectorAll('#materialsContainer .input-group');
+        if(mats.length){
+            const lastSelect = mats[mats.length-1].querySelector('select');
+            if(!lastSelect.value){
+                lastSelect.focus();
+                return alert('Vui lòng chọn vải trước khi thêm.');
+            }
+        }
+        addMaterial();
+    });
     addItem();
     addMaterial();
     updateSummary();
