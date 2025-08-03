@@ -45,7 +45,8 @@
             <td class="text-end"><fmt:formatNumber value="${m.quantity}" type="number" pattern="#,##0.##"/> m</td>
             <td>
                 <c:if test="${not empty m.invoiceImage}">
-                    <img src="<c:url value='/uploads/${m.invoiceImage}'/>" alt="Hóa đơn" style="height:40px;">
+                    <img src="<c:url value='/uploads/${m.invoiceImage}'/>" alt="Hóa đơn" style="height:40px;" class="me-2">
+                    <button type="button" class="btn btn-sm btn-secondary" onclick="showInvoice('<c:url value='/uploads/${m.invoiceImage}'/>')">Xem ảnh</button>
                 </c:if>
             </td>
         </tr>
@@ -61,6 +62,26 @@
             row.style.display = text.indexOf(filter) > -1 ? '' : 'none';
         });
     });
+</script>
+<div class="modal fade" id="invoiceModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Hóa đơn</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <img id="invoiceModalImage" src="" alt="Hóa đơn" class="img-fluid"/>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function showInvoice(src) {
+        document.getElementById('invoiceModalImage').src = src;
+        const modal = new bootstrap.Modal(document.getElementById('invoiceModal'));
+        modal.show();
+    }
 </script>
 <c:if test="${not empty msg}">
     <script>
