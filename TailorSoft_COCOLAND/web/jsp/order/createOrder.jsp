@@ -141,9 +141,13 @@
 </style>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
+<<<<<<< Updated upstream
     if (typeof $ === 'function' && $.fn.select2) {
         $('#customerSelect').select2({placeholder:'Chọn khách hàng',width:'100%'});
     }
+=======
+    $('#customerSelect').select2({placeholder:'Chọn khách hàng',width:'100%'});
+>>>>>>> Stashed changes
     let current = 0;
     const orderTabs = ['step1','step2','step3','step4'];
     function showStep(i){
