@@ -44,6 +44,7 @@
             </c:forEach>
             </tbody>
         </table>
+        <jsp:include page="/jsp/common/pagination.jsp"/>
     </div>
 </div>
 <script>
