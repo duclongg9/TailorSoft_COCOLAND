@@ -41,7 +41,7 @@
 <table id="customerTable" class="table table-striped table-hover">
     <thead>
     <tr>
-        <th>#</th>
+        <th>STT</th>
         <th>Họ tên</th>
         <th>Số điện thoại</th>
         <th>Email</th>
@@ -52,7 +52,7 @@
     <tbody>
     <c:forEach var="c" items="${customers}" varStatus="st">
         <tr data-status="${c.pendingOrders > 0 ? 'processing' : 'completed'}">
-            <td>${st.index + 1}</td>
+            <td>${st.count}</td>
             <td><a href="<c:url value='/customers/history?id=${c.id}'/>">${c.name}</a></td>
             <td><a href="<c:url value='/customers/history?id=${c.id}'/>">${c.phone}</a></td>
             <td>${c.email}</td>

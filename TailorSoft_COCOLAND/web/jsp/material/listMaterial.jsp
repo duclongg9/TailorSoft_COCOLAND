@@ -25,7 +25,7 @@
 <table id="materialTable" class="table table-striped table-hover">
     <thead class="table-dark">
     <tr>
-        <th>Mã</th>
+        <th>STT</th>
         <th>Tên vải</th>
         <th>Màu sắc</th>
         <th>Xuất xứ</th>
@@ -35,9 +35,9 @@
     </tr>
     </thead>
     <tbody>
-    <c:forEach var="m" items="${materials}">
+    <c:forEach var="m" items="${materials}" varStatus="status">
         <tr class="${m.quantity < lowStockThreshold ? 'table-danger' : ''}">
-            <td>${m.id}</td>
+            <td>${status.count}</td>
             <td>${m.name}</td>
             <td class="text-truncate" style="max-width:150px;">${m.color}</td>
             <td>${m.origin}</td>
