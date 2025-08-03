@@ -31,7 +31,10 @@
                                 <option value="${c.id}">${c.name} - ${c.phone}</option>
                             </c:forEach>
                         </select>
-                        <div class="form-text"><a href="<c:url value='/customers/create'/>" target="_blank">Thêm khách mới</a></div>
+                        <c:url var="customerCreateUrl" value="/customers/create">
+                            <c:param name="returnUrl" value="/orders/create"/>
+                        </c:url>
+                        <div class="form-text"><a href="${customerCreateUrl}">Thêm khách mới</a></div>
                     </div>
                 </div>
                 <div class="tab-pane fade" id="step2" role="tabpanel">
@@ -52,6 +55,10 @@
                                                 <option value="${pt.id}">${pt.name}</option>
                                             </c:forEach>
                                         </select>
+                                        <c:url var="ptCreateUrl" value="/product-types/create">
+                                            <c:param name="returnUrl" value="/orders/create"/>
+                                        </c:url>
+                                        <div class="form-text"><a href="${ptCreateUrl}">Thêm loại sản phẩm</a></div>
                                     </div>
                                     <div class="col-md-2">
                                         <label class="form-label">Số lượng</label>
@@ -73,7 +80,10 @@
                             <label class="form-label">Chọn vải</label>
                             <div id="materialsContainer"></div>
                             <button type="button" class="btn btn-outline-primary mt-2" id="addMaterialBtn">+ Thêm vải khác</button>
-                            <div class="form-text"><a href="<c:url value='/materials/create'/>" target="_blank">Thêm vải mới</a></div>
+                            <c:url var="materialCreateUrl" value="/materials/create">
+                                <c:param name="returnUrl" value="/orders/create"/>
+                            </c:url>
+                            <div class="form-text"><a href="${materialCreateUrl}">Thêm vải mới</a></div>
                             <template id="materialTemplate">
                                 <div class="input-group mb-2">
                                     <select class="form-select" name="materialId__INDEX__" required>
