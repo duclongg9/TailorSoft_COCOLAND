@@ -55,7 +55,7 @@
                                         <input type="number" class="form-control" name="quantity__INDEX__" value="1" min="1" required/>
                                     </div>
                                 </div>
-                                <div class="row measurement-fields"></div>
+                                <div class="row measurement-fields d-none"></div>
                             </div>
                         </div>
                     </template>
@@ -105,9 +105,11 @@
         </form>
     </div>
 </div>
+<style>
+    .measurement-input:invalid { border-color: #dc3545; }
+</style>
 <script>
     $('#customerSelect').select2({placeholder:'Chọn khách hàng',width:'100%'});
-    const tabs = new bootstrap.Tab(document.querySelector('#step1-tab'));
     let current = 0;
     const orderTabs = ['step1','step2','step3','step4'];
     function showStep(i){
@@ -135,6 +137,7 @@
             const ptId = this.value;
             const fields = item.querySelector('.measurement-fields');
             fields.innerHTML = '';
+            fields.classList.add('d-none');
             if(!ptId) return;
             fetch(mtUrl + '?productTypeId=' + ptId)
                 .then(res => res.json())
@@ -143,14 +146,34 @@
                         const col = document.createElement('div');
                         col.className = 'col-md-6 mb-3';
                         col.innerHTML = `<label class="form-label">${mt.name} (${mt.unit})</label>`+
-                            `<input type="number" step="0.1" class="form-control" name="item${idx}_m${mt.id}" placeholder="cm">`;
+                            `<input type=\"number\" step=\"0.1\" class=\"form-control measurement-input\" name=\"item${idx}_m${mt.id}\" placeholder=\"cm\" required>`;
                         fields.appendChild(col);
+                    });
+                    fields.classList.remove('d-none');
+                    const inputs = fields.querySelectorAll('.measurement-input');
+                    inputs.forEach((inp, i) => {
+                        inp.addEventListener('keydown', e => {
+                            if(e.key === 'Enter'){
+                                e.preventDefault();
+                                const next = inputs[i+1];
+                                if(next){ next.focus(); }
+                            }
+                        });
                     });
                 });
         });
         itemIndex++;
     }
     document.getElementById('addItemBtn').addEventListener('click', addItem);
+    const totalInput = document.querySelector('input[name="total"]');
+    const depositInput = document.querySelector('input[name="deposit"]');
+    function updateSummary(){
+        document.getElementById('summaryTotal').textContent = totalInput.value || 0;
+        document.getElementById('summaryDeposit').textContent = depositInput.value || 0;
+    }
+    totalInput.addEventListener('input', updateSummary);
+    depositInput.addEventListener('input', updateSummary);
     addItem();
+    updateSummary();
 </script>
 <jsp:include page="/jsp/common/footer.jsp"/>
