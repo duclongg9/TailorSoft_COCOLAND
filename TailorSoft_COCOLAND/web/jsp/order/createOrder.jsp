@@ -43,8 +43,8 @@
                                 <div class="row mb-3">
                                     <div class="col-md-6">
                                         <label class="form-label">Loại sản phẩm</label>
-                                        <select class="form-select productTypeSelect" name="productTypeId__INDEX__" required>
-                                            <option value="">--Chọn loại--</option>
+                                        <select class="form-select productTypeSelect" name="productTypeId___INDEX__" required>                                            
+                                        <option value="">--Chọn loại--</option>
                                             <c:forEach var="pt" items="${productTypes}">
                                                 <option value="${pt.id}">${pt.name}</option>
                                             </c:forEach>
@@ -52,7 +52,7 @@
                                     </div>
                                     <div class="col-md-2">
                                         <label class="form-label">Số lượng</label>
-                                        <input type="number" class="form-control" name="quantity__INDEX__" value="1" min="1" required/>
+                                        <input type="number" class="form-control" name="quantity___INDEX__" value="1" min="1" required/>
                                     </div>
                                 </div>
                                 <div class="row measurement-fields d-none"></div>
@@ -93,6 +93,9 @@
                             <option value="Dang may">Đang may</option>
                             <option value="Hoan thanh">Hoàn thành</option>
                         </select>
+                    </div>
+                    <div class="text-center mb-3">
+                        <img src="<c:url value='/img/payment-qr.jpg'/>" alt="QR Code" class="img-fluid" style="max-width:200px;">
                     </div>
                     <div class="alert alert-secondary">Tổng: <span id="summaryTotal">0</span> ₫ - Đã cọc: <span id="summaryDeposit">0</span> ₫</div>
                 </div>
@@ -165,7 +168,7 @@
         itemIndex++;
     }
     document.getElementById('addItemBtn').addEventListener('click', addItem);
-    const totalInput = document.querySelector('input[name="total"]');
+   const totalInput = document.querySelector('input[name="total"]');
     const depositInput = document.querySelector('input[name="deposit"]');
     function updateSummary(){
         document.getElementById('summaryTotal').textContent = totalInput.value || 0;
@@ -175,5 +178,10 @@
     depositInput.addEventListener('input', updateSummary);
     addItem();
     updateSummary();
+    document.getElementById('finishBtn').addEventListener('click', function(e){
+        if(!confirm('Xác nhận đã thanh toán đơn hàng?')){
+            e.preventDefault();
+        }
+    });
 </script>
 <jsp:include page="/jsp/common/footer.jsp"/>
