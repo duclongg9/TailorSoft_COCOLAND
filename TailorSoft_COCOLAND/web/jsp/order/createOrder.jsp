@@ -35,11 +35,15 @@
                     </div>
                 </div>
                 <div class="tab-pane fade" id="step2" role="tabpanel">
-                    <div id="itemsContainer"></div>
-                    <button type="button" class="btn btn-outline-primary mt-2" id="addItemBtn">+ Thêm sản phẩm khác</button>
+                    <div id="itemsContainer">
+                        <button type="button" class="btn btn-outline-primary mt-2" id="addItemBtn">+ Thêm sản phẩm khác</button>
+                    </div>
                     <template id="itemTemplate">
                         <div class="card mb-3">
                             <div class="card-body">
+                                <div class="text-end">
+                                    <button type="button" class="btn-close remove-item" aria-label="Xóa"></button>
+                                </div>
                                 <div class="row mb-3">
                                     <div class="col-md-6">
                                         <label class="form-label">Loại sản phẩm</label>
@@ -134,7 +138,9 @@
         const div = document.createElement('div');
         div.innerHTML = tpl;
         const item = div.firstElementChild;
-        document.getElementById('itemsContainer').appendChild(item);
+        const container = document.getElementById('itemsContainer');
+        container.insertBefore(item, document.getElementById('addItemBtn'));
+        item.querySelector('.remove-item').addEventListener('click', () => item.remove());
         const select = item.querySelector('.productTypeSelect');
         select.addEventListener('change', function(){
             const ptId = this.value;
