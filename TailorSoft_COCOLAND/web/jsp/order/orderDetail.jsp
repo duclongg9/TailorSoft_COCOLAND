@@ -323,7 +323,7 @@
         modal.show();
     }
 
-    (() => {
+    document.addEventListener('DOMContentLoaded', () => {
       const mtUrl      = '<c:url value="/order-details/measurements"/>'; // GET id => JSON
       const editModal  = new bootstrap.Modal(document.getElementById('editDetailModal'));
       const viewModal  = new bootstrap.Modal(document.getElementById('viewDetailModal'));
@@ -421,7 +421,7 @@
           alert('Lưu thất bại'); console.error(err);
         }
       });
-    })();
+    });
 </script>
 
 <jsp:include page="/jsp/common/footer.jsp"/>
