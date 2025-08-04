@@ -21,18 +21,6 @@
                             <p><strong>Tổng tiền:</strong> <fmt:formatNumber value="${order.total}" type="number" groupingUsed="true"/> ₫</p>
                             <p><strong>Đã thanh toán:</strong> <fmt:formatNumber value="${order.deposit}" type="number" groupingUsed="true"/> ₫</p>
                             <p><strong>Còn lại:</strong> <fmt:formatNumber value="${order.total - order.deposit}" type="number" groupingUsed="true"/> ₫</p>
-                            <c:if test="${not empty order.depositImage}">
-                                <p><strong>Ảnh cọc:</strong>
-                                    <img src="<c:url value='/uploads/${order.depositImage}'/>" alt="Ảnh cọc" style="height:40px;" class="me-2">
-                                    <button type="button" class="btn btn-sm btn-secondary" onclick="showPayment('<c:url value="/uploads/${order.depositImage}"/>')">Xem</button>
-                                </p>
-                            </c:if>
-                            <c:if test="${not empty order.fullImage}">
-                                <p><strong>Ảnh full:</strong>
-                                    <img src="<c:url value='/uploads/${order.fullImage}'/>" alt="Ảnh full" style="height:40px;" class="me-2">
-                                    <button type="button" class="btn btn-sm btn-secondary" onclick="showPayment('<c:url value="/uploads/${order.fullImage}"/>')">Xem</button>
-                                </p>
-                            </c:if>
                             <button type="button" class="btn btn-outline-primary btn-sm" id="editOrderBtn" data-id="${order.id}" data-total="${order.total}" data-deposit="${order.deposit}"><i class="fa fa-pen"></i> Sửa tiền</button>
                         </div>
                     </div>
@@ -61,10 +49,19 @@
                             <td>${d.note}</td>
                             <td class="measure-cell" data-id="${d.id}"><span class="text-muted">Đang tải...</span></td>
                             <td>
-                                <div class="btn-group btn-group-sm">
-                                    <button type="button" class="btn btn-outline-secondary view-detail" data-id="${d.id}" data-qty="${d.quantity}" data-note="${d.note}" data-price="${d.unitPrice}"><i class="fa fa-eye"></i></button>
-                                    <button type="button" class="btn btn-outline-primary edit-detail" data-id="${d.id}" data-qty="${d.quantity}" data-note="${d.note}" data-price="${d.unitPrice}"><i class="fa fa-pen"></i></button>
-                                </div>
+                                <button class="btn btn-outline-info btn-sm view-detail me-1"
+                                        title="Xem"
+                                        data-detail-id="${d.id}"
+                                        data-quantity="${d.quantity}">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                                <button class="btn btn-outline-secondary btn-sm edit-detail"
+                                        title="Sửa"
+                                        data-detail-id="${d.id}"
+                                        data-product-type-id="${d.productTypeId}"
+                                        data-quantity="${d.quantity}">
+                                    <i class="bi bi-pencil-square"></i>
+                                </button>
                             </td>
                         </tr>
                     </c:forEach>
@@ -76,40 +73,95 @@
                 <button type="button" class="btn btn-outline-success btn-sm" data-bs-toggle="modal" data-bs-target="#uploadPaymentModal"><i class="fa fa-coins"></i> Thêm thanh toán</button>
                 <a href="#" class="btn btn-outline-secondary btn-sm"><i class="fa fa-print"></i> In phiếu</a>
             </div>
+            <c:if test="${not empty order.depositImage || not empty order.fullImage}">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="row">
+                            <c:if test="${not empty order.depositImage}">
+                                <div class="col-md-6 mb-3">
+                                    <h6 class="mb-2">Ảnh cọc</h6>
+                                    <img src="<c:url value='/uploads/${order.depositImage}'/>" alt="Ảnh cọc" class="img-fluid mb-2" style="max-height:200px;">
+                                    <button type="button" class="btn btn-sm btn-secondary" onclick="showPayment('<c:url value="/uploads/${order.depositImage}"/>')">Xem</button>
+                                </div>
+                            </c:if>
+                            <c:if test="${not empty order.fullImage}">
+                                <div class="col-md-6 mb-3">
+                                    <h6 class="mb-2">Ảnh thanh toán còn lại</h6>
+                                    <img src="<c:url value='/uploads/${order.fullImage}'/>" alt="Ảnh thanh toán" class="img-fluid mb-2" style="max-height:200px;">
+                                    <button type="button" class="btn btn-sm btn-secondary" onclick="showPayment('<c:url value="/uploads/${order.fullImage}"/>')">Xem</button>
+                                </div>
+                            </c:if>
+                        </div>
+                    </div>
+                </div>
+            </c:if>
         </c:if>
         <a href="<c:url value='/orders'/>">Quay lại</a>
-    </div>
+</div>
 </div>
 
-<div class="modal fade" id="editDetailModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-        <form id="editDetailForm" class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Cập nhật chi tiết</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <input type="hidden" name="detailId" id="detailId">
-                        <div class="mb-3">
-                            <label class="form-label">Số lượng</label>
-                            <input type="number" min="1" class="form-control" name="quantity" id="quantity">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Đơn giá</label>
-                            <input type="number" step="1000" class="form-control" name="unitPrice" id="unitPrice">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Ghi chú</label>
-                            <textarea class="form-control" name="note" id="note" rows="2"></textarea>
-                        </div>
-                <div id="measurementList"></div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                <button type="submit" class="btn btn-primary" id="saveBtn">Lưu</button>
-            </div>
-        </form>
+<div class="modal fade" id="viewDetailModal" tabindex="-1" aria-labelledby="viewDetailLbl" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="viewDetailLbl">Chi tiết sản phẩm</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row g-3 mb-3">
+          <div class="col-md-8">
+            <label class="form-label">Loại sản phẩm</label>
+            <input type="text" class="form-control" id="vdProductTypeName" disabled>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Số lượng</label>
+            <input type="number" class="form-control" id="vdQuantity" disabled>
+          </div>
+        </div>
+
+        <h6 class="text-muted mb-2"><i class="bi bi-rulers"></i> Thông tin số đo</h6>
+        <div class="row gy-3" id="vdMeasurements"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+      </div>
     </div>
+  </div>
+</div>
+
+<div class="modal fade" id="editDetailModal" tabindex="-1" aria-labelledby="editDetailLbl" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <div class="modal-content">
+      <form id="editDetailForm" action="<c:url value='/order-details/update'/>" method="post">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editDetailLbl">Chỉnh sửa sản phẩm</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" name="detailId" id="edDetailId">
+
+          <div class="row g-3 mb-3">
+            <div class="col-md-8">
+              <label class="form-label">Loại sản phẩm</label>
+              <!-- không cho đổi loại, nếu cần đổi thì xoá & tạo lại -->
+              <input type="text" class="form-control" id="edProductTypeName" disabled>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Số lượng</label>
+              <input type="number" class="form-control" name="quantity" id="edQuantity" min="1" required>
+            </div>
+          </div>
+
+          <h6 class="text-muted mb-2"><i class="bi bi-rulers"></i> Thông tin số đo</h6>
+          <div class="row gy-3" id="edMeasurements"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+          <button type="submit" class="btn btn-primary">Lưu</button>
+        </div>
+      </form>
+    </div>
+  </div>
 </div>
 
 <div class="modal fade" id="uploadPaymentModal" tabindex="-1" aria-hidden="true">
@@ -184,27 +236,6 @@
 <script>
     $(function () {
         const baseUrl = '${pageContext.request.contextPath}';
-        const modalEl = document.getElementById('editDetailModal');
-        const modal = new bootstrap.Modal(modalEl);
-        
-        $('.measure-cell').each(function(){
-            const cell = $(this);
-            const id = cell.data('id');
-            $.getJSON(baseUrl + '/order-details/measurements', {id: id})
-                .done(function(list){
-                    if(Array.isArray(list) && list.length){
-                        const html = list.map(function(m){
-                            return m.name + ': ' + m.value + (m.unit ? ' ' + m.unit : '');
-                        }).join('<br>');
-                        cell.html(html);
-                    }else{
-                        cell.html('<span class="text-muted">Không có</span>');
-                    }
-                })
-                .fail(function(){
-                    cell.html('<span class="text-muted">Không có</span>');
-                });
-        });
 
 
         function loadMeasurements(id, disabled) {
@@ -291,6 +322,106 @@
         const modal = new bootstrap.Modal(document.getElementById('paymentModal'));
         modal.show();
     }
+
+    (() => {
+      const mtUrl      = '<c:url value="/order-details/measurements"/>'; // GET id => JSON
+      const editModal  = new bootstrap.Modal(document.getElementById('editDetailModal'));
+      const viewModal  = new bootstrap.Modal(document.getElementById('viewDetailModal'));
+      const $form      = document.getElementById('editDetailForm');
+      const $fields    = document.getElementById('edMeasurements');
+      const $viewFields = document.getElementById('vdMeasurements');
+
+      document.querySelectorAll('.measure-cell').forEach(async cell => {
+        const id = cell.dataset.id;
+        cell.innerHTML = '<span class="text-muted">Đang tải...</span>';
+        try {
+          const res = await fetch(`${mtUrl}?id=${id}`);
+          if (!res.ok) throw new Error('HTTP ' + res.status);
+          const list = await res.json();
+          if (!Array.isArray(list) || list.length === 0) {
+            cell.innerHTML = '<span class="text-muted">Không có</span>';
+          } else {
+            cell.innerHTML = list.map(m => `${m.name}: ${m.value}${m.unit ? ' ' + m.unit : ''}`).join('<br>');
+          }
+        } catch (e) {
+          console.error(e);
+          cell.innerHTML = '<span class="text-muted">Không có</span>';
+        }
+      });
+
+      document.querySelectorAll('.view-detail').forEach(btn => btn.addEventListener('click', async () => {
+        const detailId = btn.dataset.detailId;
+        const ptName   = btn.closest('tr').querySelector('td:nth-child(1)').textContent.trim();
+
+        document.getElementById('vdProductTypeName').value = ptName;
+        document.getElementById('vdQuantity').value = btn.dataset.quantity;
+
+        $viewFields.innerHTML = '<p class="text-muted">Đang tải...</p>';
+        try {
+          const res  = await fetch(`${mtUrl}?id=${detailId}`);
+          if (!res.ok) throw new Error('HTTP ' + res.status);
+          const list = await res.json();
+          $viewFields.innerHTML = '';
+          list.forEach(m => {
+            const col = document.createElement('div');
+            col.className = 'col-md-6';
+            col.innerHTML = `
+              <label class="form-label">${m.name} (${m.unit})</label>
+              <input type="text" class="form-control" value="${m.value}" disabled>
+            `;
+            $viewFields.appendChild(col);
+          });
+        } catch (e) {
+          console.error(e);
+          $viewFields.innerHTML = '<p class="text-danger">Không tải được số đo.</p>';
+        }
+
+        viewModal.show();
+      }));
+
+      document.querySelectorAll('.edit-detail').forEach(btn => btn.addEventListener('click', async () => {
+        const detailId = btn.dataset.detailId;
+        const ptName   = btn.closest('tr').querySelector('td:nth-child(1)').textContent.trim();
+
+        document.getElementById('edDetailId').value = detailId;
+        document.getElementById('edProductTypeName').value = ptName;
+        document.getElementById('edQuantity').value = btn.dataset.quantity;
+
+        $fields.innerHTML = '<p class="text-muted">Đang tải...</p>';
+        try {
+          const res  = await fetch(`${mtUrl}?id=${detailId}`);
+          if (!res.ok) throw new Error('HTTP ' + res.status);
+          const list = await res.json();
+          $fields.innerHTML = '';
+          list.forEach(m => {
+            const col = document.createElement('div');
+            col.className = 'col-md-6';
+            col.innerHTML = `
+              <label class="form-label">${m.name} (${m.unit})</label>
+              <input type="number" class="form-control" step="0.1" name="m_${m.id}" value="${m.value}" required>
+            `;
+            $fields.appendChild(col);
+          });
+        } catch (e) {
+          console.error(e);
+          $fields.innerHTML = '<p class="text-danger">Không tải được số đo.</p>';
+        }
+
+        editModal.show();
+      }));
+
+      $form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const formData = new URLSearchParams(new FormData($form));
+        try {
+          const resp = await fetch($form.action, { method: 'POST', headers: {'Content-Type':'application/x-www-form-urlencoded'}, body: formData });
+          if (!resp.ok) throw new Error('HTTP '+resp.status);
+          location.reload();
+        } catch (err) {
+          alert('Lưu thất bại'); console.error(err);
+        }
+      });
+    })();
 </script>
 
 <jsp:include page="/jsp/common/footer.jsp"/>
