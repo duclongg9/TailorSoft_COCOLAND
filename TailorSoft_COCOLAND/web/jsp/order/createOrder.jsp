@@ -263,6 +263,7 @@
                     data.forEach(mt => {
                         const col = document.createElement('div');
                         col.className = 'col-md-6';
+
                         const idx = select.name.match(/\d+/)[0];
                         col.innerHTML = '<label class="form-label">' + mt.name + ' (' + mt.unit + ')</label>' +
                             '<input type="number" class="form-control" step="0.1" name="item' + idx + '_m' + mt.id + '" placeholder="' + mt.unit + '" required>';
