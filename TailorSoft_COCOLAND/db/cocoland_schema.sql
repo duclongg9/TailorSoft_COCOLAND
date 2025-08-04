@@ -57,7 +57,7 @@ CREATE TABLE don_hang (
     ma_khach INT,
     ngay_dat DATE,
     ngay_giao DATE,
-    trang_thai VARCHAR(50),
+    trang_thai VARCHAR(30) CHECK (trang_thai IN ('Dang may', 'Hoan thanh', 'Don huy')),
     tong_tien DECIMAL(12,2),
     da_coc DECIMAL(12,2),
     FOREIGN KEY (ma_khach) REFERENCES khach_hang(ma_khach)
