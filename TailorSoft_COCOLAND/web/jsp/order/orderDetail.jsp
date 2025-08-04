@@ -336,6 +336,10 @@
         cell.innerHTML = '<span class="text-muted">Đang tải...</span>';
         try {
           const res = await fetch(`${mtUrl}?id=${id}`);
+          if (res.status === 400) {
+            cell.innerHTML = '<span class="text-muted">Không có</span>';
+            return;
+          }
           if (!res.ok) throw new Error('HTTP ' + res.status);
           const list = await res.json();
           if (!Array.isArray(list) || list.length === 0) {
@@ -359,18 +363,27 @@
         $viewFields.innerHTML = '<p class="text-muted">Đang tải...</p>';
         try {
           const res  = await fetch(`${mtUrl}?id=${detailId}`);
-          if (!res.ok) throw new Error('HTTP ' + res.status);
-          const list = await res.json();
-          $viewFields.innerHTML = '';
-          list.forEach(m => {
-            const col = document.createElement('div');
-            col.className = 'col-md-6';
-            col.innerHTML = `
-              <label class="form-label">${m.name} (${m.unit})</label>
-              <input type="text" class="form-control" value="${m.value}" disabled>
-            `;
-            $viewFields.appendChild(col);
-          });
+          if (res.status === 400) {
+            $viewFields.innerHTML = '<p class="text-muted">Không có số đo.</p>';
+          } else if (!res.ok) {
+            throw new Error('HTTP ' + res.status);
+          } else {
+            const list = await res.json();
+            if (!Array.isArray(list) || list.length === 0) {
+              $viewFields.innerHTML = '<p class="text-muted">Không có số đo.</p>';
+            } else {
+              $viewFields.innerHTML = '';
+              list.forEach(m => {
+                const col = document.createElement('div');
+                col.className = 'col-md-6';
+                col.innerHTML = `
+                  <label class="form-label">${m.name} (${m.unit})</label>
+                  <input type="text" class="form-control" value="${m.value}" disabled>
+                `;
+                $viewFields.appendChild(col);
+              });
+            }
+          }
         } catch (e) {
           console.error(e);
           $viewFields.innerHTML = '<p class="text-danger">Không tải được số đo.</p>';
@@ -390,18 +403,27 @@
         $fields.innerHTML = '<p class="text-muted">Đang tải...</p>';
         try {
           const res  = await fetch(`${mtUrl}?id=${detailId}`);
-          if (!res.ok) throw new Error('HTTP ' + res.status);
-          const list = await res.json();
-          $fields.innerHTML = '';
-          list.forEach(m => {
-            const col = document.createElement('div');
-            col.className = 'col-md-6';
-            col.innerHTML = `
-              <label class="form-label">${m.name} (${m.unit})</label>
-              <input type="number" class="form-control" step="0.1" name="m_${m.id}" value="${m.value}" required>
-            `;
-            $fields.appendChild(col);
-          });
+          if (res.status === 400) {
+            $fields.innerHTML = '<p class="text-muted">Không có số đo.</p>';
+          } else if (!res.ok) {
+            throw new Error('HTTP ' + res.status);
+          } else {
+            const list = await res.json();
+            if (!Array.isArray(list) || list.length === 0) {
+              $fields.innerHTML = '<p class="text-muted">Không có số đo.</p>';
+            } else {
+              $fields.innerHTML = '';
+              list.forEach(m => {
+                const col = document.createElement('div');
+                col.className = 'col-md-6';
+                col.innerHTML = `
+                  <label class="form-label">${m.name} (${m.unit})</label>
+                  <input type="number" class="form-control" step="0.1" name="m_${m.id}" value="${m.value}" required>
+                `;
+                $fields.appendChild(col);
+              });
+            }
+          }
         } catch (e) {
           console.error(e);
           $fields.innerHTML = '<p class="text-danger">Không tải được số đo.</p>';

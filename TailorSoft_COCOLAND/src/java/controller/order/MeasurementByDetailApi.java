@@ -21,7 +21,14 @@ public class MeasurementByDetailApi extends HttpServlet {
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
             return;
         }
-        int id = Integer.parseInt(idStr);
+
+        int id;
+        try {
+            id = Integer.parseInt(idStr);
+        } catch (NumberFormatException ex) {
+            resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
+            return;
+        }
         List<Map<String, Object>> list = dao.findByOrderDetail(id);
         resp.setContentType("application/json;charset=UTF-8");
         resp.getWriter().print(new Gson().toJson(list));
