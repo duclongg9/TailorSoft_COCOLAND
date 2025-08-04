@@ -269,7 +269,7 @@ public class OrderDAO {
                 ps.setString(1, newStatus);
                 ps.setInt(2, orderId);
                 return ps.executeUpdate();
-                } catch (SQLException e) {
+            } catch (SQLException e) {
                 e.printStackTrace();
             }
         } else {
@@ -278,7 +278,7 @@ public class OrderDAO {
                 ps.setString(1, newStatus);
                 ps.setInt(2, orderId);
                 return ps.executeUpdate();
-                } catch (SQLException e) {
+            } catch (SQLException e) {
                 e.printStackTrace();
             }
         }

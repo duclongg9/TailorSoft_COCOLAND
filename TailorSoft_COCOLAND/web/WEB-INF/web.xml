@@ -124,6 +124,15 @@
     </servlet-mapping>
 
     <servlet>
+        <servlet-name>OrderToggleStatusController</servlet-name>
+        <servlet-class>controller.order.OrderToggleStatusController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>OrderToggleStatusController</servlet-name>
+        <url-pattern>/orders/toggle-status</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
         <servlet-name>MeasurementListController</servlet-name>
         <servlet-class>controller.measurement.MeasurementListController</servlet-class>
     </servlet>
