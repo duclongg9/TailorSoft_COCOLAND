@@ -17,6 +17,7 @@
                 <th>Loại sản phẩm</th>
                 <th>Thông số</th>
                 <th>Giá trị</th>
+                <th>Đơn vị</th>
                 <th>Ghi chú</th>
             </tr>
             </thead>
@@ -28,6 +29,7 @@
                     <td>${m.productTypeName}</td>
                     <td>${m.measurementTypeName}</td>
                     <td>${m.value}</td>
+                    <td>${m.unit}</td>
                     <td>${m.note}</td>
                 </tr>
             </c:forEach>
