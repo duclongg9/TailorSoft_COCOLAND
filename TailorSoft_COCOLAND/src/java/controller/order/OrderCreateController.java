@@ -76,8 +76,9 @@ public class OrderCreateController extends HttpServlet {
                             d.setUnitPrice(0);
                             d.setQuantity(qty);
                             d.setNote(note);
+                            int detailId;
                             try {
-                                orderDAO.insertDetail(d);
+                                detailId = orderDAO.insertDetail(d);
                             } catch (SQLException e) {
                                 throw new RuntimeException(e);
                             }
@@ -93,6 +94,7 @@ public class OrderCreateController extends HttpServlet {
                                         m.setProductTypeId(ptId);
                                         m.setMeasurementTypeId(mtId);
                                         m.setValue(val);
+                                        m.setOrderDetailId(detailId);
                                         try {
                                             measurementDAO.insert(m);
                                         } catch (SQLException e) {
