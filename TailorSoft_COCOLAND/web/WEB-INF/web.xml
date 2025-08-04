@@ -76,6 +76,7 @@
     <servlet-mapping>
         <servlet-name>OrderListController</servlet-name>
         <url-pattern>/orders</url-pattern>
+        <url-pattern>/orders/</url-pattern>
     </servlet-mapping>
 
     <servlet>
@@ -121,6 +122,15 @@
     <servlet-mapping>
         <servlet-name>OrderCancelController</servlet-name>
         <url-pattern>/orders/cancel</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>OrderToggleStatusController</servlet-name>
+        <servlet-class>controller.order.OrderToggleStatusController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>OrderToggleStatusController</servlet-name>
+        <url-pattern>/orders/toggle-status</url-pattern>
     </servlet-mapping>
 
     <servlet>

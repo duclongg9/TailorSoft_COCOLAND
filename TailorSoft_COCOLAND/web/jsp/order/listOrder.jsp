@@ -82,7 +82,14 @@
                     <td class="text-end"><fmt:formatNumber value="${o.total - o.deposit}" type="number" groupingUsed="true"/> ₫</td>
                     <td class="text-center">
                         <a href="<c:url value='/orders/detail?id=${o.id}'/>" class="btn btn-sm btn-outline-secondary me-1" title="Chi tiết"><i class="fa fa-eye"></i></a>
-                        <a href="#" class="btn btn-sm btn-outline-primary me-1" title="Sửa"><i class="fa fa-pen"></i></a>
+                        <!-- Thay thế thẻ <a ...> bằng nút để chuyển trạng thái -->
+                        <button type="button"
+                                class="btn btn-sm btn-outline-primary me-1 toggle-status"
+                                data-id="${o.id}"
+                                data-status="${o.status}"
+                                title="Chuyển trạng thái">
+                            <i class="fa fa-pen"></i>
+                        </button>
                         <a href="#" class="btn btn-sm btn-outline-success me-1" title="In"><i class="fa fa-print"></i></a>
                         <c:if test="${o.status ne 'Don huy'}">
                             <form action="${pageContext.request.contextPath}/orders/cancel"
@@ -130,6 +137,47 @@
             $('#customerFilter').select2({placeholder: 'Khách hàng', width:'100%'});
             const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
             tooltipTriggerList.map(el => new bootstrap.Tooltip(el));
+        </script>
+        <script>
+        (() => {
+          const toggleUrl = '<c:url value="/orders/toggle-status"/>';
+
+          // Xử lý click bút chì
+          document.querySelectorAll('.toggle-status').forEach(btn => {
+            btn.addEventListener('click', () => {
+              const id     = btn.dataset.id;
+              const status = btn.dataset.status;   // 'Dang may' | 'Hoan thanh'
+              const next   = status === 'Dang may' ? 'Hoan thanh' : 'Dang may';
+              const msg    = status === 'Dang may'
+                             ? 'Đánh dấu đơn này đã hoàn thành?'
+                             : 'Đổi lại trạng thái về “Đang may”?';
+
+              if (!confirm(msg)) return;
+
+              fetch(toggleUrl, {
+                method: 'POST',
+                headers: {'Content-Type':'application/x-www-form-urlencoded'},
+                body: new URLSearchParams({id})
+              })
+              .then(r => { if(!r.ok) throw new Error(); return r.json(); })
+              .then(o => {
+                // o = {status: 'Hoan thanh'} hoặc 'Dang may'
+                btn.dataset.status = o.status;
+
+                // Cập badge trong hàng
+                const badge = btn.closest('tr').querySelector('td:nth-child(6) span');
+                if (o.status === 'Hoan thanh') {
+                  badge.className = 'badge text-bg-success';
+                  badge.textContent = 'Hoàn thành';
+                } else {
+                  badge.className = 'badge text-bg-info';
+                  badge.textContent = 'Đang may';
+                }
+              })
+              .catch(() => alert('Không cập nhật được!'));
+            });
+          });
+        })();
         </script>
         <c:if test="${not empty msg}">
             <script>
