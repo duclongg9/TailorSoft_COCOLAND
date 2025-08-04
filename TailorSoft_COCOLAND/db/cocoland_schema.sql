@@ -47,7 +47,21 @@ CREATE TABLE don_hang (
     tong_tien DECIMAL(12,2),
     da_coc DECIMAL(12,2),
     FOREIGN KEY (ma_khach) REFERENCES khach_hang(ma_khach)
-);
+) ENGINE=InnoDB;
+
+-- KHO VẢI MỞ RỘNG
+CREATE TABLE kho_vai (
+    ma_vai INT PRIMARY KEY AUTO_INCREMENT,
+    ten_vai VARCHAR(100),
+    mau_sac VARCHAR(50),
+    quyen_vai VARCHAR(100),
+    xuat_xu VARCHAR(100),
+    gia_thanh DECIMAL(12,2), -- VND per meter
+    so_luong FLOAT, -- meters remaining
+    don_vi VARCHAR(10) DEFAULT 'm',
+    hinh_hoa_don VARCHAR(255) -- path to image file
+) ENGINE=InnoDB;
+
 
 -- CHI TIẾT ĐƠN
 CREATE TABLE chi_tiet_don (
@@ -61,7 +75,7 @@ CREATE TABLE chi_tiet_don (
     ghi_chu TEXT,
     FOREIGN KEY (ma_don) REFERENCES don_hang(ma_don),
     FOREIGN KEY (ma_vai) REFERENCES kho_vai(ma_vai)
-);
+) ENGINE=InnoDB;
 
 -- SỐ ĐO
 CREATE TABLE thong_so_do (
@@ -78,18 +92,6 @@ CREATE TABLE thong_so_do (
     FOREIGN KEY (ma_ct) REFERENCES chi_tiet_don(ma_ct)
 );
 
--- KHO VẢI MỞ RỘNG
-CREATE TABLE kho_vai (
-    ma_vai INT PRIMARY KEY AUTO_INCREMENT,
-    ten_vai VARCHAR(100),
-    mau_sac VARCHAR(50),
-    quyen_vai VARCHAR(100),
-    xuat_xu VARCHAR(100),
-    gia_thanh DECIMAL(12,2), -- VND per meter
-    so_luong FLOAT, -- meters remaining
-    don_vi VARCHAR(10) DEFAULT 'm',
-    hinh_hoa_don VARCHAR(255) -- path to image file
-);
 
 -- DỮ LIỆU MẪU
 
