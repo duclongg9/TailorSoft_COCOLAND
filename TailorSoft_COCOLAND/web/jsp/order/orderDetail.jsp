@@ -45,7 +45,12 @@
                             <td><fmt:formatNumber value="${d.unitPrice}" type="number" groupingUsed="true"/> ₫</td>
                             <td>${d.quantity}</td>
                             <td>${d.note}</td>
-                            <td><button type="button" class="btn btn-sm btn-outline-primary edit-detail" data-id="${d.id}" data-qty="${d.quantity}"><i class="fa fa-pen"></i></button></td>
+                            <td>
+                                <div class="btn-group btn-group-sm">
+                                    <button type="button" class="btn btn-outline-secondary view-detail" data-id="${d.id}" data-qty="${d.quantity}" data-note="${d.note}"><i class="fa fa-eye"></i></button>
+                                    <button type="button" class="btn btn-outline-primary edit-detail" data-id="${d.id}" data-qty="${d.quantity}" data-note="${d.note}"><i class="fa fa-pen"></i></button>
+                                </div>
+                            </td>
                         </tr>
                     </c:forEach>
                     </tbody>
@@ -74,11 +79,15 @@
                     <label class="form-label">Số lượng</label>
                     <input type="number" min="1" class="form-control" name="quantity" id="quantity">
                 </div>
+                <div class="mb-3">
+                    <label class="form-label">Ghi chú</label>
+                    <textarea class="form-control" name="note" id="note" rows="2"></textarea>
+                </div>
                 <div id="measurementList"></div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                <button type="submit" class="btn btn-primary">Lưu</button>
+                <button type="submit" class="btn btn-primary" id="saveBtn">Lưu</button>
             </div>
         </form>
     </div>
@@ -87,24 +96,43 @@
 <script>
     $(function () {
         const baseUrl = '${pageContext.request.contextPath}';
-        const modal = new bootstrap.Modal(document.getElementById('editDetailModal'));
+        const modalEl = document.getElementById('editDetailModal');
+        const modal = new bootstrap.Modal(modalEl);
 
-        $('.edit-detail').on('click', function () {
-            const id = $(this).data('id');
-            const qty = $(this).data('qty');
-            $('#detailId').val(id);
-            $('#quantity').val(qty);
+        function loadMeasurements(id, disabled) {
             $('#measurementList').empty();
             $.getJSON(baseUrl + '/order-details/measurements', {id: id}, function (list) {
                 list.forEach(function (m) {
                     const item = `<div class="mb-3">
                             <label class="form-label">${m.name} (${m.unit})</label>
-                            <input type="number" step="0.01" class="form-control" name="m_${m.id}" value="${m.value}">
+                            <input type="number" step="0.01" class="form-control" name="m_${m.id}" value="${m.value}" ${disabled ? 'disabled' : ''}>
                         </div>`;
                     $('#measurementList').append(item);
                 });
                 modal.show();
             });
+        }
+
+        $('.view-detail').on('click', function () {
+            const id = $(this).data('id');
+            const qty = $(this).data('qty');
+            const note = $(this).data('note');
+            $('#detailId').val(id);
+            $('#quantity').val(qty).prop('disabled', true);
+            $('#note').val(note).prop('disabled', true);
+            $('#saveBtn').hide();
+            loadMeasurements(id, true);
+        });
+
+        $('.edit-detail').on('click', function () {
+            const id = $(this).data('id');
+            const qty = $(this).data('qty');
+            const note = $(this).data('note');
+            $('#detailId').val(id);
+            $('#quantity').val(qty).prop('disabled', false);
+            $('#note').val(note).prop('disabled', false);
+            $('#saveBtn').show();
+            loadMeasurements(id, false);
         });
 
         $('#editDetailForm').on('submit', function (e) {

@@ -216,11 +216,28 @@ public class OrderDAO {
         return list;
     }
 
-    public void updateDetailQuantity(Connection c, int detailId, int qty) throws SQLException {
-        String sql = "UPDATE chi_tiet_don SET so_luong=? WHERE ma_ct=?";
-        try (PreparedStatement ps = c.prepareStatement(sql)) {
+    public void updateDetail(Connection c, int detailId, int qty, String note) throws SQLException {
+        int orderId = 0;
+        String getSql = "SELECT ma_don FROM chi_tiet_don WHERE ma_ct=?";
+        try (PreparedStatement ps = c.prepareStatement(getSql)) {
+            ps.setInt(1, detailId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    orderId = rs.getInt(1);
+                }
+            }
+        }
+        String updateSql = "UPDATE chi_tiet_don SET so_luong=?, ghi_chu=? WHERE ma_ct=?";
+        try (PreparedStatement ps = c.prepareStatement(updateSql)) {
             ps.setInt(1, qty);
-            ps.setInt(2, detailId);
+            ps.setString(2, note);
+            ps.setInt(3, detailId);
+            ps.executeUpdate();
+        }
+        String totalSql = "UPDATE don_hang SET tong_tien = (SELECT SUM(so_luong*don_gia) FROM chi_tiet_don WHERE ma_don=?) WHERE ma_don=?";
+        try (PreparedStatement ps = c.prepareStatement(totalSql)) {
+            ps.setInt(1, orderId);
+            ps.setInt(2, orderId);
             ps.executeUpdate();
         }
     }
