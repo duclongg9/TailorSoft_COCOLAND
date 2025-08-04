@@ -237,6 +237,72 @@
     $(function () {
         const baseUrl = '${pageContext.request.contextPath}';
 
+
+        function loadMeasurements(id, disabled) {
+            $('#measurementList').html('<p class="text-muted">Đang tải...</p>');
+            $.getJSON(baseUrl + '/order-details/measurements', {id: id})
+                .done(function (list) {
+                    $('#measurementList').empty();
+                    if (!Array.isArray(list) || list.length === 0) {
+                        $('#measurementList').append('<p class="text-muted">Không có thông số</p>');
+                    } else {
+                        list.forEach(function (m) {
+                            const name = m.name || '';
+                            const unit = m.unit || '';
+                            const value = m.value != null ? m.value : '';
+                            const item = `<div class="mb-3">
+                                    <label class="form-label">${name}</label>
+                                    <div class="input-group">
+                                        <input type="number" step="0.01" class="form-control" name="m_${m.id}" value="${value}"${disabled ? ' disabled' : ''}>
+                                        <span class="input-group-text">${unit}</span>
+                                    </div>
+                                </div>`;
+                            $('#measurementList').append(item);
+                        });
+                    }
+                    
+                })
+                .fail(function () {
+                    $('#measurementList').html('<p class="text-muted">Không có thông số</p>');
+                });
+        }
+
+        $('.view-detail').on('click', function () {
+            const id = $(this).data('id');
+            const qty = $(this).data('qty');
+            const note = $(this).data('note');
+            const price = $(this).data('price');
+            $('#detailId').val(id);
+            $('#quantity').val(qty).prop('disabled', true);
+            $('#note').val(note).prop('disabled', true);
+            $('#unitPrice').val(price).prop('disabled', true);
+            $('#saveBtn').hide();
+            modal.show();
+            loadMeasurements(id, true);
+        });
+
+        $('.edit-detail').on('click', function () {
+            const id = $(this).data('id');
+            const qty = $(this).data('qty');
+            const note = $(this).data('note');
+            const price = $(this).data('price');
+            $('#detailId').val(id);
+            $('#quantity').val(qty).prop('disabled', false);
+            $('#note').val(note).prop('disabled', false);
+            $('#unitPrice').val(price).prop('disabled', false);
+            $('#saveBtn').show();
+            modal.show();
+            loadMeasurements(id, false);
+        });
+
+        $('#editDetailForm').on('submit', function (e) {
+            e.preventDefault();
+            $.post(baseUrl + '/order-details/update', $(this).serialize())
+                .done(function () {
+                    location.reload();
+                });
+        });
+
         const orderModal = new bootstrap.Modal(document.getElementById('editOrderModal'));
         $('#editOrderBtn').on('click', function(){
             $('#orderId').val($(this).data('id'));
