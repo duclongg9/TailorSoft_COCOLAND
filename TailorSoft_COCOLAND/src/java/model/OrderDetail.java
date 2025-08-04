@@ -4,6 +4,7 @@ public class OrderDetail {
     private int id;
     private int orderId;
     private String productType;
+    private int materialId;
     private String materialName;
     private double unitPrice;
     private int quantity;
@@ -11,10 +12,11 @@ public class OrderDetail {
 
     public OrderDetail() {}
 
-    public OrderDetail(int id, int orderId, String productType, String materialName, double unitPrice, int quantity, String note) {
+    public OrderDetail(int id, int orderId, String productType, int materialId, String materialName, double unitPrice, int quantity, String note) {
         this.id = id;
         this.orderId = orderId;
         this.productType = productType;
+        this.materialId = materialId;
         this.materialName = materialName;
         this.unitPrice = unitPrice;
         this.quantity = quantity;
@@ -27,6 +29,8 @@ public class OrderDetail {
     public void setOrderId(int orderId) { this.orderId = orderId; }
     public String getProductType() { return productType; }
     public void setProductType(String productType) { this.productType = productType; }
+    public int getMaterialId() { return materialId; }
+    public void setMaterialId(int materialId) { this.materialId = materialId; }
     public String getMaterialName() { return materialName; }
     public void setMaterialName(String materialName) { this.materialName = materialName; }
     public double getUnitPrice() { return unitPrice; }

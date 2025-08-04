@@ -37,23 +37,6 @@ CREATE TABLE khach_hang (
     dia_chi TEXT,
     ngay_tao TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
-
--- SỐ ĐO
-CREATE TABLE thong_so_do (
-    ma_do INT PRIMARY KEY AUTO_INCREMENT,
-    ma_khach INT,
-    ma_loai INT,
-    ma_thong_so INT,
-    ma_ct INT,
-    gia_tri FLOAT,
-    ghi_chu TEXT,
-    FOREIGN KEY (ma_khach) REFERENCES khach_hang(ma_khach),
-    FOREIGN KEY (ma_loai) REFERENCES loai_san_pham(ma_loai),
-    FOREIGN KEY (ma_thong_so) REFERENCES loai_thong_so(ma_thong_so),
-    FOREIGN KEY (ma_ct) REFERENCES chi_tiet_don(ma_ct)
-);
-
-
 -- ĐƠN HÀNG
 CREATE TABLE don_hang (
     ma_don INT PRIMARY KEY AUTO_INCREMENT,
@@ -71,11 +54,13 @@ CREATE TABLE chi_tiet_don (
     ma_ct INT PRIMARY KEY AUTO_INCREMENT,
     ma_don INT,
     loai_sp VARCHAR(50),
+    ma_vai INT,
     ten_vai VARCHAR(100),
     don_gia DECIMAL(10,2),
     so_luong INT,
     ghi_chu TEXT,
-    FOREIGN KEY (ma_don) REFERENCES don_hang(ma_don)
+    FOREIGN KEY (ma_don) REFERENCES don_hang(ma_don),
+    FOREIGN KEY (ma_vai) REFERENCES kho_vai(ma_vai)
 );
 
 -- SỐ ĐO
@@ -144,8 +129,8 @@ INSERT INTO don_hang (ma_khach, ngay_dat, ngay_giao, trang_thai, tong_tien, da_c
 (1, '2025-08-01', '2025-08-10', 'Dang may', 2500000, 1000000);
 
 -- 7. Chi tiết đơn hàng
-INSERT INTO chi_tiet_don (ma_don, loai_sp, ten_vai, don_gia, so_luong, ghi_chu) VALUES
-(1, 'Vest nam', 'Kate silk', 1250000, 1, 'May theo form slim fit');
+INSERT INTO chi_tiet_don (ma_don, loai_sp, ma_vai, ten_vai, don_gia, so_luong, ghi_chu) VALUES
+(1, 'Vest nam', 1, 'Kate silk', 1250000, 1, 'May theo form slim fit');
 
 -- 8. Thông số đo thực tế của khách
 INSERT INTO thong_so_do (ma_khach, ma_loai, ma_thong_so, gia_tri, ma_ct) VALUES

@@ -9,6 +9,7 @@ import dao.connect.DBConnect;
 import model.Order;
 import model.OrderDetail;
 import model.Measurement;
+import model.Material;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -67,18 +68,24 @@ public class OrderCreateController extends HttpServlet {
                             String idx = k.substring("productTypeId".length());
                             int ptId = Integer.parseInt(request.getParameter(k));
                             int qty = Integer.parseInt(request.getParameter("quantity" + idx));
+                            int materialId = Integer.parseInt(request.getParameter("materialId_" + idx));
+                            double used = Double.parseDouble(request.getParameter("materialQty_" + idx));
                             String note = request.getParameter("note" + idx);
+
+                            Material material = mDao.findById(materialId);
 
                             OrderDetail d = new OrderDetail();
                             d.setOrderId(orderId);
                             d.setProductType(productTypeDAO.cacheFindName(ptId));
-                            d.setMaterialName("");
-                            d.setUnitPrice(0);
+                            d.setMaterialId(materialId);
+                            d.setMaterialName(material != null ? material.getName() : "");
+                            d.setUnitPrice(material != null ? material.getPrice() : 0);
                             d.setQuantity(qty);
                             d.setNote(note);
                             int detailId;
                             try {
                                 detailId = orderDAO.insertDetail(d);
+                                mDao.decreaseQuantity(materialId, used);
                             } catch (SQLException e) {
                                 throw new RuntimeException(e);
                             }
@@ -101,19 +108,6 @@ public class OrderCreateController extends HttpServlet {
                                             throw new RuntimeException(e);
                                         }
                                     });
-                        });
-
-                params.keySet().stream()
-                        .filter(k -> k.startsWith("materialId_"))
-                        .forEach(k -> {
-                            String idx = k.substring("materialId_".length());
-                            int mId = Integer.parseInt(request.getParameter(k));
-                            double used = Double.parseDouble(request.getParameter("materialQty_" + idx));
-                            try {
-                                mDao.decreaseQuantity(mId, used);
-                            } catch (SQLException e) {
-                                throw new RuntimeException(e);
-                            }
                         });
 
                 conn.commit();
