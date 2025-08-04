@@ -13,3 +13,50 @@
 ## Xây dựng
 Chạy `ant compile` để biên dịch dự án và `ant test` để chạy các kiểm thử mặc định. Điều chỉnh thông tin kết nối trong `src/java/dao/connect/DBConnect.java` cho môi trường của bạn.
 
+### Gửi thông báo đơn hàng
+Ứng dụng có hỗ trợ gửi email và Zalo ZNS khi tạo đơn hàng. Cấu hình thông tin đăng nhập qua biến môi trường:
+
+```
+GMAIL_USER=<tài khoản Gmail>
+GMAIL_PASS=<mật khẩu ứng dụng Gmail>
+ZALO_ACCESS_TOKEN=<token của OA>
+ZALO_TEMPLATE_ID=<template id được Zalo cấp>
+```
+
+Nếu các biến này không được thiết lập, chức năng gửi thông báo sẽ bị bỏ qua và ghi log cảnh báo.
+
+#### Thiết lập Gmail
+1. Bật **2-Step Verification** cho tài khoản Gmail dùng để gửi.
+2. Tạo **App Password** loại `Mail`, thiết bị `Other`; ghi lại 16 ký tự mật khẩu.
+3. Khai báo biến môi trường:
+   - Linux/Mac:
+     ```bash
+     export GMAIL_USER="duclongg9@gmail.com"
+     export GMAIL_PASS="APP_PASS"
+     ```
+   - Windows PowerShell:
+     ```powershell
+     setx GMAIL_USER "duclongg9@gmail.com"
+     setx GMAIL_PASS "APP_PASS"
+     ```
+
+#### Thiết lập Zalo ZNS
+1. Đăng ký/đăng nhập **Zalo Official Account** tại https://oa.zalo.me/manage.
+2. Kích hoạt dịch vụ **Zalo Notification Service** và tạo template thông báo đơn hàng (chứa các biến `items`, `total`, `paid`, `order_date`, `appointment_date`).
+3. Sau khi template được duyệt, lấy **Template ID** và **Access Token** tại phần cấu hình OA.
+4. Whitelist số điện thoại nhận tin (ví dụ `0388888865` ⇒ `84388888865`).
+5. Khai báo biến môi trường:
+   ```bash
+   export ZALO_ACCESS_TOKEN=your_OA_access_token
+   export ZALO_TEMPLATE_ID=123456
+   ```
+
+Số điện thoại gửi ZNS phải ở dạng `84xxxxxxxxx`; phương thức gửi trong ứng dụng sẽ tự chuẩn hóa chuỗi nhập vào.
+
+Ví dụ gọi trong luồng xử lý đơn hàng:
+```java
+NotificationService ns = new NotificationService();
+ns.sendOrderEmail("duclongg9@gmail.com", order, details);
+ns.sendOrderZns("84388888865", order, details);
+```
+

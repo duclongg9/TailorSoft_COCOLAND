@@ -12,6 +12,10 @@ import jakarta.mail.internet.MimeMessage;
 import model.Order;
 import model.OrderDetail;
 
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -21,9 +25,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 public class NotificationService {
+    private static final Logger LOGGER = Logger.getLogger(NotificationService.class.getName());
     private static final String GMAIL_USER = System.getenv("GMAIL_USER");
     private static final String GMAIL_PASS = System.getenv("GMAIL_PASS");
     private static final String ZALO_ACCESS_TOKEN = System.getenv("ZALO_ACCESS_TOKEN");
@@ -31,7 +38,12 @@ public class NotificationService {
     private static final SimpleDateFormat DF = new SimpleDateFormat("dd/MM/yyyy");
 
     public void sendOrderEmail(String toEmail, Order order, List<OrderDetail> details) throws MessagingException {
-        if (GMAIL_USER == null || GMAIL_PASS == null || toEmail == null || toEmail.isBlank()) {
+        if (GMAIL_USER == null || GMAIL_PASS == null) {
+            LOGGER.warning("Gmail credentials not set; skip sending email");
+            return;
+        }
+        if (toEmail == null || toEmail.isBlank()) {
+            LOGGER.warning("Recipient email is empty; skip sending email");
             return;
         }
         Properties props = new Properties();
@@ -64,10 +76,17 @@ public class NotificationService {
         message.setText(body.toString());
 
         Transport.send(message);
+        LOGGER.info("Sent order email to " + toEmail);
     }
 
     public void sendOrderZns(String phone, Order order, List<OrderDetail> details) {
-        if (ZALO_ACCESS_TOKEN == null || ZALO_TEMPLATE_ID == null || phone == null || phone.isBlank()) {
+        if (ZALO_ACCESS_TOKEN == null || ZALO_TEMPLATE_ID == null) {
+            LOGGER.warning("Zalo credentials not set; skip sending ZNS");
+            return;
+        }
+        String phoneZns = normalizePhone(phone);
+        if (phoneZns == null || phoneZns.isBlank()) {
+            LOGGER.warning("Recipient phone is empty; skip sending ZNS");
             return;
         }
         try {
@@ -86,7 +105,7 @@ public class NotificationService {
             templateData.put("appointment_date", DF.format(order.getDeliveryDate()));
 
             Map<String, Object> payload = new HashMap<>();
-            payload.put("phone", phone);
+            payload.put("phone", phoneZns);
             payload.put("template_id", ZALO_TEMPLATE_ID);
             payload.put("template_data", templateData);
             payload.put("tracking_id", "order_" + order.getId());
@@ -98,9 +117,19 @@ public class NotificationService {
                 os.write(input);
             }
 
-            conn.getResponseCode(); // trigger request
-            conn.disconnect();
-        } catch (Exception ignored) {
+            int code = conn.getResponseCode();
+            StringBuilder resp = new StringBuilder();
+            try (BufferedReader br = new BufferedReader(new InputStreamReader(
+                    code >= 400 ? conn.getErrorStream() : conn.getInputStream(), StandardCharsets.UTF_8))) {
+                String line;
+                while ((line = br.readLine()) != null) {
+                    resp.append(line);
+                }
+            }
+            LOGGER.info("ZNS response: HTTP " + code + " - " + resp);
+        } catch (IOException ex) {
+            LOGGER.log(Level.WARNING, "Send ZNS failed", ex);
+
         }
     }
 
@@ -108,6 +137,18 @@ public class NotificationService {
         return details.stream()
                 .map(d -> d.getProductType() + " x" + d.getQuantity())
                 .collect(Collectors.joining(", "));
+    }
+
+    private String normalizePhone(String phone) {
+        if (phone == null) return null;
+        String digits = phone.replaceAll("\\D", "");
+        if (digits.isEmpty()) return null;
+        if (digits.startsWith("0")) {
+            digits = "84" + digits.substring(1);
+        } else if (!digits.startsWith("84")) {
+            digits = "84" + digits;
+        }
+        return digits;
     }
 }
 
