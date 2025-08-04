@@ -87,13 +87,13 @@
                             <div class="form-text"><a href="${materialCreateUrl}">Thêm vải mới</a></div>
                             <template id="materialTemplate">
                                 <div class="input-group mb-2">
-                                    <select class="form-select" name="materialId__INDEX__" required>
+                                    <select class="form-select" name="materialId___INDEX__" required>
                                         <option value="">--Chọn vải--</option>
                                         <c:forEach var="m" items="${materials}">
                                             <option value="${m.id}">${m.name}</option>
                                         </c:forEach>
                                     </select>
-                                    <input type="number" class="form-control" name="materialQty__INDEX__" placeholder="Số lượng" min="0.1" step="0.1" required>
+                                    <input type="number" class="form-control" name="materialQty___INDEX__" placeholder="Số lượng" min="0.1" step="0.1" required>
                                     <button type="button" class="btn btn-outline-danger remove-material">&times;</button>
                                 </div>
                             </template>
