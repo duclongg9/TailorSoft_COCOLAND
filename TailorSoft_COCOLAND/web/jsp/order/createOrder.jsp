@@ -116,7 +116,7 @@
                 <div class="tab-pane fade" id="step4" role="tabpanel">
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label class="form-label">Đã cọc</label>
+                            <label class="form-label">Đã thanh toán</label>
                             <input type="number" name="deposit" class="form-control" step="1000" required>
                         </div>
                         <div class="col-md-3 mb-3">
@@ -138,7 +138,7 @@
                     <div class="text-center mb-3">
                         <img src="<c:url value='/img/payment-qr.jpg'/>" alt="QR Code" class="img-fluid" style="max-width:300px;">
                     </div>
-                    <div class="alert alert-secondary">Tổng: <span id="summaryTotal">0</span> ₫ - Đã cọc: <span id="summaryDeposit">0</span> ₫</div>
+                    <div class="alert alert-secondary">Tổng: <span id="summaryTotal">0</span> ₫ - Đã thanh toán: <span id="summaryDeposit">0</span> ₫</div>
                 </div>
             </div>
             <div class="d-flex justify-content-between mt-3">
@@ -299,7 +299,7 @@
     const depositInput = document.querySelector('input[name="deposit"]');
     function validatePayment(){
         if(Number(depositInput.value) > Number(totalInput.value)){
-            depositInput.setCustomValidity('Đã cọc không được vượt quá tổng tiền');
+            depositInput.setCustomValidity('Đã thanh toán không được vượt quá tổng tiền');
         }else{
             depositInput.setCustomValidity('');
         }

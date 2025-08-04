@@ -19,7 +19,7 @@
                         </div>
                         <div class="col-md-6">
                             <p><strong>Tổng tiền:</strong> <fmt:formatNumber value="${order.total}" type="number" groupingUsed="true"/> ₫</p>
-                            <p><strong>Đã cọc:</strong> <fmt:formatNumber value="${order.deposit}" type="number" groupingUsed="true"/> ₫</p>
+                            <p><strong>Đã thanh toán:</strong> <fmt:formatNumber value="${order.deposit}" type="number" groupingUsed="true"/> ₫</p>
                             <p><strong>Còn lại:</strong> <fmt:formatNumber value="${order.total - order.deposit}" type="number" groupingUsed="true"/> ₫</p>
                             <button type="button" class="btn btn-outline-primary btn-sm" id="editOrderBtn" data-id="${order.id}" data-total="${order.total}" data-deposit="${order.deposit}"><i class="fa fa-pen"></i> Sửa tiền</button>
                         </div>
@@ -112,7 +112,7 @@
                     <input type="number" step="1000" class="form-control" name="total" id="orderTotal">
                 </div>
                 <div class="mb-3">
-                    <label class="form-label">Đã cọc</label>
+                    <label class="form-label">Đã thanh toán</label>
                     <input type="number" step="1000" class="form-control" name="deposit" id="orderDeposit">
                 </div>
             </div>
