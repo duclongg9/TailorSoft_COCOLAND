@@ -37,6 +37,8 @@ public class OrderDAO {
                 o.setStatus(rs.getString("trang_thai"));
                 o.setTotal(rs.getDouble("tong_tien"));
                 o.setDeposit(rs.getDouble("da_coc"));
+                o.setDepositImage(rs.getString("anh_coc"));
+                o.setFullImage(rs.getString("anh_full"));
                 list.add(o);
             }
         } catch (SQLException e) {
@@ -46,7 +48,7 @@ public class OrderDAO {
     }
 
     public Order findById(int id) {
-        String sql = "SELECT dh.ma_don, dh.ma_khach, kh.ho_ten, kh.so_dien_thoai, kh.email, dh.ngay_dat, dh.ngay_giao, dh.trang_thai, dh.tong_tien, dh.da_coc " +
+        String sql = "SELECT dh.ma_don, dh.ma_khach, kh.ho_ten, kh.so_dien_thoai, kh.email, dh.ngay_dat, dh.ngay_giao, dh.trang_thai, dh.tong_tien, dh.da_coc, dh.anh_coc, dh.anh_full " +
                 "FROM don_hang dh JOIN khach_hang kh ON dh.ma_khach = kh.ma_khach WHERE dh.ma_don=?";
         try (Connection conn = DBConnect.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -64,6 +66,8 @@ public class OrderDAO {
                     o.setStatus(rs.getString("trang_thai"));
                     o.setTotal(rs.getDouble("tong_tien"));
                     o.setDeposit(rs.getDouble("da_coc"));
+                    o.setDepositImage(rs.getString("anh_coc"));
+                    o.setFullImage(rs.getString("anh_full"));
                     return o;
                 }
             }
@@ -294,6 +298,26 @@ public class OrderDAO {
                 ps.setInt(3, orderId);
                 ps.executeUpdate();
             }
+        }
+    }
+
+    public void updateDepositImage(int orderId, String fileName) throws SQLException {
+        String sql = "UPDATE don_hang SET anh_coc=? WHERE ma_don=?";
+        try (Connection c = conn != null ? conn : DBConnect.getConnection();
+             PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setString(1, fileName);
+            ps.setInt(2, orderId);
+            ps.executeUpdate();
+        }
+    }
+
+    public void updateFullImage(int orderId, String fileName) throws SQLException {
+        String sql = "UPDATE don_hang SET anh_full=? WHERE ma_don=?";
+        try (Connection c = conn != null ? conn : DBConnect.getConnection();
+             PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setString(1, fileName);
+            ps.setInt(2, orderId);
+            ps.executeUpdate();
         }
     }
 }
