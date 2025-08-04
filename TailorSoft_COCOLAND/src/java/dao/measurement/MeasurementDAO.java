@@ -23,7 +23,7 @@ public class MeasurementDAO {
     public List<Measurement> findAll() {
         List<Measurement> list = new ArrayList<>();
         String sql = "SELECT tsd.ma_do, tsd.ma_khach, k.ho_ten, tsd.ma_loai, l.ten_loai, " +
-                "tsd.ma_thong_so, t.ten_thong_so, tsd.gia_tri, tsd.ghi_chu, tsd.ma_ct " +
+                "tsd.ma_thong_so, t.ten_thong_so, t.don_vi, tsd.gia_tri, tsd.ghi_chu, tsd.ma_ct " +
                 "FROM thong_so_do tsd " +
                 "JOIN khach_hang k ON tsd.ma_khach = k.ma_khach " +
                 "JOIN loai_san_pham l ON tsd.ma_loai = l.ma_loai " +
@@ -40,6 +40,7 @@ public class MeasurementDAO {
                 m.setProductTypeName(rs.getString("ten_loai"));
                 m.setMeasurementTypeId(rs.getInt("ma_thong_so"));
                 m.setMeasurementTypeName(rs.getString("ten_thong_so"));
+                m.setUnit(rs.getString("don_vi"));
                 m.setValue(rs.getDouble("gia_tri"));
                 m.setNote(rs.getString("ghi_chu"));
                 m.setOrderDetailId(rs.getInt("ma_ct"));
@@ -87,7 +88,8 @@ public class MeasurementDAO {
 
     public List<Map<String, Object>> findByOrderDetail(int detailId) {
         List<Map<String, Object>> list = new ArrayList<>();
-        String sql = "SELECT tsd.ma_do, lt.ten_thong_so, lt.don_vi, tsd.gia_tri " +
+        String sql = "SELECT tsd.ma_do, lt.ten_thong_so AS name, " +
+                "COALESCE(lt.don_vi, '') AS unit, tsd.gia_tri " +
                 "FROM thong_so_do tsd JOIN loai_thong_so lt ON tsd.ma_thong_so = lt.ma_thong_so " +
                 "WHERE tsd.ma_ct = ?";
         try (Connection c = DBConnect.getConnection();
@@ -97,8 +99,8 @@ public class MeasurementDAO {
                 while (rs.next()) {
                     Map<String, Object> m = new HashMap<>();
                     m.put("id", rs.getInt("ma_do"));
-                    m.put("name", rs.getString("ten_thong_so"));
-                    m.put("unit", rs.getString("don_vi"));
+                    m.put("name", rs.getString("name"));
+                    m.put("unit", rs.getString("unit"));
                     m.put("value", rs.getDouble("gia_tri"));
                     list.add(m);
                 }
