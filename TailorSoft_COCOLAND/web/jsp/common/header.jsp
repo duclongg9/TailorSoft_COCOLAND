@@ -21,6 +21,19 @@
         #sidebar{position:fixed;top:0;left:0;min-height:100vh;width:220px;transition:left .3s;}
         #sidebar.collapsed{left:-220px;}
         #mainContent{margin-left:220px;transition:margin-left .3s;}
+        @media (max-width:576px){
+            input.form-control,select.form-select,textarea.form-control{
+                padding:0.25rem 0.5rem;
+                font-size:0.875rem;
+            }
+            .btn{
+                padding:0.25rem 0.5rem;
+                font-size:0.875rem;
+            }
+            .form-label{
+                font-size:0.875rem;
+            }
+        }
     </style>
 </head>
 <body>

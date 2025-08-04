@@ -76,6 +76,7 @@ public class OrderCreateController extends HttpServlet {
 
                             OrderDetail d = new OrderDetail();
                             d.setOrderId(orderId);
+                            d.setProductTypeId(ptId);
                             d.setProductType(productTypeDAO.cacheFindName(ptId));
                             d.setMaterialId(materialId);
                             d.setMaterialName(material != null ? material.getName() : "");
