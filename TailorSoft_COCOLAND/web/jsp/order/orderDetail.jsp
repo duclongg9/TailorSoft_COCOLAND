@@ -132,16 +132,27 @@
 
         function loadMeasurements(id, disabled) {
             $('#measurementList').empty();
-            $.getJSON(baseUrl + '/order-details/measurements', {id: id}, function (list) {
-                list.forEach(function (m) {
-                    const item = `<div class="mb-3">
-                            <label class="form-label">${m.name} (${m.unit})</label>
-                            <input type="number" step="0.01" class="form-control" name="m_${m.id}" value="${m.value}" ${disabled ? 'disabled' : ''}>
-                        </div>`;
-                    $('#measurementList').append(item);
+            $.getJSON(baseUrl + '/order-details/measurements', {id: id})
+                .done(function (list) {
+                    if (!Array.isArray(list) || list.length === 0) {
+                        $('#measurementList').append('<p class="text-muted">Không có thông số</p>');
+                    } else {
+                        list.forEach(function (m) {
+                            const label = m.name ? (m.unit ? `${m.name} (${m.unit})` : m.name) : '';
+                            const value = m.value != null ? m.value : '';
+                            const item = `<div class="mb-3">
+                                    <label class="form-label">${label}</label>
+                                    <input type="number" step="0.01" class="form-control" name="m_${m.id}" value="${value}" ${disabled ? 'disabled' : ''}>
+                                </div>`;
+                            $('#measurementList').append(item);
+                        });
+                    }
+                    modal.show();
+                })
+                .fail(function () {
+                    $('#measurementList').append('<p class="text-muted">Không có thông số</p>');
+                    modal.show();
                 });
-                modal.show();
-            });
         }
 
         $('.view-detail').on('click', function () {
