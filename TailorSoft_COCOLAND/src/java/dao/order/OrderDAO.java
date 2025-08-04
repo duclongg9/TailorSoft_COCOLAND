@@ -216,7 +216,7 @@ public class OrderDAO {
         return list;
     }
 
-    public void updateDetail(Connection c, int detailId, int qty, String note) throws SQLException {
+    public void updateDetail(Connection c, int detailId, int qty, String note, double unitPrice) throws SQLException {
         int orderId = 0;
         String getSql = "SELECT ma_don FROM chi_tiet_don WHERE ma_ct=?";
         try (PreparedStatement ps = c.prepareStatement(getSql)) {
@@ -227,11 +227,12 @@ public class OrderDAO {
                 }
             }
         }
-        String updateSql = "UPDATE chi_tiet_don SET so_luong=?, ghi_chu=? WHERE ma_ct=?";
+        String updateSql = "UPDATE chi_tiet_don SET so_luong=?, ghi_chu=?, don_gia=? WHERE ma_ct=?";
         try (PreparedStatement ps = c.prepareStatement(updateSql)) {
             ps.setInt(1, qty);
             ps.setString(2, note);
-            ps.setInt(3, detailId);
+            ps.setDouble(3, unitPrice);
+            ps.setInt(4, detailId);
             ps.executeUpdate();
         }
         String totalSql = "UPDATE don_hang SET tong_tien = (SELECT SUM(so_luong*don_gia) FROM chi_tiet_don WHERE ma_don=?) WHERE ma_don=?";
@@ -256,6 +257,26 @@ public class OrderDAO {
                 ps.setString(1, newStatus);
                 ps.setInt(2, orderId);
                 return ps.executeUpdate();
+            }
+        }
+    }
+
+    public void updateAmounts(int orderId, double total, double deposit) throws SQLException {
+        String sql = "UPDATE don_hang SET tong_tien=?, da_coc=? WHERE ma_don=?";
+        if (conn != null) {
+            try (PreparedStatement ps = conn.prepareStatement(sql)) {
+                ps.setDouble(1, total);
+                ps.setDouble(2, deposit);
+                ps.setInt(3, orderId);
+                ps.executeUpdate();
+            }
+        } else {
+            try (Connection c = DBConnect.getConnection();
+                 PreparedStatement ps = c.prepareStatement(sql)) {
+                ps.setDouble(1, total);
+                ps.setDouble(2, deposit);
+                ps.setInt(3, orderId);
+                ps.executeUpdate();
             }
         }
     }

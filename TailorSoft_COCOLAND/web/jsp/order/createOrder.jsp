@@ -70,6 +70,10 @@
                                         <label class="form-label">Số lượng</label>
                                         <input type="number" class="form-control" name="quantity__INDEX__" value="1" min="1" required>
                                     </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Ghi chú</label>
+                                        <textarea class="form-control" name="note__INDEX__" rows="1"></textarea>
+                                    </div>
                                 </div>
 
                                 <div class="measurement-wrapper mt-4 d-none">

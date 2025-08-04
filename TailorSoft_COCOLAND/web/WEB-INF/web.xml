@@ -222,4 +222,13 @@
         <url-pattern>/order-details/update</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>OrderUpdateAmountController</servlet-name>
+        <servlet-class>controller.order.OrderUpdateAmountController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>OrderUpdateAmountController</servlet-name>
+        <url-pattern>/orders/update-amount</url-pattern>
+    </servlet-mapping>
+
 </web-app>
