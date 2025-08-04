@@ -26,14 +26,19 @@
 <button class="btn btn-dark position-fixed m-2" id="sidebarToggle" style="z-index:1100;"><i class="fas fa-bars"></i></button>
 <div class="d-flex">
 <script>
-    $(function(){
-        $('#sidebarToggle').on('click', function(){
-            $('#sidebar').toggleClass('collapsed');
-            if($('#sidebar').hasClass('collapsed')){
-                $('#mainContent').css('margin-left','0');
-            } else {
-                $('#mainContent').css('margin-left','220px');
-            }
-        });
+    document.addEventListener('DOMContentLoaded', function () {
+        const sidebar = document.getElementById('sidebar');
+        const main = document.getElementById('mainContent');
+        const toggle = document.getElementById('sidebarToggle');
+        if (sidebar && main && toggle) {
+            toggle.addEventListener('click', function () {
+                sidebar.classList.toggle('collapsed');
+                if (sidebar.classList.contains('collapsed')) {
+                    main.style.marginLeft = '0';
+                } else {
+                    main.style.marginLeft = '220px';
+                }
+            });
+        }
     });
 </script>
