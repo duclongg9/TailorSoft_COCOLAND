@@ -216,6 +216,15 @@ public class OrderDAO {
         return list;
     }
 
+    public void updateDetailQuantity(Connection c, int detailId, int qty) throws SQLException {
+        String sql = "UPDATE chi_tiet_don SET so_luong=? WHERE ma_ct=?";
+        try (PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setInt(1, qty);
+            ps.setInt(2, detailId);
+            ps.executeUpdate();
+        }
+    }
+
     public int updateStatus(int orderId, String newStatus) throws SQLException {
         String sql = "UPDATE don_hang SET trang_thai=? WHERE ma_don=?";
         if (conn != null) {

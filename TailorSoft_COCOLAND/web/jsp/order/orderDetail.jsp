@@ -34,6 +34,7 @@
                         <th>Đơn giá</th>
                         <th>Số lượng</th>
                         <th>Ghi chú</th>
+                        <th></th>
                     </tr>
                     </thead>
                     <tbody>
@@ -44,6 +45,7 @@
                             <td><fmt:formatNumber value="${d.unitPrice}" type="number" groupingUsed="true"/> ₫</td>
                             <td>${d.quantity}</td>
                             <td>${d.note}</td>
+                            <td><button type="button" class="btn btn-sm btn-outline-primary edit-detail" data-id="${d.id}" data-qty="${d.quantity}"><i class="fa fa-pen"></i></button></td>
                         </tr>
                     </c:forEach>
                     </tbody>
@@ -58,4 +60,61 @@
         <a href="<c:url value='/orders'/>">Quay lại</a>
     </div>
 </div>
+
+<div class="modal fade" id="editDetailModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <form id="editDetailForm" class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Cập nhật chi tiết</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" name="detailId" id="detailId">
+                <div class="mb-3">
+                    <label class="form-label">Số lượng</label>
+                    <input type="number" min="1" class="form-control" name="quantity" id="quantity">
+                </div>
+                <div id="measurementList"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                <button type="submit" class="btn btn-primary">Lưu</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    $(function () {
+        const baseUrl = '${pageContext.request.contextPath}';
+        const modal = new bootstrap.Modal(document.getElementById('editDetailModal'));
+
+        $('.edit-detail').on('click', function () {
+            const id = $(this).data('id');
+            const qty = $(this).data('qty');
+            $('#detailId').val(id);
+            $('#quantity').val(qty);
+            $('#measurementList').empty();
+            $.getJSON(baseUrl + '/order-details/measurements', {id: id}, function (list) {
+                list.forEach(function (m) {
+                    const item = `<div class="mb-3">
+                            <label class="form-label">${m.name} (${m.unit})</label>
+                            <input type="number" step="0.01" class="form-control" name="m_${m.id}" value="${m.value}">
+                        </div>`;
+                    $('#measurementList').append(item);
+                });
+                modal.show();
+            });
+        });
+
+        $('#editDetailForm').on('submit', function (e) {
+            e.preventDefault();
+            $.post(baseUrl + '/order-details/update', $(this).serialize())
+                .done(function () {
+                    location.reload();
+                });
+        });
+    });
+</script>
+
 <jsp:include page="/jsp/common/footer.jsp"/>

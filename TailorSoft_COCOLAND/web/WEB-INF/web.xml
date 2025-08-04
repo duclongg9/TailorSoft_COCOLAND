@@ -204,4 +204,22 @@
         <url-pattern>/customers/update</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>MeasurementByDetailApi</servlet-name>
+        <servlet-class>controller.order.MeasurementByDetailApi</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>MeasurementByDetailApi</servlet-name>
+        <url-pattern>/order-details/measurements</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>OrderDetailUpdateController</servlet-name>
+        <servlet-class>controller.order.OrderDetailUpdateController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>OrderDetailUpdateController</servlet-name>
+        <url-pattern>/order-details/update</url-pattern>
+    </servlet-mapping>
+
 </web-app>
