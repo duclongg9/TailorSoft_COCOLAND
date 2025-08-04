@@ -156,7 +156,7 @@
         let current = 0;
         const orderTabs = ['step1','step2','step3','step4'];
         function showStep(i){
-            const tabEl = document.querySelector(`#${orderTabs[i]}-tab`);
+            const tabEl = document.querySelector('#' + orderTabs[i] + '-tab');
             if (window.bootstrap && window.bootstrap.Tab) {
                 new bootstrap.Tab(tabEl).show();
             } else {
@@ -263,7 +263,10 @@
                     data.forEach(mt => {
                         const col = document.createElement('div');
                         col.className = 'col-md-6';
-                        col.innerHTML = `\n                            <label class="form-label">${mt.name} (${mt.unit})</label>\n                            <input type="number" class="form-control" step="0.1" name="item${select.name.match(/\d+/)[0]}_m${mt.id}" placeholder="${mt.unit}" required>\n                        `;
+
+                        const idx = select.name.match(/\d+/)[0];
+                        col.innerHTML = '<label class="form-label">' + mt.name + ' (' + mt.unit + ')</label>' +
+                            '<input type="number" class="form-control" step="0.1" name="item' + idx + '_m' + mt.id + '" placeholder="' + mt.unit + '" required>';
                         fields.appendChild(col);
                     });
                 }
