@@ -55,9 +55,10 @@
                 <th>Ngày giao</th>
                 <th>Trạng thái</th>
                 <th class="text-end">Tổng tiền</th>
-                <th class="text-end">Đã cọc</th>
+                <th class="text-end">Đã thanh toán</th>
                 <th class="text-end">Còn lại</th>
                 <th class="text-center">Actions</th>
+                <th class="text-center">Thanh toán</th>
             </tr>
             </thead>
             <tbody>
@@ -92,6 +93,11 @@
                                    <i class="fa fa-times"></i>
                                </button>
                             </form>
+                        </c:if>
+                    </td>
+                    <td class="text-center">
+                        <c:if test="${o.deposit >= o.total}">
+                            <i class="fa fa-check text-success" title="Đã thanh toán"></i>
                         </c:if>
                     </td>
                 </tr>
