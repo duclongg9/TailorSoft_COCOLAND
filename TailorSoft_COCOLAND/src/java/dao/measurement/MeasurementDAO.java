@@ -89,7 +89,7 @@ public class MeasurementDAO {
     public List<Map<String, Object>> findByOrderDetail(int detailId) {
         List<Map<String, Object>> list = new ArrayList<>();
         String sql = "SELECT tsd.ma_do, lt.ten_thong_so AS name, " +
-                "COALESCE(lt.don_vi, '') AS unit, tsd.gia_tri " +
+                "COALESCE(lt.don_vi, '') AS unit, tsd.gia_tri AS value " +
                 "FROM thong_so_do tsd JOIN loai_thong_so lt ON tsd.ma_thong_so = lt.ma_thong_so " +
                 "WHERE tsd.ma_ct = ?";
         try (Connection c = DBConnect.getConnection();
@@ -101,7 +101,7 @@ public class MeasurementDAO {
                     m.put("id", rs.getInt("ma_do"));
                     m.put("name", rs.getString("name"));
                     m.put("unit", rs.getString("unit"));
-                    m.put("value", rs.getDouble("gia_tri"));
+                    m.put("value", rs.getDouble("value"));
                     list.add(m);
                 }
             }
