@@ -20,10 +20,11 @@ public class OrderDetailUpdateController extends HttpServlet {
         req.setCharacterEncoding("UTF-8");
         int detailId = Integer.parseInt(req.getParameter("detailId"));
         int qty = Integer.parseInt(req.getParameter("quantity"));
+        String note = req.getParameter("note");
 
         try (Connection c = DBConnect.getConnection()) {
             c.setAutoCommit(false);
-            orderDAO.updateDetailQuantity(c, detailId, qty);
+            orderDAO.updateDetail(c, detailId, qty, note);
             req.getParameterMap().forEach((k, v) -> {
                 if (k.startsWith("m_")) {
                     int mId = Integer.parseInt(k.substring(2));
