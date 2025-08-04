@@ -8,6 +8,7 @@ public class Measurement {
     private String productTypeName;
     private int measurementTypeId;
     private String measurementTypeName;
+    private String unit;
     private double value;
     private String note;
     private int orderDetailId;
@@ -16,7 +17,7 @@ public class Measurement {
 
     public Measurement(int id, int customerId, String customerName, int productTypeId,
                        String productTypeName, int measurementTypeId, String measurementTypeName,
-                       double value, String note, int orderDetailId) {
+                       String unit, double value, String note, int orderDetailId) {
         this.id = id;
         this.customerId = customerId;
         this.customerName = customerName;
@@ -24,6 +25,7 @@ public class Measurement {
         this.productTypeName = productTypeName;
         this.measurementTypeId = measurementTypeId;
         this.measurementTypeName = measurementTypeName;
+        this.unit = unit;
         this.value = value;
         this.note = note;
         this.orderDetailId = orderDetailId;
@@ -43,6 +45,8 @@ public class Measurement {
     public void setMeasurementTypeId(int measurementTypeId) { this.measurementTypeId = measurementTypeId; }
     public String getMeasurementTypeName() { return measurementTypeName; }
     public void setMeasurementTypeName(String measurementTypeName) { this.measurementTypeName = measurementTypeName; }
+    public String getUnit() { return unit; }
+    public void setUnit(String unit) { this.unit = unit; }
     public double getValue() { return value; }
     public void setValue(double value) { this.value = value; }
     public String getNote() { return note; }
