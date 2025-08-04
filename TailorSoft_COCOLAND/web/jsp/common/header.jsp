@@ -17,7 +17,28 @@
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <style>
         body{font-family:'Roboto',sans-serif;}
+        #sidebar{position:fixed;top:0;left:0;min-height:100vh;width:220px;transition:left .3s;}
+        #sidebar.collapsed{left:-220px;}
+        #mainContent{margin-left:220px;transition:margin-left .3s;}
     </style>
 </head>
 <body>
+<button class="btn btn-dark position-fixed m-2" id="sidebarToggle" style="z-index:1100;"><i class="fas fa-bars"></i></button>
 <div class="d-flex">
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const sidebar = document.getElementById('sidebar');
+        const main = document.getElementById('mainContent');
+        const toggle = document.getElementById('sidebarToggle');
+        if (sidebar && main && toggle) {
+            toggle.addEventListener('click', function () {
+                sidebar.classList.toggle('collapsed');
+                if (sidebar.classList.contains('collapsed')) {
+                    main.style.marginLeft = '0';
+                } else {
+                    main.style.marginLeft = '220px';
+                }
+            });
+        }
+    });
+</script>

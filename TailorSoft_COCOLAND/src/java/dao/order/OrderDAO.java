@@ -215,4 +215,22 @@ public class OrderDAO {
         }
         return list;
     }
+
+    public int updateStatus(int orderId, String newStatus) throws SQLException {
+        String sql = "UPDATE don_hang SET trang_thai=? WHERE ma_don=?";
+        if (conn != null) {
+            try (PreparedStatement ps = conn.prepareStatement(sql)) {
+                ps.setString(1, newStatus);
+                ps.setInt(2, orderId);
+                return ps.executeUpdate();
+            }
+        } else {
+            try (Connection c = DBConnect.getConnection();
+                 PreparedStatement ps = c.prepareStatement(sql)) {
+                ps.setString(1, newStatus);
+                ps.setInt(2, orderId);
+                return ps.executeUpdate();
+            }
+        }
+    }
 }
