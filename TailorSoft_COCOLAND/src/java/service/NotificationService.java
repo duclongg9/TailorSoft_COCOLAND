@@ -12,6 +12,7 @@ import jakarta.mail.internet.MimeMessage;
 import model.Order;
 import model.OrderDetail;
 
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -128,6 +129,7 @@ public class NotificationService {
             LOGGER.info("ZNS response: HTTP " + code + " - " + resp);
         } catch (IOException ex) {
             LOGGER.log(Level.WARNING, "Send ZNS failed", ex);
+
         }
     }
 
