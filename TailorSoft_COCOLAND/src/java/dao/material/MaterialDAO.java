@@ -57,6 +57,30 @@ public class MaterialDAO {
         }
     }
 
+    public Material findById(int id) {
+        String sql = "SELECT ma_vai, ten_vai, mau_sac, xuat_xu, gia_thanh, so_luong, hinh_hoa_don FROM kho_vai WHERE ma_vai=?";
+        try (Connection c = conn != null ? conn : DBConnect.getConnection();
+             PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    Material m = new Material();
+                    m.setId(rs.getInt("ma_vai"));
+                    m.setName(rs.getString("ten_vai"));
+                    m.setColor(rs.getString("mau_sac"));
+                    m.setOrigin(rs.getString("xuat_xu"));
+                    m.setPrice(rs.getDouble("gia_thanh"));
+                    m.setQuantity(rs.getDouble("so_luong"));
+                    m.setInvoiceImage(rs.getString("hinh_hoa_don"));
+                    return m;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public void decreaseQuantity(int id, double amount) throws SQLException {
         String sql = "UPDATE kho_vai SET so_luong = so_luong - ? WHERE ma_vai = ?";
         if (conn != null) {
