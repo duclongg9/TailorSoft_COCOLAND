@@ -106,6 +106,15 @@
     </servlet-mapping>
 
     <servlet>
+        <servlet-name>OrderCancelController</servlet-name>
+        <servlet-class>controller.order.OrderCancelController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>OrderCancelController</servlet-name>
+        <url-pattern>/orders/cancel</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
         <servlet-name>MeasurementListController</servlet-name>
         <servlet-class>controller.measurement.MeasurementListController</servlet-class>
     </servlet>
