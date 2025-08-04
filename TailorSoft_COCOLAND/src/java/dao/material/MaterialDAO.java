@@ -8,6 +8,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MaterialDAO {
+    private final Connection conn;
+
+    public MaterialDAO() {
+        this.conn = null;
+    }
+
+    public MaterialDAO(Connection conn) {
+        this.conn = conn;
+    }
+
     public List<Material> findAll() {
         List<Material> list = new ArrayList<>();
         String sql = "SELECT ma_vai, ten_vai, mau_sac, xuat_xu, gia_thanh, so_luong, hinh_hoa_don FROM kho_vai";
@@ -33,8 +43,8 @@ public class MaterialDAO {
 
     public void insert(Material material) {
         String sql = "INSERT INTO kho_vai(ten_vai, mau_sac, xuat_xu, gia_thanh, so_luong, hinh_hoa_don) VALUES(?,?,?,?,?,?)";
-        try (Connection conn = DBConnect.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection c = DBConnect.getConnection();
+             PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setString(1, material.getName());
             ps.setString(2, material.getColor());
             ps.setString(3, material.getOrigin());
@@ -47,15 +57,21 @@ public class MaterialDAO {
         }
     }
 
-    public void decreaseQuantity(int id, double amount) {
+    public void decreaseQuantity(int id, double amount) throws SQLException {
         String sql = "UPDATE kho_vai SET so_luong = so_luong - ? WHERE ma_vai = ?";
-        try (Connection conn = DBConnect.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setDouble(1, amount);
-            ps.setInt(2, id);
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
+        if (conn != null) {
+            try (PreparedStatement ps = conn.prepareStatement(sql)) {
+                ps.setDouble(1, amount);
+                ps.setInt(2, id);
+                ps.executeUpdate();
+            }
+        } else {
+            try (Connection c = DBConnect.getConnection();
+                 PreparedStatement ps = c.prepareStatement(sql)) {
+                ps.setDouble(1, amount);
+                ps.setInt(2, id);
+                ps.executeUpdate();
+            }
         }
     }
 }

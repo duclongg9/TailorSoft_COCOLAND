@@ -9,6 +9,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class OrderDAO {
+    private final Connection conn;
+
+    public OrderDAO() {
+        this.conn = null;
+    }
+
+    public OrderDAO(Connection conn) {
+        this.conn = conn;
+    }
     public List<Order> findAll() {
         List<Order> list = new ArrayList<>();
         String sql = "SELECT dh.ma_don, dh.ma_khach, kh.ho_ten, kh.so_dien_thoai, kh.email, dh.ngay_dat, dh.ngay_giao, dh.trang_thai, dh.tong_tien, dh.da_coc " +
@@ -64,41 +73,67 @@ public class OrderDAO {
         return null;
     }
 
-    public int insert(Order order) {
+    public int insert(Order order) throws SQLException {
         String sql = "INSERT INTO don_hang(ma_khach, ngay_dat, ngay_giao, trang_thai, tong_tien, da_coc) VALUES(?,?,?,?,?,?)";
-        try (Connection conn = DBConnect.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            ps.setInt(1, order.getCustomerId());
-            ps.setDate(2, new java.sql.Date(order.getOrderDate().getTime()));
-            ps.setDate(3, new java.sql.Date(order.getDeliveryDate().getTime()));
-            ps.setString(4, order.getStatus());
-            ps.setDouble(5, order.getTotal());
-            ps.setDouble(6, order.getDeposit());
-            ps.executeUpdate();
-            try (ResultSet rs = ps.getGeneratedKeys()) {
-                if (rs.next()) {
-                    return rs.getInt(1);
+        if (conn != null) {
+            try (PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+                ps.setInt(1, order.getCustomerId());
+                ps.setDate(2, new java.sql.Date(order.getOrderDate().getTime()));
+                ps.setDate(3, new java.sql.Date(order.getDeliveryDate().getTime()));
+                ps.setString(4, order.getStatus());
+                ps.setDouble(5, order.getTotal());
+                ps.setDouble(6, order.getDeposit());
+                ps.executeUpdate();
+                try (ResultSet rs = ps.getGeneratedKeys()) {
+                    if (rs.next()) {
+                        return rs.getInt(1);
+                    }
                 }
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
+            return -1;
+        } else {
+            try (Connection c = DBConnect.getConnection();
+                 PreparedStatement ps = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+                ps.setInt(1, order.getCustomerId());
+                ps.setDate(2, new java.sql.Date(order.getOrderDate().getTime()));
+                ps.setDate(3, new java.sql.Date(order.getDeliveryDate().getTime()));
+                ps.setString(4, order.getStatus());
+                ps.setDouble(5, order.getTotal());
+                ps.setDouble(6, order.getDeposit());
+                ps.executeUpdate();
+                try (ResultSet rs = ps.getGeneratedKeys()) {
+                    if (rs.next()) {
+                        return rs.getInt(1);
+                    }
+                }
+            }
+            return -1;
         }
-        return -1;
     }
 
-    public void insertDetail(OrderDetail detail) {
+    public void insertDetail(OrderDetail detail) throws SQLException {
         String sql = "INSERT INTO chi_tiet_don(ma_don, loai_sp, ten_vai, don_gia, so_luong, ghi_chu) VALUES(?,?,?,?,?,?)";
-        try (Connection conn = DBConnect.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, detail.getOrderId());
-            ps.setString(2, detail.getProductType());
-            ps.setString(3, detail.getMaterialName());
-            ps.setDouble(4, detail.getUnitPrice());
-            ps.setInt(5, detail.getQuantity());
-            ps.setString(6, detail.getNote());
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
+        if (conn != null) {
+            try (PreparedStatement ps = conn.prepareStatement(sql)) {
+                ps.setInt(1, detail.getOrderId());
+                ps.setString(2, detail.getProductType());
+                ps.setString(3, detail.getMaterialName());
+                ps.setDouble(4, detail.getUnitPrice());
+                ps.setInt(5, detail.getQuantity());
+                ps.setString(6, detail.getNote());
+                ps.executeUpdate();
+            }
+        } else {
+            try (Connection c = DBConnect.getConnection();
+                 PreparedStatement ps = c.prepareStatement(sql)) {
+                ps.setInt(1, detail.getOrderId());
+                ps.setString(2, detail.getProductType());
+                ps.setString(3, detail.getMaterialName());
+                ps.setDouble(4, detail.getUnitPrice());
+                ps.setInt(5, detail.getQuantity());
+                ps.setString(6, detail.getNote());
+                ps.executeUpdate();
+            }
         }
     }
 
