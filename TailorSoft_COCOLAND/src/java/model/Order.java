@@ -19,7 +19,14 @@ public class Order {
 
     public Order() {}
 
-    public Order(int id, int customerId, Date orderDate, Date deliveryDate, String status, double total, double deposit) {
+    public Order(int id, int customerId, Date orderDate, Date deliveryDate, String status,
+                 double total, double deposit) {
+        this(id, customerId, orderDate, deliveryDate, status, total, deposit, null, null, null);
+    }
+
+    public Order(int id, int customerId, Date orderDate, Date deliveryDate, String status,
+                 double total, double deposit, String productType,
+                 String depositImage, String fullImage) {
         this.id = id;
         this.customerId = customerId;
         this.orderDate = orderDate;
@@ -27,6 +34,9 @@ public class Order {
         this.status = status;
         this.total = total;
         this.deposit = deposit;
+        this.productType = productType;
+        this.depositImage = depositImage;
+        this.fullImage = fullImage;
     }
 
     public int getId() { return id; }
