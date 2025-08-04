@@ -140,7 +140,7 @@
         </script>
         <script>
         (() => {
-          const ctx = '${pageContext.request.contextPath}';
+          const toggleUrl = '<c:url value="/orders/toggle-status"/>';
 
           // Xử lý click bút chì
           document.querySelectorAll('.toggle-status').forEach(btn => {
@@ -154,7 +154,9 @@
 
               if (!confirm(msg)) return;
 
-              fetch(ctx + '/orders/toggle-status', {
+
+              fetch(toggleUrl, {
+
                 method: 'POST',
                 headers: {'Content-Type':'application/x-www-form-urlencoded'},
                 body: new URLSearchParams({id})
