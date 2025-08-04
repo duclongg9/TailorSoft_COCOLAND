@@ -47,6 +47,7 @@
                         <th>Đơn giá</th>
                         <th>Số lượng</th>
                         <th>Ghi chú</th>
+                        <th>Số đo</th>
                         <th></th>
                     </tr>
                     </thead>
@@ -58,6 +59,7 @@
                             <td><fmt:formatNumber value="${d.unitPrice}" type="number" groupingUsed="true"/> ₫</td>
                             <td>${d.quantity}</td>
                             <td>${d.note}</td>
+                            <td class="measure-cell" data-id="${d.id}"><span class="text-muted">Đang tải...</span></td>
                             <td>
                                 <div class="btn-group btn-group-sm">
                                     <button type="button" class="btn btn-outline-secondary view-detail" data-id="${d.id}" data-qty="${d.quantity}" data-note="${d.note}" data-price="${d.unitPrice}"><i class="fa fa-eye"></i></button>
@@ -184,6 +186,26 @@
         const baseUrl = '${pageContext.request.contextPath}';
         const modalEl = document.getElementById('editDetailModal');
         const modal = new bootstrap.Modal(modalEl);
+        
+        $('.measure-cell').each(function(){
+            const cell = $(this);
+            const id = cell.data('id');
+            $.getJSON(baseUrl + '/order-details/measurements', {id: id})
+                .done(function(list){
+                    if(Array.isArray(list) && list.length){
+                        const html = list.map(function(m){
+                            return m.name + ': ' + m.value + (m.unit ? ' ' + m.unit : '');
+                        }).join('<br>');
+                        cell.html(html);
+                    }else{
+                        cell.html('<span class="text-muted">Không có</span>');
+                    }
+                })
+                .fail(function(){
+                    cell.html('<span class="text-muted">Không có</span>');
+                });
+        });
+
 
         function loadMeasurements(id, disabled) {
             $('#measurementList').empty();
