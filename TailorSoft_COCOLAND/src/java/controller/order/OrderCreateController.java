@@ -10,6 +10,9 @@ import model.Order;
 import model.OrderDetail;
 import model.Measurement;
 import model.Material;
+import model.Customer;
+
+import service.NotificationService;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -20,6 +23,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -60,6 +64,7 @@ public class OrderCreateController extends HttpServlet {
                 Order order = new Order(0, customerId, orderDate, deliveryDate, status, total, deposit);
                 int orderId = orderDAO.insert(order);
                 if (orderId < 1) throw new SQLException("Insert order failed");
+                order.setId(orderId);
 
                 Map<String, String[]> params = request.getParameterMap();
                 params.keySet().stream()
@@ -112,6 +117,17 @@ public class OrderCreateController extends HttpServlet {
                         });
 
                 conn.commit();
+
+                Customer customer = customerDAO.findById(customerId);
+                List<OrderDetail> details = orderDAO.findDetailsByOrder(orderId);
+                NotificationService notify = new NotificationService();
+                try {
+                    notify.sendOrderEmail(customer.getEmail(), order, details);
+                    notify.sendOrderZns(customer.getPhone(), order, details);
+                } catch (Exception e) {
+                    LOGGER.log(Level.WARNING, "Send notification failed", e);
+                }
+
                 response.sendRedirect(request.getContextPath() + "/orders?msg=created");
             } catch (Exception ex) {
                 conn.rollback();
