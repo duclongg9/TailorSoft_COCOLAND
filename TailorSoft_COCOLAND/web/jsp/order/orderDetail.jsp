@@ -208,9 +208,10 @@
 
 
         function loadMeasurements(id, disabled) {
-            $('#measurementList').empty();
+            $('#measurementList').html('<p class="text-muted">Đang tải...</p>');
             $.getJSON(baseUrl + '/order-details/measurements', {id: id})
                 .done(function (list) {
+                    $('#measurementList').empty();
                     if (!Array.isArray(list) || list.length === 0) {
                         $('#measurementList').append('<p class="text-muted">Không có thông số</p>');
                     } else {
@@ -221,18 +222,17 @@
                             const item = `<div class="mb-3">
                                     <label class="form-label">${name}</label>
                                     <div class="input-group">
-                                        <input type="number" step="0.01" class="form-control" name="m_${m.id}" value="${value}" ${disabled ? 'disabled' : ''}>
+                                        <input type="number" step="0.01" class="form-control" name="m_${m.id}" value="${value}"${disabled ? ' disabled' : ''}>
                                         <span class="input-group-text">${unit}</span>
                                     </div>
                                 </div>`;
                             $('#measurementList').append(item);
                         });
                     }
-                    modal.show();
+                    
                 })
                 .fail(function () {
-                    $('#measurementList').append('<p class="text-muted">Không có thông số</p>');
-                    modal.show();
+                    $('#measurementList').html('<p class="text-muted">Không có thông số</p>');
                 });
         }
 
@@ -246,6 +246,7 @@
             $('#note').val(note).prop('disabled', true);
             $('#unitPrice').val(price).prop('disabled', true);
             $('#saveBtn').hide();
+            modal.show();
             loadMeasurements(id, true);
         });
 
@@ -259,6 +260,7 @@
             $('#note').val(note).prop('disabled', false);
             $('#unitPrice').val(price).prop('disabled', false);
             $('#saveBtn').show();
+            modal.show();
             loadMeasurements(id, false);
         });
 
