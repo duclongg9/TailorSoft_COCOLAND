@@ -59,8 +59,13 @@ public class MaterialDAO {
 
     public Material findById(int id) {
         String sql = "SELECT ma_vai, ten_vai, mau_sac, xuat_xu, gia_thanh, so_luong, hinh_hoa_don FROM kho_vai WHERE ma_vai=?";
-        try (Connection c = conn != null ? conn : DBConnect.getConnection();
-             PreparedStatement ps = c.prepareStatement(sql)) {
+        Connection c = conn;
+        boolean shouldClose = false;
+        if (c == null) {
+            c = DBConnect.getConnection();
+            shouldClose = true;
+        }
+        try (PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setInt(1, id);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
@@ -77,6 +82,14 @@ public class MaterialDAO {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+            } finally {
+            if (shouldClose && c != null) {
+                try {
+                    c.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
         }
         return null;
     }

@@ -21,7 +21,7 @@ public class OrderDAO {
     public List<Order> findAll() {
         List<Order> list = new ArrayList<>();
         String sql = "SELECT dh.ma_don, dh.ma_khach, kh.ho_ten, kh.so_dien_thoai, kh.email, dh.ngay_dat, dh.ngay_giao, dh.trang_thai, dh.tong_tien, dh.da_coc " +
-                "FROM don_hang dh JOIN khach_hang kh ON dh.ma_khach = kh.ma_khach";
+                "FROM don_hang dh JOIN khach_hang kh ON dh.ma_khach = kh.ma_khach ORDER BY dh.ngay_dat DESC";
         try (Connection conn = DBConnect.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
