@@ -67,6 +67,7 @@ public class OrderCreateController extends HttpServlet {
                             String idx = k.substring("productTypeId".length());
                             int ptId = Integer.parseInt(request.getParameter(k));
                             int qty = Integer.parseInt(request.getParameter("quantity" + idx));
+                            String note = request.getParameter("note" + idx);
 
                             OrderDetail d = new OrderDetail();
                             d.setOrderId(orderId);
@@ -74,6 +75,7 @@ public class OrderCreateController extends HttpServlet {
                             d.setMaterialName("");
                             d.setUnitPrice(0);
                             d.setQuantity(qty);
+                            d.setNote(note);
                             try {
                                 orderDAO.insertDetail(d);
                             } catch (SQLException e) {

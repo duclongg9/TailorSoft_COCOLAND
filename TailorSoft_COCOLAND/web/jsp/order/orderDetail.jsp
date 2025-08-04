@@ -21,6 +21,7 @@
                             <p><strong>Tổng tiền:</strong> <fmt:formatNumber value="${order.total}" type="number" groupingUsed="true"/> ₫</p>
                             <p><strong>Đã cọc:</strong> <fmt:formatNumber value="${order.deposit}" type="number" groupingUsed="true"/> ₫</p>
                             <p><strong>Còn lại:</strong> <fmt:formatNumber value="${order.total - order.deposit}" type="number" groupingUsed="true"/> ₫</p>
+                            <button type="button" class="btn btn-outline-primary btn-sm" id="editOrderBtn" data-id="${order.id}" data-total="${order.total}" data-deposit="${order.deposit}"><i class="fa fa-pen"></i> Sửa tiền</button>
                         </div>
                     </div>
                 </div>
@@ -47,8 +48,8 @@
                             <td>${d.note}</td>
                             <td>
                                 <div class="btn-group btn-group-sm">
-                                    <button type="button" class="btn btn-outline-secondary view-detail" data-id="${d.id}" data-qty="${d.quantity}" data-note="${d.note}"><i class="fa fa-eye"></i></button>
-                                    <button type="button" class="btn btn-outline-primary edit-detail" data-id="${d.id}" data-qty="${d.quantity}" data-note="${d.note}"><i class="fa fa-pen"></i></button>
+                                    <button type="button" class="btn btn-outline-secondary view-detail" data-id="${d.id}" data-qty="${d.quantity}" data-note="${d.note}" data-price="${d.unitPrice}"><i class="fa fa-eye"></i></button>
+                                    <button type="button" class="btn btn-outline-primary edit-detail" data-id="${d.id}" data-qty="${d.quantity}" data-note="${d.note}" data-price="${d.unitPrice}"><i class="fa fa-pen"></i></button>
                                 </div>
                             </td>
                         </tr>
@@ -75,19 +76,49 @@
             </div>
             <div class="modal-body">
                 <input type="hidden" name="detailId" id="detailId">
-                <div class="mb-3">
-                    <label class="form-label">Số lượng</label>
-                    <input type="number" min="1" class="form-control" name="quantity" id="quantity">
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Ghi chú</label>
-                    <textarea class="form-control" name="note" id="note" rows="2"></textarea>
-                </div>
+                        <div class="mb-3">
+                            <label class="form-label">Số lượng</label>
+                            <input type="number" min="1" class="form-control" name="quantity" id="quantity">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Đơn giá</label>
+                            <input type="number" step="1000" class="form-control" name="unitPrice" id="unitPrice">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Ghi chú</label>
+                            <textarea class="form-control" name="note" id="note" rows="2"></textarea>
+                        </div>
                 <div id="measurementList"></div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
                 <button type="submit" class="btn btn-primary" id="saveBtn">Lưu</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="modal fade" id="editOrderModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <form id="editOrderForm" class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Cập nhật tiền đơn hàng</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" name="orderId" id="orderId">
+                <div class="mb-3">
+                    <label class="form-label">Tổng tiền</label>
+                    <input type="number" step="1000" class="form-control" name="total" id="orderTotal">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Đã cọc</label>
+                    <input type="number" step="1000" class="form-control" name="deposit" id="orderDeposit">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                <button type="submit" class="btn btn-primary">Lưu</button>
             </div>
         </form>
     </div>
@@ -117,9 +148,11 @@
             const id = $(this).data('id');
             const qty = $(this).data('qty');
             const note = $(this).data('note');
+            const price = $(this).data('price');
             $('#detailId').val(id);
             $('#quantity').val(qty).prop('disabled', true);
             $('#note').val(note).prop('disabled', true);
+            $('#unitPrice').val(price).prop('disabled', true);
             $('#saveBtn').hide();
             loadMeasurements(id, true);
         });
@@ -128,9 +161,11 @@
             const id = $(this).data('id');
             const qty = $(this).data('qty');
             const note = $(this).data('note');
+            const price = $(this).data('price');
             $('#detailId').val(id);
             $('#quantity').val(qty).prop('disabled', false);
             $('#note').val(note).prop('disabled', false);
+            $('#unitPrice').val(price).prop('disabled', false);
             $('#saveBtn').show();
             loadMeasurements(id, false);
         });
@@ -141,6 +176,20 @@
                 .done(function () {
                     location.reload();
                 });
+        });
+
+        const orderModal = new bootstrap.Modal(document.getElementById('editOrderModal'));
+        $('#editOrderBtn').on('click', function(){
+            $('#orderId').val($(this).data('id'));
+            $('#orderTotal').val($(this).data('total'));
+            $('#orderDeposit').val($(this).data('deposit'));
+            orderModal.show();
+        });
+
+        $('#editOrderForm').on('submit', function(e){
+            e.preventDefault();
+            $.post(baseUrl + '/orders/update-amount', $(this).serialize())
+                .done(function(){ location.reload(); });
         });
     });
 </script>
