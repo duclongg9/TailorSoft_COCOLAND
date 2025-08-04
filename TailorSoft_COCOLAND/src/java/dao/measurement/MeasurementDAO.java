@@ -8,6 +8,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MeasurementDAO {
+    private final Connection conn;
+
+    public MeasurementDAO() {
+        this.conn = null;
+    }
+
+    public MeasurementDAO(Connection conn) {
+        this.conn = conn;
+    }
+
     public List<Measurement> findAll() {
         List<Measurement> list = new ArrayList<>();
         String sql = "SELECT tsd.ma_do, tsd.ma_khach, k.ho_ten, tsd.ma_loai, l.ten_loai, " +
@@ -38,18 +48,27 @@ public class MeasurementDAO {
         return list;
     }
 
-    public void insert(Measurement measurement) {
+    public void insert(Measurement measurement) throws SQLException {
         String sql = "INSERT INTO thong_so_do(ma_khach, ma_loai, ma_thong_so, gia_tri, ghi_chu) VALUES(?,?,?,?,?)";
-        try (Connection conn = DBConnect.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, measurement.getCustomerId());
-            ps.setInt(2, measurement.getProductTypeId());
-            ps.setInt(3, measurement.getMeasurementTypeId());
-            ps.setDouble(4, measurement.getValue());
-            ps.setString(5, measurement.getNote());
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
+        if (conn != null) {
+            try (PreparedStatement ps = conn.prepareStatement(sql)) {
+                ps.setInt(1, measurement.getCustomerId());
+                ps.setInt(2, measurement.getProductTypeId());
+                ps.setInt(3, measurement.getMeasurementTypeId());
+                ps.setDouble(4, measurement.getValue());
+                ps.setString(5, measurement.getNote());
+                ps.executeUpdate();
+            }
+        } else {
+            try (Connection c = DBConnect.getConnection();
+                 PreparedStatement ps = c.prepareStatement(sql)) {
+                ps.setInt(1, measurement.getCustomerId());
+                ps.setInt(2, measurement.getProductTypeId());
+                ps.setInt(3, measurement.getMeasurementTypeId());
+                ps.setDouble(4, measurement.getValue());
+                ps.setString(5, measurement.getNote());
+                ps.executeUpdate();
+            }
         }
     }
 }
