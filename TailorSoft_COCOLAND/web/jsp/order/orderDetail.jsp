@@ -234,89 +234,6 @@
 </div>
 
 <script>
-    $(function () {
-        const baseUrl = '${pageContext.request.contextPath}';
-
-
-        function loadMeasurements(id, disabled) {
-            $('#measurementList').html('<p class="text-muted">Đang tải...</p>');
-            $.getJSON(baseUrl + '/order-details/measurements', {id: id})
-                .done(function (list) {
-                    $('#measurementList').empty();
-                    if (!Array.isArray(list) || list.length === 0) {
-                        $('#measurementList').append('<p class="text-muted">Không có thông số</p>');
-                    } else {
-                        list.forEach(function (m) {
-                            const name = m.name || '';
-                            const unit = m.unit || '';
-                            const value = m.value != null ? m.value : '';
-                            const item = `<div class="mb-3">
-                                    <label class="form-label">${name}</label>
-                                    <div class="input-group">
-                                        <input type="number" step="0.01" class="form-control" name="m_${m.id}" value="${value}"${disabled ? ' disabled' : ''}>
-                                        <span class="input-group-text">${unit}</span>
-                                    </div>
-                                </div>`;
-                            $('#measurementList').append(item);
-                        });
-                    }
-                    
-                })
-                .fail(function () {
-                    $('#measurementList').html('<p class="text-muted">Không có thông số</p>');
-                });
-        }
-
-        $('.view-detail').on('click', function () {
-            const id = $(this).data('id');
-            const qty = $(this).data('qty');
-            const note = $(this).data('note');
-            const price = $(this).data('price');
-            $('#detailId').val(id);
-            $('#quantity').val(qty).prop('disabled', true);
-            $('#note').val(note).prop('disabled', true);
-            $('#unitPrice').val(price).prop('disabled', true);
-            $('#saveBtn').hide();
-            modal.show();
-            loadMeasurements(id, true);
-        });
-
-        $('.edit-detail').on('click', function () {
-            const id = $(this).data('id');
-            const qty = $(this).data('qty');
-            const note = $(this).data('note');
-            const price = $(this).data('price');
-            $('#detailId').val(id);
-            $('#quantity').val(qty).prop('disabled', false);
-            $('#note').val(note).prop('disabled', false);
-            $('#unitPrice').val(price).prop('disabled', false);
-            $('#saveBtn').show();
-            modal.show();
-            loadMeasurements(id, false);
-        });
-
-        $('#editDetailForm').on('submit', function (e) {
-            e.preventDefault();
-            $.post(baseUrl + '/order-details/update', $(this).serialize())
-                .done(function () {
-                    location.reload();
-                });
-        });
-
-        const orderModal = new bootstrap.Modal(document.getElementById('editOrderModal'));
-        $('#editOrderBtn').on('click', function(){
-            $('#orderId').val($(this).data('id'));
-            $('#orderTotal').val($(this).data('total'));
-            $('#orderDeposit').val($(this).data('deposit'));
-            orderModal.show();
-        });
-
-        $('#editOrderForm').on('submit', function(e){
-            e.preventDefault();
-            $.post(baseUrl + '/orders/update-amount', $(this).serialize())
-                .done(function(){ location.reload(); });
-        });
-    });
     function showPayment(src) {
         document.getElementById('paymentModalImage').src = src;
         const modal = new bootstrap.Modal(document.getElementById('paymentModal'));
@@ -325,17 +242,24 @@
 
     document.addEventListener('DOMContentLoaded', () => {
       const mtUrl      = '<c:url value="/order-details/measurements"/>'; // GET id => JSON
+      const orderUpdateUrl = '<c:url value="/orders/update-amount"/>';
       const editModal  = new bootstrap.Modal(document.getElementById('editDetailModal'));
       const viewModal  = new bootstrap.Modal(document.getElementById('viewDetailModal'));
+      const orderModal = new bootstrap.Modal(document.getElementById('editOrderModal'));
       const $form      = document.getElementById('editDetailForm');
       const $fields    = document.getElementById('edMeasurements');
       const $viewFields = document.getElementById('vdMeasurements');
+      const orderForm  = document.getElementById('editOrderForm');
 
       document.querySelectorAll('.measure-cell').forEach(async cell => {
         const id = cell.dataset.id;
         cell.innerHTML = '<span class="text-muted">Đang tải...</span>';
         try {
           const res = await fetch(`${mtUrl}?id=${id}`);
+          if (res.status === 400) {
+            cell.innerHTML = '<span class="text-muted">Không có</span>';
+            return;
+          }
           if (!res.ok) throw new Error('HTTP ' + res.status);
           const list = await res.json();
           if (!Array.isArray(list) || list.length === 0) {
@@ -359,18 +283,27 @@
         $viewFields.innerHTML = '<p class="text-muted">Đang tải...</p>';
         try {
           const res  = await fetch(`${mtUrl}?id=${detailId}`);
-          if (!res.ok) throw new Error('HTTP ' + res.status);
-          const list = await res.json();
-          $viewFields.innerHTML = '';
-          list.forEach(m => {
-            const col = document.createElement('div');
-            col.className = 'col-md-6';
-            col.innerHTML = `
-              <label class="form-label">${m.name} (${m.unit})</label>
-              <input type="text" class="form-control" value="${m.value}" disabled>
-            `;
-            $viewFields.appendChild(col);
-          });
+          if (res.status === 400) {
+            $viewFields.innerHTML = '<p class="text-muted">Không có số đo.</p>';
+          } else if (!res.ok) {
+            throw new Error('HTTP ' + res.status);
+          } else {
+            const list = await res.json();
+            if (!Array.isArray(list) || list.length === 0) {
+              $viewFields.innerHTML = '<p class="text-muted">Không có số đo.</p>';
+            } else {
+              $viewFields.innerHTML = '';
+              list.forEach(m => {
+                const col = document.createElement('div');
+                col.className = 'col-md-6';
+                col.innerHTML = `
+                  <label class="form-label">${m.name} (${m.unit})</label>
+                  <input type="text" class="form-control" value="${m.value}" disabled>
+                `;
+                $viewFields.appendChild(col);
+              });
+            }
+          }
         } catch (e) {
           console.error(e);
           $viewFields.innerHTML = '<p class="text-danger">Không tải được số đo.</p>';
@@ -390,18 +323,27 @@
         $fields.innerHTML = '<p class="text-muted">Đang tải...</p>';
         try {
           const res  = await fetch(`${mtUrl}?id=${detailId}`);
-          if (!res.ok) throw new Error('HTTP ' + res.status);
-          const list = await res.json();
-          $fields.innerHTML = '';
-          list.forEach(m => {
-            const col = document.createElement('div');
-            col.className = 'col-md-6';
-            col.innerHTML = `
-              <label class="form-label">${m.name} (${m.unit})</label>
-              <input type="number" class="form-control" step="0.1" name="m_${m.id}" value="${m.value}" required>
-            `;
-            $fields.appendChild(col);
-          });
+          if (res.status === 400) {
+            $fields.innerHTML = '<p class="text-muted">Không có số đo.</p>';
+          } else if (!res.ok) {
+            throw new Error('HTTP ' + res.status);
+          } else {
+            const list = await res.json();
+            if (!Array.isArray(list) || list.length === 0) {
+              $fields.innerHTML = '<p class="text-muted">Không có số đo.</p>';
+            } else {
+              $fields.innerHTML = '';
+              list.forEach(m => {
+                const col = document.createElement('div');
+                col.className = 'col-md-6';
+                col.innerHTML = `
+                  <label class="form-label">${m.name} (${m.unit})</label>
+                  <input type="number" class="form-control" step="0.1" name="m_${m.id}" value="${m.value}" required>
+                `;
+                $fields.appendChild(col);
+              });
+            }
+          }
         } catch (e) {
           console.error(e);
           $fields.innerHTML = '<p class="text-danger">Không tải được số đo.</p>';
@@ -419,6 +361,26 @@
           location.reload();
         } catch (err) {
           alert('Lưu thất bại'); console.error(err);
+        }
+      });
+
+      document.getElementById('editOrderBtn')?.addEventListener('click', e => {
+        const btn = e.currentTarget;
+        document.getElementById('orderId').value = btn.dataset.id;
+        document.getElementById('orderTotal').value = btn.dataset.total;
+        document.getElementById('orderDeposit').value = btn.dataset.deposit;
+        orderModal.show();
+      });
+
+      orderForm.addEventListener('submit', async e => {
+        e.preventDefault();
+        const data = new URLSearchParams(new FormData(orderForm));
+        try {
+          const resp = await fetch(orderUpdateUrl, { method: 'POST', headers: {'Content-Type':'application/x-www-form-urlencoded'}, body: data });
+          if (!resp.ok) throw new Error('HTTP ' + resp.status);
+          location.reload();
+        } catch (err) {
+          alert('Cập nhật thất bại'); console.error(err);
         }
       });
     });
