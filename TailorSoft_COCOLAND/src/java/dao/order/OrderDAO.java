@@ -20,8 +20,7 @@ public class OrderDAO {
     }
     public List<Order> findAll() {
         List<Order> list = new ArrayList<>();
-        String sql = "SELECT dh.ma_don, dh.ma_khach, kh.ho_ten, kh.so_dien_thoai, kh.email, dh.ngay_dat, dh.ngay_giao, dh.trang_thai, dh.tong_tien, dh.da_coc, dh.anh_coc, dh.anh_full " +
-                "FROM don_hang dh JOIN khach_hang kh ON dh.ma_khach = kh.ma_khach";
+        String sql = "SELECT dh.*, kh.ho_ten, kh.so_dien_thoai, kh.email FROM don_hang dh JOIN khach_hang kh ON dh.ma_khach = kh.ma_khach";
         try (Connection conn = DBConnect.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
@@ -37,8 +36,8 @@ public class OrderDAO {
                 o.setStatus(rs.getString("trang_thai"));
                 o.setTotal(rs.getDouble("tong_tien"));
                 o.setDeposit(rs.getDouble("da_coc"));
-                o.setDepositImage(rs.getString("anh_coc"));
-                o.setFullImage(rs.getString("anh_full"));
+                try { o.setDepositImage(rs.getString("anh_coc")); } catch (SQLException ignored) {}
+                try { o.setFullImage(rs.getString("anh_full")); } catch (SQLException ignored) {}
                 list.add(o);
             }
         } catch (SQLException e) {
@@ -48,8 +47,7 @@ public class OrderDAO {
     }
 
     public Order findById(int id) {
-        String sql = "SELECT dh.ma_don, dh.ma_khach, kh.ho_ten, kh.so_dien_thoai, kh.email, dh.ngay_dat, dh.ngay_giao, dh.trang_thai, dh.tong_tien, dh.da_coc, dh.anh_coc, dh.anh_full " +
-                "FROM don_hang dh JOIN khach_hang kh ON dh.ma_khach = kh.ma_khach WHERE dh.ma_don=?";
+        String sql = "SELECT dh.*, kh.ho_ten, kh.so_dien_thoai, kh.email FROM don_hang dh JOIN khach_hang kh ON dh.ma_khach = kh.ma_khach WHERE dh.ma_don=?";
         try (Connection conn = DBConnect.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, id);
@@ -66,8 +64,8 @@ public class OrderDAO {
                     o.setStatus(rs.getString("trang_thai"));
                     o.setTotal(rs.getDouble("tong_tien"));
                     o.setDeposit(rs.getDouble("da_coc"));
-                    o.setDepositImage(rs.getString("anh_coc"));
-                    o.setFullImage(rs.getString("anh_full"));
+                    try { o.setDepositImage(rs.getString("anh_coc")); } catch (SQLException ignored) {}
+                    try { o.setFullImage(rs.getString("anh_full")); } catch (SQLException ignored) {}
                     return o;
                 }
             }
