@@ -111,10 +111,10 @@ public class OrderDAO {
         }
     }
 
-    public void insertDetail(OrderDetail detail) throws SQLException {
+    public int insertDetail(OrderDetail detail) throws SQLException {
         String sql = "INSERT INTO chi_tiet_don(ma_don, loai_sp, ten_vai, don_gia, so_luong, ghi_chu) VALUES(?,?,?,?,?,?)";
         if (conn != null) {
-            try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            try (PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
                 ps.setInt(1, detail.getOrderId());
                 ps.setString(2, detail.getProductType());
                 ps.setString(3, detail.getMaterialName());
@@ -122,10 +122,16 @@ public class OrderDAO {
                 ps.setInt(5, detail.getQuantity());
                 ps.setString(6, detail.getNote());
                 ps.executeUpdate();
+                try (ResultSet rs = ps.getGeneratedKeys()) {
+                    if (rs.next()) {
+                        return rs.getInt(1);
+                    }
+                }
             }
+            return -1;
         } else {
             try (Connection c = DBConnect.getConnection();
-                 PreparedStatement ps = c.prepareStatement(sql)) {
+                 PreparedStatement ps = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
                 ps.setInt(1, detail.getOrderId());
                 ps.setString(2, detail.getProductType());
                 ps.setString(3, detail.getMaterialName());
@@ -133,7 +139,13 @@ public class OrderDAO {
                 ps.setInt(5, detail.getQuantity());
                 ps.setString(6, detail.getNote());
                 ps.executeUpdate();
+                try (ResultSet rs = ps.getGeneratedKeys()) {
+                    if (rs.next()) {
+                        return rs.getInt(1);
+                    }
+                }
             }
+            return -1;
         }
     }
 

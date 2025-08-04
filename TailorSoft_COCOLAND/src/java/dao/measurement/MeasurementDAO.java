@@ -23,7 +23,7 @@ public class MeasurementDAO {
     public List<Measurement> findAll() {
         List<Measurement> list = new ArrayList<>();
         String sql = "SELECT tsd.ma_do, tsd.ma_khach, k.ho_ten, tsd.ma_loai, l.ten_loai, " +
-                "tsd.ma_thong_so, t.ten_thong_so, tsd.gia_tri, tsd.ghi_chu " +
+                "tsd.ma_thong_so, t.ten_thong_so, tsd.gia_tri, tsd.ghi_chu, tsd.ma_ct " +
                 "FROM thong_so_do tsd " +
                 "JOIN khach_hang k ON tsd.ma_khach = k.ma_khach " +
                 "JOIN loai_san_pham l ON tsd.ma_loai = l.ma_loai " +
@@ -42,6 +42,7 @@ public class MeasurementDAO {
                 m.setMeasurementTypeName(rs.getString("ten_thong_so"));
                 m.setValue(rs.getDouble("gia_tri"));
                 m.setNote(rs.getString("ghi_chu"));
+                m.setOrderDetailId(rs.getInt("ma_ct"));
                 list.add(m);
             }
         } catch (SQLException e) {
@@ -51,7 +52,7 @@ public class MeasurementDAO {
     }
 
     public void insert(Measurement measurement) throws SQLException {
-        String sql = "INSERT INTO thong_so_do(ma_khach, ma_loai, ma_thong_so, gia_tri, ghi_chu) VALUES(?,?,?,?,?)";
+        String sql = "INSERT INTO thong_so_do(ma_khach, ma_loai, ma_thong_so, gia_tri, ghi_chu, ma_ct) VALUES(?,?,?,?,?,?)";
         if (conn != null) {
             try (PreparedStatement ps = conn.prepareStatement(sql)) {
                 ps.setInt(1, measurement.getCustomerId());
@@ -59,6 +60,11 @@ public class MeasurementDAO {
                 ps.setInt(3, measurement.getMeasurementTypeId());
                 ps.setDouble(4, measurement.getValue());
                 ps.setString(5, measurement.getNote());
+                if (measurement.getOrderDetailId() > 0) {
+                    ps.setInt(6, measurement.getOrderDetailId());
+                } else {
+                    ps.setNull(6, Types.INTEGER);
+                }
                 ps.executeUpdate();
             }
         } else {
@@ -69,6 +75,11 @@ public class MeasurementDAO {
                 ps.setInt(3, measurement.getMeasurementTypeId());
                 ps.setDouble(4, measurement.getValue());
                 ps.setString(5, measurement.getNote());
+                if (measurement.getOrderDetailId() > 0) {
+                    ps.setInt(6, measurement.getOrderDetailId());
+                } else {
+                    ps.setNull(6, Types.INTEGER);
+                }
                 ps.executeUpdate();
             }
         }
