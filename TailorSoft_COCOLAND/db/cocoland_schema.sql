@@ -37,23 +37,6 @@ CREATE TABLE khach_hang (
     dia_chi TEXT,
     ngay_tao TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
-
--- SỐ ĐO
-CREATE TABLE thong_so_do (
-    ma_do INT PRIMARY KEY AUTO_INCREMENT,
-    ma_khach INT,
-    ma_loai INT,
-    ma_thong_so INT,
-    ma_ct INT,
-    gia_tri FLOAT,
-    ghi_chu TEXT,
-    FOREIGN KEY (ma_khach) REFERENCES khach_hang(ma_khach),
-    FOREIGN KEY (ma_loai) REFERENCES loai_san_pham(ma_loai),
-    FOREIGN KEY (ma_thong_so) REFERENCES loai_thong_so(ma_thong_so),
-    FOREIGN KEY (ma_ct) REFERENCES chi_tiet_don(ma_ct)
-);
-
-
 -- ĐƠN HÀNG
 CREATE TABLE don_hang (
     ma_don INT PRIMARY KEY AUTO_INCREMENT,
