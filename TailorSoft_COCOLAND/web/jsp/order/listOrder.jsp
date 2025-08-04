@@ -32,6 +32,7 @@
                     <option value="">Tất cả trạng thái</option>
                     <option value="Dang may">Đang may</option>
                     <option value="Hoan thanh">Hoàn thành</option>
+                    <option value="Don huy">Đơn hủy</option>
                 </select>
             </div>
             <div class="col-md-2"><input id="monthFilter" type="month" class="form-control"/></div>
@@ -70,7 +71,8 @@
                     <td><fmt:formatDate value="${o.deliveryDate}" pattern="dd-MM-yyyy"/></td>
                     <td>
                         <c:choose>
-                            <c:when test="${o.status == 'Hoan thanh'}"><span class="badge text-bg-success">Hoàn thành</span></c:when>
+                            <c:when test="${o.status eq 'Don huy'}"><span class="badge text-bg-secondary">Đơn hủy</span></c:when>
+                            <c:when test="${o.status eq 'Hoan thanh'}"><span class="badge text-bg-success">Hoàn thành</span></c:when>
                             <c:otherwise><span class="badge text-bg-info">Đang may</span></c:otherwise>
                         </c:choose>
                     </td>
@@ -80,7 +82,17 @@
                     <td class="text-center">
                         <a href="<c:url value='/orders/detail?id=${o.id}'/>" class="btn btn-sm btn-outline-secondary me-1" title="Chi tiết"><i class="fa fa-eye"></i></a>
                         <a href="#" class="btn btn-sm btn-outline-primary me-1" title="Sửa"><i class="fa fa-pen"></i></a>
-                        <a href="#" class="btn btn-sm btn-outline-success" title="In"><i class="fa fa-print"></i></a>
+                        <a href="#" class="btn btn-sm btn-outline-success me-1" title="In"><i class="fa fa-print"></i></a>
+                        <c:if test="${o.status ne 'Don huy'}">
+                            <form action="${pageContext.request.contextPath}/orders/cancel"
+                                  method="post" class="d-inline"
+                                  onsubmit="return confirm('Hủy đơn hàng này?');">
+                               <input type="hidden" name="id" value="${o.id}"/>
+                               <button class="btn btn-outline-danger btn-sm" title="Hủy">
+                                   <i class="fa fa-times"></i>
+                               </button>
+                            </form>
+                        </c:if>
                     </td>
                 </tr>
             </c:forEach>
