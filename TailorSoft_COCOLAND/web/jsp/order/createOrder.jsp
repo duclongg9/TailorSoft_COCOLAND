@@ -87,13 +87,13 @@
                             <div class="form-text"><a href="${materialCreateUrl}">Thêm vải mới</a></div>
                             <template id="materialTemplate">
                                 <div class="input-group mb-2">
-                                    <select class="form-select" name="materialId__INDEX__" required>
+                                    <select class="form-select" name="materialId___INDEX__" required>
                                         <option value="">--Chọn vải--</option>
                                         <c:forEach var="m" items="${materials}">
                                             <option value="${m.id}">${m.name}</option>
                                         </c:forEach>
                                     </select>
-                                    <input type="number" class="form-control" name="materialQty__INDEX__" placeholder="Số lượng" min="0.1" step="0.1" required>
+                                    <input type="number" class="form-control" name="materialQty___INDEX__" placeholder="Số lượng" min="0.1" step="0.1" required>
                                     <button type="button" class="btn btn-outline-danger remove-material">&times;</button>
                                 </div>
                             </template>
@@ -141,93 +141,83 @@
 </style>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-    if (typeof $ === 'function' && $.fn.select2) {
-        document.addEventListener('DOMContentLoaded', function () {
-    if (typeof $ === 'function' && $.fn.select2) {
-        $('#customerSelect').select2({placeholder:'Chọn khách hàng',width:'100%'});
-    }
-    let current = 0;
-    const orderTabs = ['step1','step2','step3','step4'];
-    function showStep(i){
-        const tabEl = document.querySelector(`#${orderTabs[i]}-tab`);
-        if (window.bootstrap && window.bootstrap.Tab) {
+        if (typeof $ === 'function' && $.fn.select2) {
+            $('#customerSelect').select2({placeholder:'Chọn khách hàng',width:'100%'});
+        }
+        let current = 0;
+        const orderTabs = ['step1','step2','step3','step4'];
+        function showStep(i){
+            const tabEl = document.querySelector(`#${orderTabs[i]}-tab`);
             if (window.bootstrap && window.bootstrap.Tab) {
-            new bootstrap.Tab(tabEl).show();
-        } else {
-            document.querySelectorAll('#orderWizard .nav-link').forEach(l => l.classList.remove('active'));
-            document.querySelectorAll('#orderWizardContent .tab-pane').forEach(p => p.classList.remove('show','active'));
-            tabEl.classList.add('active');
-            const pane = document.getElementById(orderTabs[i]);
-            if (pane) pane.classList.add('show','active');
+                new bootstrap.Tab(tabEl).show();
+            } else {
+                document.querySelectorAll('#orderWizard .nav-link').forEach(l => l.classList.remove('active'));
+                document.querySelectorAll('#orderWizardContent .tab-pane').forEach(p => p.classList.remove('show','active'));
+                tabEl.classList.add('active');
+                const pane = document.getElementById(orderTabs[i]);
+                if (pane) pane.classList.add('show','active');
+            }
+            document.getElementById('prevBtn').style.display = i===0?'none':'inline-block';
+            document.getElementById('nextBtn').classList.toggle('d-none', i===orderTabs.length-1);
+            document.getElementById('finishBtn').classList.toggle('d-none', i!==orderTabs.length-1);
         }
-        } else {
-            document.querySelectorAll('#orderWizard .nav-link').forEach(l => l.classList.remove('active'));
-            document.querySelectorAll('#orderWizardContent .tab-pane').forEach(p => p.classList.remove('show','active'));
-            tabEl.classList.add('active');
-            const pane = document.getElementById(orderTabs[i]);
-            if (pane) pane.classList.add('show','active');
-        }
-        document.getElementById('prevBtn').style.display = i===0?'none':'inline-block';
-        document.getElementById('nextBtn').classList.toggle('d-none', i===orderTabs.length-1);
-        document.getElementById('finishBtn').classList.toggle('d-none', i!==orderTabs.length-1);
-    }
-    function validateStep(i){
-        // Bước 1 dùng Select2 nên cần kiểm tra thủ công
-        if(i === 0){
-            const customer = document.getElementById('customerSelect');
-            if(!customer.value){
-                // Thông báo thân thiện khi chưa chọn khách hàng
-                alert('Vui lòng chọn khách hàng');
-                if(customer.nextElementSibling){
-                    customer.nextElementSibling.focus();
-                } else {
-                    customer.focus();
+        function validateStep(i){
+            // Bước 1 dùng Select2 nên cần kiểm tra thủ công
+            if(i === 0){
+                const customer = document.getElementById('customerSelect');
+                if(!customer.value){
+                    // Thông báo thân thiện khi chưa chọn khách hàng
+                    alert('Vui lòng chọn khách hàng');
+                    if(customer.nextElementSibling){
+                        customer.nextElementSibling.focus();
+                    } else {
+                        customer.focus();
+                    }
+                    return false;
                 }
-                return false;
+                return true;
+            }
+            const pane = document.getElementById(orderTabs[i]);
+            const inputs = pane.querySelectorAll('input, select');
+            for(const el of inputs){
+                if(!el.checkValidity()){
+                    el.reportValidity();
+                    return false;
+                }
             }
             return true;
         }
-        const pane = document.getElementById(orderTabs[i]);
-        const inputs = pane.querySelectorAll('input, select');
-        for(const el of inputs){
-            if(!el.checkValidity()){
-                el.reportValidity();
-                return false;
+        showStep(0);
+        document.getElementById('nextBtn').addEventListener('click',()=>{
+            if(current<orderTabs.length-1 && validateStep(current)){
+                current++;
+                showStep(current);
             }
-        }
-        return true;
-    }
-    showStep(0);
-    document.getElementById('nextBtn').addEventListener('click',()=>{
-        if(current<orderTabs.length-1 && validateStep(current)){
-            current++;
-            showStep(current);
-        }
-    });
-    document.getElementById('prevBtn').addEventListener('click',()=>{
-        if(current>0){
-            current--;
-            showStep(current);
-        }
-    });
+        });
+        document.getElementById('prevBtn').addEventListener('click',()=>{
+            if(current>0){
+                current--;
+                showStep(current);
+            }
+        });
 
-    const mtUrl = '<c:url value="/product-types/measurement-types"/>';
-    let itemIndex = 0;
-    const addItemBtn = document.getElementById('addItemBtn');
-    function updateAddItemBtn(){
-        const hasItem = document.querySelectorAll('#itemsContainer .card').length > 0;
-        addItemBtn.textContent = hasItem ? '+ Thêm sản phẩm khác' : '+ Chọn sản phẩm';
-    }
-    function addItem(){
-        const idx = itemIndex;
-        const tpl = document.getElementById('itemTemplate').innerHTML.replace(/__INDEX__/g, idx);
-        const div = document.createElement('div');
-        div.innerHTML = tpl;
-        const item = div.firstElementChild;
+        const mtUrl = '<c:url value="/product-types/measurement-types"/>';
+        let itemIndex = 0;
+        const addItemBtn = document.getElementById('addItemBtn');
+        function updateAddItemBtn(){
+            const hasItem = document.querySelectorAll('#itemsContainer .card').length > 0;
+            addItemBtn.textContent = hasItem ? '+ Thêm sản phẩm khác' : '+ Chọn sản phẩm';
+        }
+        function addItem(){
+            const idx = itemIndex;
+            const tpl = document.getElementById('itemTemplate').innerHTML.replace(/__INDEX__/g, idx);
+            const div = document.createElement('div');
+            div.innerHTML = tpl;
+            const item = div.firstElementChild;
 
-        const container = document.getElementById('itemsContainer');
-        container.insertBefore(item, addItemBtn);
-        item.querySelector('.remove-item').addEventListener('click', () => { item.remove(); updateAddItemBtn(); });
+            const container = document.getElementById('itemsContainer');
+            container.insertBefore(item, addItemBtn);
+            item.querySelector('.remove-item').addEventListener('click', () => { item.remove(); updateAddItemBtn(); });
         const select = item.querySelector('.productTypeSelect');
         select.addEventListener('change', function(){
             const ptId = this.value;
