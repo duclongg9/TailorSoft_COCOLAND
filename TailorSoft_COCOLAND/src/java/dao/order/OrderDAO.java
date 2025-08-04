@@ -112,15 +112,16 @@ public class OrderDAO {
     }
 
     public int insertDetail(OrderDetail detail) throws SQLException {
-        String sql = "INSERT INTO chi_tiet_don(ma_don, loai_sp, ten_vai, don_gia, so_luong, ghi_chu) VALUES(?,?,?,?,?,?)";
+        String sql = "INSERT INTO chi_tiet_don(ma_don, loai_sp, ma_vai, ten_vai, don_gia, so_luong, ghi_chu) VALUES(?,?,?,?,?,?,?)";
         if (conn != null) {
             try (PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
                 ps.setInt(1, detail.getOrderId());
                 ps.setString(2, detail.getProductType());
-                ps.setString(3, detail.getMaterialName());
-                ps.setDouble(4, detail.getUnitPrice());
-                ps.setInt(5, detail.getQuantity());
-                ps.setString(6, detail.getNote());
+                ps.setInt(3, detail.getMaterialId());
+                ps.setString(4, detail.getMaterialName());
+                ps.setDouble(5, detail.getUnitPrice());
+                ps.setInt(6, detail.getQuantity());
+                ps.setString(7, detail.getNote());
                 ps.executeUpdate();
                 try (ResultSet rs = ps.getGeneratedKeys()) {
                     if (rs.next()) {
@@ -134,10 +135,11 @@ public class OrderDAO {
                  PreparedStatement ps = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
                 ps.setInt(1, detail.getOrderId());
                 ps.setString(2, detail.getProductType());
-                ps.setString(3, detail.getMaterialName());
-                ps.setDouble(4, detail.getUnitPrice());
-                ps.setInt(5, detail.getQuantity());
-                ps.setString(6, detail.getNote());
+                ps.setInt(3, detail.getMaterialId());
+                ps.setString(4, detail.getMaterialName());
+                ps.setDouble(5, detail.getUnitPrice());
+                ps.setInt(6, detail.getQuantity());
+                ps.setString(7, detail.getNote());
                 ps.executeUpdate();
                 try (ResultSet rs = ps.getGeneratedKeys()) {
                     if (rs.next()) {
@@ -151,7 +153,7 @@ public class OrderDAO {
 
     public List<OrderDetail> findDetailsByOrder(int orderId) {
         List<OrderDetail> list = new ArrayList<>();
-        String sql = "SELECT ma_ct, ma_don, loai_sp, ten_vai, don_gia, so_luong, ghi_chu FROM chi_tiet_don WHERE ma_don = ?";
+        String sql = "SELECT ma_ct, ma_don, loai_sp, ma_vai, ten_vai, don_gia, so_luong, ghi_chu FROM chi_tiet_don WHERE ma_don = ?";
         try (Connection conn = DBConnect.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, orderId);
@@ -161,6 +163,7 @@ public class OrderDAO {
                     d.setId(rs.getInt("ma_ct"));
                     d.setOrderId(rs.getInt("ma_don"));
                     d.setProductType(rs.getString("loai_sp"));
+                    d.setMaterialId(rs.getInt("ma_vai"));
                     d.setMaterialName(rs.getString("ten_vai"));
                     d.setUnitPrice(rs.getDouble("don_gia"));
                     d.setQuantity(rs.getInt("so_luong"));
@@ -176,7 +179,7 @@ public class OrderDAO {
 
     public List<OrderDetail> findDetailsByCustomer(int customerId) {
         List<OrderDetail> list = new ArrayList<>();
-        String sql = "SELECT ct.ma_ct, ct.ma_don, ct.loai_sp, ct.ten_vai, ct.don_gia, ct.so_luong, ct.ghi_chu " +
+        String sql = "SELECT ct.ma_ct, ct.ma_don, ct.loai_sp, ct.ma_vai, ct.ten_vai, ct.don_gia, ct.so_luong, ct.ghi_chu " +
                      "FROM chi_tiet_don ct JOIN don_hang dh ON ct.ma_don = dh.ma_don WHERE dh.ma_khach = ?";
         try (Connection conn = DBConnect.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -187,6 +190,7 @@ public class OrderDAO {
                     d.setId(rs.getInt("ma_ct"));
                     d.setOrderId(rs.getInt("ma_don"));
                     d.setProductType(rs.getString("loai_sp"));
+                    d.setMaterialId(rs.getInt("ma_vai"));
                     d.setMaterialName(rs.getString("ten_vai"));
                     d.setUnitPrice(rs.getDouble("don_gia"));
                     d.setQuantity(rs.getInt("so_luong"));
