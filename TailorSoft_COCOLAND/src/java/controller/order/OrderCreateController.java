@@ -62,11 +62,11 @@ public class OrderCreateController extends HttpServlet {
 
                 Map<String, String[]> params = request.getParameterMap();
                 params.keySet().stream()
-                        .filter(k -> k.startsWith("productTypeId_"))
+                        .filter(k -> k.startsWith("productTypeId"))
                         .forEach(k -> {
-                            String idx = k.substring("productTypeId_".length());
+                            String idx = k.substring("productTypeId".length());
                             int ptId = Integer.parseInt(request.getParameter(k));
-                            int qty = Integer.parseInt(request.getParameter("quantity_" + idx));
+                            int qty = Integer.parseInt(request.getParameter("quantity" + idx));
 
                             OrderDetail d = new OrderDetail();
                             d.setOrderId(orderId);

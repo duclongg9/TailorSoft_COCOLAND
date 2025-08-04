@@ -55,7 +55,7 @@
                                 <div class="row g-3">
                                     <div class="col-md-6">
                                         <label class="form-label">Loại sản phẩm</label>
-                                        <select class="form-select productTypeSelect" name="productTypeId___INDEX__" required>
+                                        <select class="form-select productTypeSelect" name="productTypeId__INDEX__" required>
                                             <option value="" selected>--Chọn loại--</option>
                                             <c:forEach var="pt" items="${productTypes}">
                                                 <option value="${pt.id}">${pt.name}</option>
@@ -68,7 +68,7 @@
                                     </div>
                                     <div class="col-md-2">
                                         <label class="form-label">Số lượng</label>
-                                        <input type="number" class="form-control" name="quantity___INDEX__" value="1" min="1" required>
+                                        <input type="number" class="form-control" name="quantity__INDEX__" value="1" min="1" required>
                                     </div>
                                 </div>
 
@@ -239,8 +239,14 @@
             }
 
             itemsContainer.insertBefore(card, addItemBtn);
-            itemIndex++;
             updateAddBtnLabel();
+
+            // Load measurements immediately if a value is preselected
+            if (select.value) {
+                loadMeasurements(select, card);
+            }
+
+            itemIndex++;
         }
 
         async function loadMeasurements(select, card){
