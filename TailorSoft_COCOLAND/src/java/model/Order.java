@@ -14,6 +14,8 @@ public class Order {
     private double total;
     private double deposit;
     private String productType;
+    private String depositImage;
+    private String fullImage;
 
     public Order() {}
 
@@ -49,4 +51,8 @@ public class Order {
     public void setDeposit(double deposit) { this.deposit = deposit; }
     public String getProductType() { return productType; }
     public void setProductType(String productType) { this.productType = productType; }
+    public String getDepositImage() { return depositImage; }
+    public void setDepositImage(String depositImage) { this.depositImage = depositImage; }
+    public String getFullImage() { return fullImage; }
+    public void setFullImage(String fullImage) { this.fullImage = fullImage; }
 }

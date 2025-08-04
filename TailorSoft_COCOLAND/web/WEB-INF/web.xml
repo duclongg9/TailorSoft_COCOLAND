@@ -88,6 +88,15 @@
     </servlet-mapping>
 
     <servlet>
+        <servlet-name>OrderPaymentImageUploadController</servlet-name>
+        <servlet-class>controller.order.OrderPaymentImageUploadController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>OrderPaymentImageUploadController</servlet-name>
+        <url-pattern>/orders/payment-image</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
         <servlet-name>OrderCreateController</servlet-name>
         <servlet-class>controller.order.OrderCreateController</servlet-class>
     </servlet>

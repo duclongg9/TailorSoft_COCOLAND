@@ -46,6 +46,8 @@ CREATE TABLE don_hang (
     trang_thai VARCHAR(30) CHECK (trang_thai IN ('Dang may', 'Hoan thanh', 'Don huy')),
     tong_tien DECIMAL(12,2),
     da_coc DECIMAL(12,2),
+    anh_coc VARCHAR(255),
+    anh_full VARCHAR(255),
     FOREIGN KEY (ma_khach) REFERENCES khach_hang(ma_khach)
 ) ENGINE=InnoDB;
 
