@@ -39,19 +39,24 @@
                 </div>
                 <div class="tab-pane fade" id="step2" role="tabpanel">
                     <div id="itemsContainer">
-                        <button type="button" class="btn btn-outline-primary mt-2" id="addItemBtn">+ Chọn sản phẩm</button>
+                        <button type="button" class="btn btn-outline-primary mt-2" id="addItemBtn">
+                            + Chọn sản phẩm
+                        </button>
                     </div>
+
                     <template id="itemTemplate">
                         <div class="card mb-3">
                             <div class="card-body">
-                                <div class="text-end">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <h6 class="fw-semibold mb-2">Sản phẩm #__INDEX__</h6>
                                     <button type="button" class="btn-close remove-item" aria-label="Xóa"></button>
                                 </div>
-                                <div class="row mb-3">
+
+                                <div class="row g-3">
                                     <div class="col-md-6">
                                         <label class="form-label">Loại sản phẩm</label>
-                                        <select class="form-select productTypeSelect" name="productTypeId___INDEX__" required>                                            
-                                        <option value="">--Chọn loại--</option>
+                                        <select class="form-select productTypeSelect" name="productTypeId___INDEX__" required>
+                                            <option value="" selected>--Chọn loại--</option>
                                             <c:forEach var="pt" items="${productTypes}">
                                                 <option value="${pt.id}">${pt.name}</option>
                                             </c:forEach>
@@ -59,14 +64,18 @@
                                         <c:url var="ptCreateUrl" value="/product-types/create">
                                             <c:param name="returnUrl" value="/orders/create"/>
                                         </c:url>
-                                        <div class="form-text"><a href="${ptCreateUrl}">Thêm loại sản phẩm</a></div>
+                                        <small class="form-text"><a href="${ptCreateUrl}">Thêm loại sản phẩm</a></small>
                                     </div>
                                     <div class="col-md-2">
                                         <label class="form-label">Số lượng</label>
-                                        <input type="number" class="form-control" name="quantity___INDEX__" value="1" min="1" required/>
+                                        <input type="number" class="form-control" name="quantity___INDEX__" value="1" min="1" required>
                                     </div>
                                 </div>
-                                <div class="row measurement-fields d-none"></div>
+
+                                <div class="measurement-wrapper mt-4 d-none">
+                                    <h6 class="text-muted mb-2"><i class="bi bi-rulers"></i> Thông tin số đo (<span class="measure-title"></span>)</h6>
+                                    <div class="row gy-3 measurement-fields"></div>
+                                </div>
                             </div>
                         </div>
                     </template>
@@ -203,60 +212,73 @@
 
         const mtUrl = '<c:url value="/product-types/measurement-types"/>';
         let itemIndex = 0;
+        const itemsContainer = document.getElementById('itemsContainer');
         const addItemBtn = document.getElementById('addItemBtn');
-        function updateAddItemBtn(){
-            const hasItem = document.querySelectorAll('#itemsContainer .card').length > 0;
+
+        function updateAddBtnLabel(){
+            const hasItem = itemsContainer.querySelectorAll('.card').length > 0;
             addItemBtn.textContent = hasItem ? '+ Thêm sản phẩm khác' : '+ Chọn sản phẩm';
         }
-        function addItem(){
-            const idx = itemIndex;
-            const tpl = document.getElementById('itemTemplate').innerHTML.replace(/__INDEX__/g, idx);
-            const div = document.createElement('div');
-            div.innerHTML = tpl;
-            const item = div.firstElementChild;
 
-            const container = document.getElementById('itemsContainer');
-            container.insertBefore(item, addItemBtn);
-            item.querySelector('.remove-item').addEventListener('click', () => { item.remove(); updateAddItemBtn(); });
-        const select = item.querySelector('.productTypeSelect');
-        select.addEventListener('change', function(){
-            const ptId = this.value;
-            const fields = item.querySelector('.measurement-fields');
+        function addItem(){
+            const tpl = document.getElementById('itemTemplate').innerHTML.replace(/__INDEX__/g, itemIndex);
+            const wrap = document.createElement('div');
+            wrap.innerHTML = tpl;
+            const card = wrap.firstElementChild;
+
+            card.querySelector('.remove-item').addEventListener('click', () => {
+                card.remove();
+                updateAddBtnLabel();
+            });
+
+            const select = card.querySelector('.productTypeSelect');
+            select.addEventListener('change', () => loadMeasurements(select, card));
+
+            if (typeof $ === 'function' && $.fn.select2) {
+                $(select).select2({ placeholder: 'Chọn loại', dropdownParent: $(card), width: '100%' });
+            }
+
+            itemsContainer.insertBefore(card, addItemBtn);
+            itemIndex++;
+            updateAddBtnLabel();
+        }
+
+        async function loadMeasurements(select, card){
+            const ptId = select.value;
+            const wrapper = card.querySelector('.measurement-wrapper');
+            const fields = wrapper.querySelector('.measurement-fields');
+            const title = wrapper.querySelector('.measure-title');
             fields.innerHTML = '';
-            fields.classList.add('d-none');
+            wrapper.classList.add('d-none');
+
             if(!ptId) return;
-            fetch(mtUrl + '?productTypeId=' + ptId)
-                .then(res => { if(!res.ok) throw new Error(); return res.json(); })
-                .then(data => {
+
+            try {
+                const resp = await fetch(mtUrl + '?productTypeId=' + ptId);
+                if(!resp.ok) throw new Error('HTTP ' + resp.status);
+                const data = await resp.json();
+                if(!Array.isArray(data) || data.length === 0){
+                    fields.innerHTML = '<p class="text-warning mb-0">Chưa cấu hình số đo cho loại sản phẩm này.</p>';
+                } else {
                     data.forEach(mt => {
                         const col = document.createElement('div');
-                        col.className = 'col-md-6 mb-3';
-                        col.innerHTML = `<label class="form-label">${mt.name} (${mt.unit})</label>` +
-                            `<input type="number" step="0.1" class="form-control measurement-input" name="item${idx}_m${mt.id}" placeholder="${mt.unit}" required>`;
+                        col.className = 'col-md-6';
+                        col.innerHTML = `\n                            <label class="form-label">${mt.name} (${mt.unit})</label>\n                            <input type="number" class="form-control" step="0.1" name="item${select.name.match(/\d+/)[0]}_m${mt.id}" placeholder="${mt.unit}" required>\n                        `;
                         fields.appendChild(col);
                     });
-                    fields.classList.remove('d-none');
-                    const inputs = fields.querySelectorAll('.measurement-input');
-                    inputs.forEach((inp, i) => {
-                        inp.addEventListener('keydown', e => {
-                            if(e.key === 'Enter'){
-                                e.preventDefault();
-                                const next = inputs[i+1];
-                                if(next){ next.focus(); }
-                            }
-                        });
-                    });
-                })
-                .catch(() => {
-                    fields.innerHTML = '<div class="text-danger">Không lấy được kích thước</div>';
-                    fields.classList.remove('d-none');
-                });
-        });
-        itemIndex++;
-        updateAddItemBtn();
-    }
-    addItemBtn.addEventListener('click', addItem);
-    addItem();
+                }
+                const selText = select.options[select.selectedIndex].textContent.trim();
+                title.textContent = selText;
+                wrapper.classList.remove('d-none');
+            } catch (err) {
+                console.error(err);
+                fields.innerHTML = '<p class="text-danger mb-0">Lỗi tải dữ liệu số đo</p>';
+                wrapper.classList.remove('d-none');
+            }
+        }
+
+        addItemBtn.addEventListener('click', addItem);
+        addItem();
     const totalInput = document.querySelector('input[name="total"]');
     const depositInput = document.querySelector('input[name="deposit"]');
     function validatePayment(){
