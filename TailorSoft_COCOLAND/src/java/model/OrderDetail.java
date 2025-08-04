@@ -3,6 +3,7 @@ package model;
 public class OrderDetail {
     private int id;
     private int orderId;
+    private int productTypeId;
     private String productType;
     private int materialId;
     private String materialName;
@@ -12,9 +13,10 @@ public class OrderDetail {
 
     public OrderDetail() {}
 
-    public OrderDetail(int id, int orderId, String productType, int materialId, String materialName, double unitPrice, int quantity, String note) {
+    public OrderDetail(int id, int orderId, int productTypeId, String productType, int materialId, String materialName, double unitPrice, int quantity, String note) {
         this.id = id;
         this.orderId = orderId;
+        this.productTypeId = productTypeId;
         this.productType = productType;
         this.materialId = materialId;
         this.materialName = materialName;
@@ -22,11 +24,17 @@ public class OrderDetail {
         this.quantity = quantity;
         this.note = note;
     }
+    
+    public OrderDetail(int id, int orderId, String productType, int materialId, String materialName, double unitPrice, int quantity, String note) {
+        this(id, orderId, 0, productType, materialId, materialName, unitPrice, quantity, note);
+    }
 
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
     public int getOrderId() { return orderId; }
     public void setOrderId(int orderId) { this.orderId = orderId; }
+    public int getProductTypeId() { return productTypeId; }
+    public void setProductTypeId(int productTypeId) { this.productTypeId = productTypeId; }
     public String getProductType() { return productType; }
     public void setProductType(String productType) { this.productType = productType; }
     public int getMaterialId() { return materialId; }

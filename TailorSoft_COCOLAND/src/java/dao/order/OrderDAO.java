@@ -262,13 +262,15 @@ public class OrderDAO {
         }
     }
 
-    public int updateStatus(int orderId, String newStatus) throws SQLException {
+    public int updateStatus(int orderId, String newStatus) {
         String sql = "UPDATE don_hang SET trang_thai=? WHERE ma_don=?";
         if (conn != null) {
             try (PreparedStatement ps = conn.prepareStatement(sql)) {
                 ps.setString(1, newStatus);
                 ps.setInt(2, orderId);
                 return ps.executeUpdate();
+                } catch (SQLException e) {
+                e.printStackTrace();
             }
         } else {
             try (Connection c = DBConnect.getConnection();
@@ -276,8 +278,11 @@ public class OrderDAO {
                 ps.setString(1, newStatus);
                 ps.setInt(2, orderId);
                 return ps.executeUpdate();
+                } catch (SQLException e) {
+                e.printStackTrace();
             }
         }
+        return 0;
     }
 
     public void updateAmounts(int orderId, double total, double deposit) throws SQLException {
