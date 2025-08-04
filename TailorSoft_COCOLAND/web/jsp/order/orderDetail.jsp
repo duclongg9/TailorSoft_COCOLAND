@@ -21,6 +21,18 @@
                             <p><strong>Tổng tiền:</strong> <fmt:formatNumber value="${order.total}" type="number" groupingUsed="true"/> ₫</p>
                             <p><strong>Đã thanh toán:</strong> <fmt:formatNumber value="${order.deposit}" type="number" groupingUsed="true"/> ₫</p>
                             <p><strong>Còn lại:</strong> <fmt:formatNumber value="${order.total - order.deposit}" type="number" groupingUsed="true"/> ₫</p>
+                            <c:if test="${not empty order.depositImage}">
+                                <p><strong>Ảnh cọc:</strong>
+                                    <img src="<c:url value='/uploads/${order.depositImage}'/>" alt="Ảnh cọc" style="height:40px;" class="me-2">
+                                    <button type="button" class="btn btn-sm btn-secondary" onclick="showPayment('<c:url value="/uploads/${order.depositImage}"/>')">Xem</button>
+                                </p>
+                            </c:if>
+                            <c:if test="${not empty order.fullImage}">
+                                <p><strong>Ảnh full:</strong>
+                                    <img src="<c:url value='/uploads/${order.fullImage}'/>" alt="Ảnh full" style="height:40px;" class="me-2">
+                                    <button type="button" class="btn btn-sm btn-secondary" onclick="showPayment('<c:url value="/uploads/${order.fullImage}"/>')">Xem</button>
+                                </p>
+                            </c:if>
                             <button type="button" class="btn btn-outline-primary btn-sm" id="editOrderBtn" data-id="${order.id}" data-total="${order.total}" data-deposit="${order.deposit}"><i class="fa fa-pen"></i> Sửa tiền</button>
                         </div>
                     </div>
@@ -59,7 +71,7 @@
             </c:if>
             <div class="d-flex gap-2 mb-3">
                 <a href="#" class="btn btn-outline-primary btn-sm"><i class="fa fa-pen"></i> Cập nhật trạng thái</a>
-                <a href="#" class="btn btn-outline-success btn-sm"><i class="fa fa-coins"></i> Thêm thanh toán</a>
+                <button type="button" class="btn btn-outline-success btn-sm" data-bs-toggle="modal" data-bs-target="#uploadPaymentModal"><i class="fa fa-coins"></i> Thêm thanh toán</button>
                 <a href="#" class="btn btn-outline-secondary btn-sm"><i class="fa fa-print"></i> In phiếu</a>
             </div>
         </c:if>
@@ -95,6 +107,49 @@
                 <button type="submit" class="btn btn-primary" id="saveBtn">Lưu</button>
             </div>
         </form>
+    </div>
+</div>
+
+<div class="modal fade" id="uploadPaymentModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <form class="modal-content" method="post" enctype="multipart/form-data" action="<c:url value='/orders/payment-image'/>">
+            <div class="modal-header">
+                <h5 class="modal-title">Thêm thanh toán</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" name="orderId" value="${order.id}">
+                <div class="mb-3">
+                    <label class="form-label">Loại</label>
+                    <select name="type" class="form-select">
+                        <option value="deposit">Cọc</option>
+                        <option value="full">Full</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Ảnh chuyển khoản</label>
+                    <input type="file" name="paymentImage" class="form-control" accept="image/*" required>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                <button type="submit" class="btn btn-primary">Lưu</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="modal fade" id="paymentModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Ảnh chuyển khoản</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <img id="paymentModalImage" src="" alt="Ảnh chuyển khoản" class="img-fluid"/>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -203,6 +258,11 @@
                 .done(function(){ location.reload(); });
         });
     });
+    function showPayment(src) {
+        document.getElementById('paymentModalImage').src = src;
+        const modal = new bootstrap.Modal(document.getElementById('paymentModal'));
+        modal.show();
+    }
 </script>
 
 <jsp:include page="/jsp/common/footer.jsp"/>
