@@ -232,10 +232,13 @@
             });
 
             const select = card.querySelector('.productTypeSelect');
-            select.addEventListener('change', () => loadMeasurements(select, card));
+            const handle = () => loadMeasurements(select, card);
 
             if (typeof $ === 'function' && $.fn.select2) {
-                $(select).select2({ placeholder: 'Chọn loại', dropdownParent: $(card), width: '100%' });
+                $(select).on('change', handle)
+                         .select2({ placeholder: 'Chọn loại', dropdownParent: $(card), width: '100%' });
+            } else {
+                select.addEventListener('change', handle);
             }
 
             itemsContainer.insertBefore(card, addItemBtn);
