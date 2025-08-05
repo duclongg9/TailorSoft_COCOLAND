@@ -71,7 +71,7 @@
             </c:if>
             <div class="d-flex gap-2 mb-3">
                 <button type="button" class="btn btn-outline-primary btn-sm" id="toggleStatusBtn" data-id="${order.id}"><i class="fa fa-pen"></i> Cập nhật trạng thái</button>
-                <button type="button" class="btn btn-outline-success btn-sm" data-bs-toggle="modal" data-bs-target="#uploadPaymentModal"><i class="fa fa-coins"></i> Thêm thanh toán</button>
+                <button type="button" class="btn btn-outline-success btn-sm" data-bs-toggle="modal" data-bs-target="#uploadPaymentModal" data-order-id="${order.id}"><i class="fa fa-coins"></i> Thêm thanh toán</button>
                 <a href="#" class="btn btn-outline-secondary btn-sm"><i class="fa fa-print"></i> In phiếu</a>
             </div>
             <c:if test="${not empty order.depositImage || not empty order.fullImage}">
@@ -264,6 +264,7 @@
       const orderForm  = document.getElementById('editOrderForm');
       const statusBtn  = document.getElementById('toggleStatusBtn');
       const statusText = document.getElementById('orderStatus');
+      const addPaymentBtn = document.querySelector('[data-bs-toggle="modal"][data-bs-target="#uploadPaymentModal"]');
 
       const formatValue = v => {
         const num = Number(v);
@@ -401,6 +402,15 @@
           orderModal.show();
         });
       }
+      
+      if (addPaymentBtn) {
+        addPaymentBtn.addEventListener('click', function () {
+          const orderId = this.dataset.orderId;
+          document.querySelector('#uploadPaymentModal input[name="orderId"]').value = orderId;
+        });
+      }
+
+
 
       orderForm.addEventListener('submit', async e => {
         e.preventDefault();
