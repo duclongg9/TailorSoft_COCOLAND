@@ -250,4 +250,13 @@
         <url-pattern>/orders/update-amount</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>OrderSendEmailController</servlet-name>
+        <servlet-class>controller.order.OrderSendEmailController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>OrderSendEmailController</servlet-name>
+        <url-pattern>/orders/send-email</url-pattern>
+    </servlet-mapping>
+
 </web-app>
