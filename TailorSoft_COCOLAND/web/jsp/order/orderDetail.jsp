@@ -15,7 +15,7 @@
                             <p><strong>Khách hàng:</strong> ${order.customerName}</p>
                             <p><strong>Ngày đặt:</strong> <fmt:formatDate value="${order.orderDate}" pattern="dd-MM-yyyy"/></p>
                             <p><strong>Ngày giao:</strong> <fmt:formatDate value="${order.deliveryDate}" pattern="dd-MM-yyyy"/></p>
-                            <p><strong>Trạng thái:</strong> ${order.status}</p>
+                            <p><strong>Trạng thái:</strong> <span id="orderStatus">${order.status}</span></p>
                         </div>
                         <div class="col-md-6">
                             <p><strong>Tổng tiền:</strong> <fmt:formatNumber value="${order.total}" type="number" groupingUsed="true"/> ₫</p>
@@ -70,7 +70,7 @@
                 </table>
             </c:if>
             <div class="d-flex gap-2 mb-3">
-                <a href="#" class="btn btn-outline-primary btn-sm"><i class="fa fa-pen"></i> Cập nhật trạng thái</a>
+                <button type="button" class="btn btn-outline-primary btn-sm" id="toggleStatusBtn" data-id="${order.id}"><i class="fa fa-pen"></i> Cập nhật trạng thái</button>
                 <button type="button" class="btn btn-outline-success btn-sm" data-bs-toggle="modal" data-bs-target="#uploadPaymentModal"><i class="fa fa-coins"></i> Thêm thanh toán</button>
                 <a href="#" class="btn btn-outline-secondary btn-sm"><i class="fa fa-print"></i> In phiếu</a>
             </div>
@@ -254,6 +254,7 @@
     document.addEventListener('DOMContentLoaded', () => {
       const mtUrl      = '<c:url value="/order-details/measurements"/>'; // GET id => JSON
       const orderUpdateUrl = '<c:url value="/orders/update-amount"/>';
+      const toggleStatusUrl = '<c:url value="/orders/toggle-status"/>';
       const editModal  = new bootstrap.Modal(document.getElementById('editDetailModal'));
       const viewModal  = new bootstrap.Modal(document.getElementById('viewDetailModal'));
       const orderModal = new bootstrap.Modal(document.getElementById('editOrderModal'));
@@ -261,6 +262,8 @@
       const $fields    = document.getElementById('edMeasurements');
       const $viewFields = document.getElementById('vdMeasurements');
       const orderForm  = document.getElementById('editOrderForm');
+      const statusBtn  = document.getElementById('toggleStatusBtn');
+      const statusText = document.getElementById('orderStatus');
 
       const formatValue = v => {
         const num = Number(v);
@@ -406,6 +409,22 @@
             body: data
           });
           location.reload();
+        } catch (err) {
+          alert('Cập nhật thất bại'); console.error(err);
+        }
+      });
+      
+      statusBtn?.addEventListener('click', async e => {
+        e.preventDefault();
+        try {
+          const resp = await fetch(toggleStatusUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: `id=${statusBtn.dataset.id}`
+          });
+          if (!resp.ok) throw new Error('HTTP ' + resp.status);
+          const data = await resp.json();
+          statusText.textContent = data.status;
         } catch (err) {
           alert('Cập nhật thất bại'); console.error(err);
         }
