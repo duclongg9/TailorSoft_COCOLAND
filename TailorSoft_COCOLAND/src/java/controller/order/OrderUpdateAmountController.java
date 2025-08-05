@@ -25,28 +25,30 @@ public class OrderUpdateAmountController extends HttpServlet {
         int orderId = Integer.parseInt(req.getParameter("orderId"));
         double total = Double.parseDouble(req.getParameter("total"));
         double deposit = Double.parseDouble(req.getParameter("deposit"));
+
+        Order order = orderDAO.findById(orderId);
+        if (order == null) {
+            resp.sendError(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
         if (deposit > total) {
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
             return;
         }
         try {
             orderDAO.updateAmounts(orderId, total, deposit);
-            
+
             if (deposit >= total) {
-                Order order = orderDAO.findById(orderId);
-                if (order != null) {
-                    order.setTotal(total);
-                    order.setDeposit(deposit);
-                    try {
-                        List<OrderDetail> details = orderDAO.findDetailsByOrder(orderId);
-                        notificationService.sendOrderEmail(order.getCustomerEmail(), order, details);
-                        notificationService.sendOrderZns(order.getCustomerPhone(), order, details);
-                    } catch (Exception e) {
-                        LOGGER.log(Level.WARNING, "Send notification failed", e);
-                    }
+                order.setTotal(total);
+                order.setDeposit(deposit);
+                try {
+                    List<OrderDetail> details = orderDAO.findDetailsByOrder(orderId);
+                    notificationService.sendOrderEmail(order.getCustomerEmail(), order, details);
+                    notificationService.sendOrderZns(order.getCustomerPhone(), order, details);
+                } catch (Exception e) {
+                    LOGGER.log(Level.WARNING, "Send notification failed", e);
                 }
             }
-
 
             resp.setStatus(HttpServletResponse.SC_OK);
         } catch (SQLException ex) {

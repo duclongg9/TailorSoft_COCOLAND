@@ -420,17 +420,19 @@
       if (statusBtn) {
         statusBtn.addEventListener('click', async function (e) {
           e.preventDefault();
+          const orderId = this.dataset.id;
           try {
             const resp = await fetch(toggleStatusUrl, {
               method: 'POST',
               headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-              body: `id=${statusBtn.dataset.id}`
+              body: `id=${orderId}`
             });
             if (!resp.ok) throw new Error('HTTP ' + resp.status);
             const data = await resp.json();
             statusText.textContent = data.status;
           } catch (err) {
-            alert('Cập nhật thất bại'); console.error(err);
+            alert('Cập nhật trạng thái thất bại');
+            console.error(err);
           }
         });
       }
