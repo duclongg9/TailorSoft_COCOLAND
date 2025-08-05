@@ -32,7 +32,7 @@ public class NotificationService {
     private static final Logger LOGGER = Logger.getLogger(NotificationService.class.getName());
     // Thay đổi tên biến môi trường ở đây
     private static final String GMAIL_USER = System.getenv("duclongg9@gmail.com");  // Email của bạn (ví dụ: duclongg9@gmail.com)
-    private static final String GMAIL_PASS = System.getenv("hgxf dloo glyx jlrm");  // Mật khẩu ứng dụng Gmail
+    private static final String GMAIL_PASS = System.getenv("qnzz mwkg uhjw umee");  // Mật khẩu ứng dụng Gmail
     private static final String ZALO_ACCESS_TOKEN = System.getenv("ZALO_ACCESS_TOKEN");
     private static final String ZALO_TEMPLATE_ID = System.getenv("ZALO_TEMPLATE_ID");
     private static final SimpleDateFormat DF = new SimpleDateFormat("dd/MM/yyyy");
