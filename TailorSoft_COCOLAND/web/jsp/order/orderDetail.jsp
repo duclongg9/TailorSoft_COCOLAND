@@ -251,12 +251,6 @@
       const $viewFields = document.getElementById('vdMeasurements');
       const orderForm  = document.getElementById('editOrderForm');
 
-      const formatValue = v => {
-        const num = Number(v);
-        if (Number.isNaN(num)) return '';
-        return Number.isInteger(num) ? num.toString() : num.toFixed(1);
-      };
-
       document.querySelectorAll('.measure-cell').forEach(async cell => {
         const id = cell.dataset.id;
         cell.innerHTML = '<span class="text-muted">Đang tải...</span>';
@@ -271,7 +265,7 @@
           if (!Array.isArray(list) || list.length === 0) {
             cell.innerHTML = '<span class="text-muted">Không có</span>';
           } else {
-            cell.innerHTML = list.map(m => `${m.name}: ${formatValue(m.value)}${m.unit ? ' ' + m.unit : ''}`).join('<br>');
+            cell.innerHTML = list.map(m => `${m.name}: ${m.value}${m.unit ? ' ' + m.unit : ''}`).join('<br>');
           }
         } catch (e) {
           console.error(e);
@@ -304,7 +298,7 @@
                 col.className = 'col-md-6';
                 col.innerHTML = `
                   <label class="form-label">${m.name} (${m.unit})</label>
-                  <input type="text" class="form-control" value="${formatValue(m.value)}" disabled>
+                  <input type="text" class="form-control" value="${m.value}" disabled>
                 `;
                 $viewFields.appendChild(col);
               });
@@ -344,7 +338,7 @@
                 col.className = 'col-md-6';
                 col.innerHTML = `
                   <label class="form-label">${m.name} (${m.unit})</label>
-                  <input type="number" class="form-control" step="0.1" name="m_${m.id}" value="${formatValue(m.value)}" required>
+                  <input type="number" class="form-control" step="0.1" name="m_${m.id}" value="${m.value}" required>
                 `;
                 $fields.appendChild(col);
               });
