@@ -2,13 +2,8 @@ package service;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import jakarta.mail.Message;
 import jakarta.mail.MessagingException;
-import jakarta.mail.PasswordAuthentication;
-import jakarta.mail.Session;
-import jakarta.mail.Transport;
-import jakarta.mail.internet.InternetAddress;
-import jakarta.mail.internet.MimeMessage;
+import java.io.UnsupportedEncodingException;
 import model.Order;
 import model.OrderDetail;
 
@@ -23,7 +18,7 @@ import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
+import units.SendMail;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -31,34 +26,15 @@ import java.util.stream.Collectors;
 public class NotificationService {
     private static final Logger LOGGER = Logger.getLogger(NotificationService.class.getName());
     // Thay đổi tên biến môi trường ở đây
-    private static final String GMAIL_USER = System.getenv("longpdhe171902@fpt.edu.vn");
-    private static final String GMAIL_PASS = System.getenv("egic fiqn muof dedc");
     private static final String ZALO_ACCESS_TOKEN = System.getenv("ZALO_ACCESS_TOKEN");
     private static final String ZALO_TEMPLATE_ID = System.getenv("ZALO_TEMPLATE_ID");
     private static final SimpleDateFormat DF = new SimpleDateFormat("dd/MM/yyyy");
 
-    public void sendOrderEmail(String toEmail, Order order, List<OrderDetail> details) throws MessagingException {
-        if (GMAIL_USER == null || GMAIL_PASS == null) {
-            LOGGER.warning("Gmail credentials not set; skip sending email");
-            return;
-        }
+    public void sendOrderEmail(String toEmail, Order order, List<OrderDetail> details) throws MessagingException, UnsupportedEncodingException {
         if (toEmail == null || toEmail.isBlank()) {
             LOGGER.warning("Recipient email is empty; skip sending email");
             return;
         }
-        Properties props = new Properties();
-        props.put("mail.smtp.auth", "true");
-        props.put("mail.smtp.starttls.enable", "true");
-        props.put("mail.smtp.host", "smtp.gmail.com");
-        props.put("mail.smtp.port", "587");
-
-        Session session = Session.getInstance(props, new jakarta.mail.Authenticator() {
-            @Override
-            protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication(GMAIL_USER, GMAIL_PASS);
-            }
-        });
-
         String subject = "Thông tin đơn hàng #" + order.getId();
         StringBuilder body = new StringBuilder();
         body.append("Chào quý khách,\n\n")
@@ -68,14 +44,7 @@ public class NotificationService {
             .append("Ngày đặt: ").append(DF.format(order.getOrderDate())).append("\n")
             .append("Ngày hẹn: ").append(DF.format(order.getDeliveryDate())).append("\n\n")
             .append("Cảm ơn bạn đã ủng hộ cửa hàng may JohnyDung!");
-
-        Message message = new MimeMessage(session);
-        message.setFrom(new InternetAddress(GMAIL_USER));
-        message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail));
-        message.setSubject(subject);
-        message.setContent(body.toString(), "text/plain; charset=UTF-8");
-
-        Transport.send(message);
+        SendMail.sendMail(toEmail, subject, body.toString());
         LOGGER.info("Sent order email to " + toEmail);
     }
 
