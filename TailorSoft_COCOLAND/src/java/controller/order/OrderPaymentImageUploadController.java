@@ -1,6 +1,7 @@
 package controller.order;
 
 import dao.order.OrderDAO;
+import model.Order;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.http.HttpServlet;
@@ -20,6 +21,12 @@ public class OrderPaymentImageUploadController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         int orderId = Integer.parseInt(req.getParameter("orderId"));
+        Order order = orderDAO.findById(orderId);
+        if (order == null) {
+            resp.sendError(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
+
         String type = req.getParameter("type");
         Part imagePart = req.getPart("paymentImage");
         String fileName = null;
