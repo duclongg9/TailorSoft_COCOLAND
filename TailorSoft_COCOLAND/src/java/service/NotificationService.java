@@ -31,8 +31,8 @@ import java.util.stream.Collectors;
 public class NotificationService {
     private static final Logger LOGGER = Logger.getLogger(NotificationService.class.getName());
     // Thay đổi tên biến môi trường ở đây
-    private static final String GMAIL_USER = System.getenv("duclongg9@gmail.com");  // Email của bạn (ví dụ: duclongg9@gmail.com)
-    private static final String GMAIL_PASS = System.getenv("qnzz mwkg uhjw umee");  // Mật khẩu ứng dụng Gmail
+    private static final String GMAIL_USER = System.getenv("longpdhe171902@fpt.edu.vn");
+    private static final String GMAIL_PASS = System.getenv("egic fiqn muof dedc");
     private static final String ZALO_ACCESS_TOKEN = System.getenv("ZALO_ACCESS_TOKEN");
     private static final String ZALO_TEMPLATE_ID = System.getenv("ZALO_TEMPLATE_ID");
     private static final SimpleDateFormat DF = new SimpleDateFormat("dd/MM/yyyy");
@@ -73,7 +73,7 @@ public class NotificationService {
         message.setFrom(new InternetAddress(GMAIL_USER));
         message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail));
         message.setSubject(subject);
-//        message.setText(body.toString(), "UTF-8");  // Đảm bảo mã hóa UTF-8
+        message.setContent(body.toString(), "text/plain; charset=UTF-8");
 
         Transport.send(message);
         LOGGER.info("Sent order email to " + toEmail);
