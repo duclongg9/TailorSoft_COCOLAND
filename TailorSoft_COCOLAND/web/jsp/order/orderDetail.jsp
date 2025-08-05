@@ -59,7 +59,8 @@
                                         title="Sửa"
                                         data-detail-id="${d.id}"
                                         data-product-type-id="${d.productTypeId}"
-                                        data-quantity="${d.quantity}">
+                                        data-quantity="${d.quantity}"
+                                        data-unit-price="${d.unitPrice}">
                                     <i class="bi bi-pencil-square"></i>
                                 </button>
                             </td>
@@ -151,7 +152,17 @@
               <input type="number" class="form-control" name="quantity" id="edQuantity" min="1" required>
             </div>
           </div>
-
+          <div class="row g-3 mb-3">
+            <div class="col-md-6">
+              <label class="form-label">Đơn giá</label>
+              <input type="number" class="form-control" name="unitPrice" id="edUnitPrice" step="1000" min="0" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Ghi chú</label>
+              <input type="text" class="form-control" name="note" id="edNote">
+            </div>
+          </div>
+          
           <h6 class="text-muted mb-2"><i class="bi bi-rulers"></i> Thông tin số đo</h6>
           <div class="row gy-3" id="edMeasurements"></div>
         </div>
@@ -325,6 +336,9 @@
         document.getElementById('edDetailId').value = detailId;
         document.getElementById('edProductTypeName').value = ptName;
         document.getElementById('edQuantity').value = btn.dataset.quantity;
+        document.getElementById('edUnitPrice').value = btn.dataset.unitPrice;
+        const noteText = btn.closest('tr').querySelector('td:nth-child(5)').textContent.trim();
+        document.getElementById('edNote').value = noteText;
 
         $fields.innerHTML = '<p class="text-muted">Đang tải...</p>';
         try {
@@ -360,10 +374,14 @@
 
       $form.addEventListener('submit', async (e) => {
         e.preventDefault();
-        const formData = new URLSearchParams(new FormData($form));
+        const formData = new URLSearchParams(new FormData($form)).toString();
         try {
-          const resp = await fetch($form.action, { method: 'POST', headers: {'Content-Type':'application/x-www-form-urlencoded'}, body: formData });
-          if (!resp.ok) throw new Error('HTTP '+resp.status);
+          const resp = await fetch($form.action, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: formData
+          });
+          if (!resp.ok) throw new Error('HTTP ' + resp.status);
           location.reload();
         } catch (err) {
           alert('Lưu thất bại'); console.error(err);
@@ -380,10 +398,13 @@
 
       orderForm.addEventListener('submit', async e => {
         e.preventDefault();
-        const data = new URLSearchParams(new FormData(orderForm));
+        const data = new URLSearchParams(new FormData(orderForm)).toString();
         try {
-          const resp = await fetch(orderUpdateUrl, { method: 'POST', headers: {'Content-Type':'application/x-www-form-urlencoded'}, body: data });
-          if (!resp.ok) throw new Error('HTTP ' + resp.status);
+          const resp = await fetch(orderUpdateUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: data
+          });
           location.reload();
         } catch (err) {
           alert('Cập nhật thất bại'); console.error(err);
