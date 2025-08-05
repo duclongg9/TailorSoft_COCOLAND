@@ -32,6 +32,7 @@
                     <option value="">Tất cả trạng thái</option>
                     <option value="Dang may">Đang may</option>
                     <option value="Hoan thanh">Hoàn thành</option>
+                    <option value="Don huy">Đơn hủy</option>
                 </select>
             </div>
             <div class="col-md-2"><input id="monthFilter" type="month" class="form-control"/></div>
@@ -47,28 +48,32 @@
         <table id="orderTable" class="table table-striped table-hover">
             <thead>
             <tr>
-                <th class="d-none">Mã</th>
+                <th>STT</th>
+                <th class="d-none">ID</th>
                 <th>Khách hàng</th>
                 <th>Ngày đặt</th>
                 <th>Ngày giao</th>
                 <th>Trạng thái</th>
                 <th class="text-end">Tổng tiền</th>
-                <th class="text-end">Đã cọc</th>
+                <th class="text-end">Đã thanh toán</th>
                 <th class="text-end">Còn lại</th>
                 <th class="text-center">Actions</th>
+                <th class="text-center">Thanh toán</th>
             </tr>
             </thead>
             <tbody>
-            <c:forEach var="o" items="${orders}">
+            <c:forEach var="o" items="${orders}" varStatus="st">
                 <c:set var="orderMonth"><fmt:formatDate value="${o.orderDate}" pattern="yyyy-MM"/></c:set>
                 <tr data-status="${o.status}" data-order-date="${orderMonth}" data-customer-id="${o.customerId}">
+                    <td>${st.index + 1}</td>
                     <td class="d-none">${o.id}</td>
                     <td><span data-bs-toggle="tooltip" title="${o.customerPhone} / ${o.customerEmail}">${o.customerName}</span></td>
                     <td><fmt:formatDate value="${o.orderDate}" pattern="dd-MM-yyyy"/></td>
                     <td><fmt:formatDate value="${o.deliveryDate}" pattern="dd-MM-yyyy"/></td>
                     <td>
                         <c:choose>
-                            <c:when test="${o.status == 'Hoan thanh'}"><span class="badge text-bg-success">Hoàn thành</span></c:when>
+                            <c:when test="${o.status eq 'Don huy'}"><span class="badge text-bg-secondary">Đơn hủy</span></c:when>
+                            <c:when test="${o.status eq 'Hoan thanh'}"><span class="badge text-bg-success">Hoàn thành</span></c:when>
                             <c:otherwise><span class="badge text-bg-info">Đang may</span></c:otherwise>
                         </c:choose>
                     </td>
@@ -77,8 +82,30 @@
                     <td class="text-end"><fmt:formatNumber value="${o.total - o.deposit}" type="number" groupingUsed="true"/> ₫</td>
                     <td class="text-center">
                         <a href="<c:url value='/orders/detail?id=${o.id}'/>" class="btn btn-sm btn-outline-secondary me-1" title="Chi tiết"><i class="fa fa-eye"></i></a>
-                        <a href="#" class="btn btn-sm btn-outline-primary me-1" title="Sửa"><i class="fa fa-pen"></i></a>
-                        <a href="#" class="btn btn-sm btn-outline-success" title="In"><i class="fa fa-print"></i></a>
+                        <!-- Thay thế thẻ <a ...> bằng nút để chuyển trạng thái -->
+                        <button type="button"
+                                class="btn btn-sm btn-outline-primary me-1 toggle-status"
+                                data-id="${o.id}"
+                                data-status="${o.status}"
+                                title="Chuyển trạng thái">
+                            <i class="fa fa-pen"></i>
+                        </button>
+                        <a href="#" class="btn btn-sm btn-outline-success me-1" title="In"><i class="fa fa-print"></i></a>
+                        <c:if test="${o.status ne 'Don huy'}">
+                            <form action="${pageContext.request.contextPath}/orders/cancel"
+                                  method="post" class="d-inline"
+                                  onsubmit="return confirm('Hủy đơn hàng này?');">
+                               <input type="hidden" name="id" value="${o.id}"/>
+                               <button class="btn btn-outline-danger btn-sm" title="Hủy">
+                                   <i class="fa fa-times"></i>
+                               </button>
+                            </form>
+                        </c:if>
+                    </td>
+                    <td class="text-center">
+                        <c:if test="${o.deposit >= o.total}">
+                            <i class="fa fa-check text-success" title="Đã thanh toán"></i>
+                        </c:if>
                     </td>
                 </tr>
             </c:forEach>
@@ -110,6 +137,49 @@
             $('#customerFilter').select2({placeholder: 'Khách hàng', width:'100%'});
             const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
             tooltipTriggerList.map(el => new bootstrap.Tooltip(el));
+        </script>
+        <script>
+        (() => {
+          const toggleUrl = '<c:url value="/orders/toggle-status"/>';
+
+          // Xử lý click bút chì
+          document.querySelectorAll('.toggle-status').forEach(btn => {
+            btn.addEventListener('click', () => {
+              const id     = btn.dataset.id;
+              const status = btn.dataset.status;   // 'Dang may' | 'Hoan thanh'
+              const next   = status === 'Dang may' ? 'Hoan thanh' : 'Dang may';
+              const msg    = status === 'Dang may'
+                             ? 'Đánh dấu đơn này đã hoàn thành?'
+                             : 'Đổi lại trạng thái về “Đang may”?';
+
+              if (!confirm(msg)) return;
+
+
+              fetch(toggleUrl, {
+
+                method: 'POST',
+                headers: {'Content-Type':'application/x-www-form-urlencoded'},
+                body: new URLSearchParams({id})
+              })
+              .then(r => { if(!r.ok) throw new Error(); return r.json(); })
+              .then(o => {
+                // o = {status: 'Hoan thanh'} hoặc 'Dang may'
+                btn.dataset.status = o.status;
+
+                // Cập badge trong hàng
+                const badge = btn.closest('tr').querySelector('td:nth-child(6) span');
+                if (o.status === 'Hoan thanh') {
+                  badge.className = 'badge text-bg-success';
+                  badge.textContent = 'Hoàn thành';
+                } else {
+                  badge.className = 'badge text-bg-info';
+                  badge.textContent = 'Đang may';
+                }
+              })
+              .catch(() => alert('Không cập nhật được!'));
+            });
+          });
+        })();
         </script>
         <c:if test="${not empty msg}">
             <script>

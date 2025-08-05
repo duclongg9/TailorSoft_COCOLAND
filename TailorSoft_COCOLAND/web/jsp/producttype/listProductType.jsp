@@ -12,7 +12,7 @@
         <table class="table table-striped">
             <thead class="table-dark">
                 <tr>
-                    <th>Mã</th>
+                    <th>STT</th>
                     <th>Tên loại</th>
                     <th>Ký hiệu</th>
                     <th>Số đo áp dụng</th>
@@ -20,9 +20,9 @@
                 </tr>
             </thead>
             <tbody>
-                <c:forEach var="pt" items="${productTypes}">
+                <c:forEach var="pt" items="${productTypes}" varStatus="status">
                     <tr>
-                        <td>${pt.id}</td>
+                        <td>${status.count}</td>
                         <td>${pt.name}</td>
                         <td>${pt.code}</td>
                         <td>

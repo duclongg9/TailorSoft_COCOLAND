@@ -7,6 +7,7 @@
     <div class="mt-4">
         <h2>Thêm loại sản phẩm may</h2>
         <form action="" method="post" id="productTypeForm" class="mt-3">
+            <input type="hidden" name="returnUrl" value="${param.returnUrl}"/>
             <div class="mb-3">
                 <label class="form-label">Tên loại sản phẩm</label>
                 <input type="text" name="name" class="form-control" required>

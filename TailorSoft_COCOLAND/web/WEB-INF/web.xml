@@ -76,6 +76,7 @@
     <servlet-mapping>
         <servlet-name>OrderListController</servlet-name>
         <url-pattern>/orders</url-pattern>
+        <url-pattern>/orders/</url-pattern>
     </servlet-mapping>
 
     <servlet>
@@ -85,6 +86,15 @@
     <servlet-mapping>
         <servlet-name>OrderDetailController</servlet-name>
         <url-pattern>/orders/detail</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>OrderPaymentImageUploadController</servlet-name>
+        <servlet-class>controller.order.OrderPaymentImageUploadController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>OrderPaymentImageUploadController</servlet-name>
+        <url-pattern>/orders/payment-image</url-pattern>
     </servlet-mapping>
 
     <servlet>
@@ -103,6 +113,24 @@
     <servlet-mapping>
         <servlet-name>OrderHistoryController</servlet-name>
         <url-pattern>/customers/history</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>OrderCancelController</servlet-name>
+        <servlet-class>controller.order.OrderCancelController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>OrderCancelController</servlet-name>
+        <url-pattern>/orders/cancel</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>OrderToggleStatusController</servlet-name>
+        <servlet-class>controller.order.OrderToggleStatusController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>OrderToggleStatusController</servlet-name>
+        <url-pattern>/orders/toggle-status</url-pattern>
     </servlet-mapping>
 
     <servlet>
@@ -193,6 +221,33 @@
     <servlet-mapping>
         <servlet-name>CustomerUpdateController</servlet-name>
         <url-pattern>/customers/update</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>MeasurementByDetailApi</servlet-name>
+        <servlet-class>controller.order.MeasurementByDetailApi</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>MeasurementByDetailApi</servlet-name>
+        <url-pattern>/order-details/measurements</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>OrderDetailUpdateController</servlet-name>
+        <servlet-class>controller.order.OrderDetailUpdateController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>OrderDetailUpdateController</servlet-name>
+        <url-pattern>/order-details/update</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>OrderUpdateAmountController</servlet-name>
+        <servlet-class>controller.order.OrderUpdateAmountController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>OrderUpdateAmountController</servlet-name>
+        <url-pattern>/orders/update-amount</url-pattern>
     </servlet-mapping>
 
 </web-app>

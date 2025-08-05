@@ -40,6 +40,11 @@ public class ProductTypeCreateController extends HttpServlet {
         pt.setName(name);
         pt.setCode(code);
         productTypeDAO.insert(pt, ids);
-        response.sendRedirect(request.getContextPath() + "/product-types");
+        String returnUrl = request.getParameter("returnUrl");
+        if (returnUrl != null && !returnUrl.isEmpty()) {
+            response.sendRedirect(request.getContextPath() + returnUrl);
+        } else {
+            response.sendRedirect(request.getContextPath() + "/product-types");
+        }
     }
 }

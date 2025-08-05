@@ -7,8 +7,11 @@ import model.MeasurementType;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 
 public class ProductTypeDAO {
+    private final Map<Integer, String> typeNameCache = new HashMap<>();
     public List<ProductType> findAll() {
         List<ProductType> list = new ArrayList<>();
         String sql = "SELECT ma_loai, ten_loai, ky_hieu FROM loai_san_pham";
@@ -46,6 +49,13 @@ public class ProductTypeDAO {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public String cacheFindName(int id) {
+        return typeNameCache.computeIfAbsent(id, k -> {
+            ProductType p = findById(k);
+            return p == null ? "N/A" : p.getName();
+        });
     }
 
     public void insert(ProductType pt, List<Integer> measurementTypeIds) {

@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.List;
 
 public class MeasurementCreateController extends HttpServlet {
@@ -42,7 +43,7 @@ public class MeasurementCreateController extends HttpServlet {
                     m.setValue(value);
                     m.setNote(note);
                     measurementDAO.insert(m);
-                } catch (NumberFormatException ignored) {}
+                } catch (NumberFormatException | SQLException ignored) {}
             }
         }
         response.sendRedirect(request.getContextPath() + "/measurements?msg=created");

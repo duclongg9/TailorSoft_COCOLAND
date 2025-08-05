@@ -68,7 +68,7 @@ Mục tiêu:
 | Mã khách | `Select2` search hoặc nút “Thêm khách mới” (popup). |
 | Ngày đặt/ngày giao | Datepicker. |
 | Trạng thái | Dropdown với danh sách trạng thái cố định. |
-| Tổng tiền / Đã cọc | `type="number" step="1000"`; hiển thị gợi ý đơn vị VNĐ. |
+| Tổng tiền / Đã thanh toán | `type="number" step="1000"`; hiển thị gợi ý đơn vị VNĐ. |
 | Chọn sản phẩm + số đo | Sau bước này mở wizard/tab để nhập chi tiết sản phẩm & số đo. |
 
 ### Chi tiết đơn

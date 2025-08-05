@@ -28,7 +28,7 @@
         <table class="table table-striped">
             <thead class="table-dark">
                 <tr>
-                    <th>#</th>
+                    <th>STT</th>
                     <th>Tên số đo</th>
                     <th>Bộ phận</th>
                     <th>Đơn vị</th>
@@ -37,9 +37,9 @@
                 </tr>
             </thead>
             <tbody>
-                <c:forEach var="mt" items="${measurementTypes}">
+                <c:forEach var="mt" items="${measurementTypes}" varStatus="st">
                     <tr>
-                        <td>${mt.id}</td>
+                        <td>${st.index + 1}</td>
                         <td>${mt.name}</td>
                         <td>${mt.bodyPart}</td>
                         <td>${mt.unit}</td>

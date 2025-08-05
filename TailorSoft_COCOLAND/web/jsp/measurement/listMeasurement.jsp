@@ -12,22 +12,24 @@
         <table class="table table-striped table-hover">
             <thead class="table-dark">
             <tr>
-                <th>Mã</th>
+                <th>STT</th>
                 <th>Khách hàng</th>
                 <th>Loại sản phẩm</th>
                 <th>Thông số</th>
                 <th>Giá trị</th>
+                <th>Đơn vị</th>
                 <th>Ghi chú</th>
             </tr>
             </thead>
             <tbody>
-            <c:forEach var="m" items="${measurements}">
+            <c:forEach var="m" items="${measurements}" varStatus="status">
                 <tr>
-                    <td>${m.id}</td>
+                    <td>${status.index + 1}</td>
                     <td>${m.customerName}</td>
                     <td>${m.productTypeName}</td>
                     <td>${m.measurementTypeName}</td>
                     <td>${m.value}</td>
+                    <td>${m.unit}</td>
                     <td>${m.note}</td>
                 </tr>
             </c:forEach>

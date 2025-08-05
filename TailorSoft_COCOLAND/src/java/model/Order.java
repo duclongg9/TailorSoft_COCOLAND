@@ -14,10 +14,19 @@ public class Order {
     private double total;
     private double deposit;
     private String productType;
+    private String depositImage;
+    private String fullImage;
 
     public Order() {}
 
-    public Order(int id, int customerId, Date orderDate, Date deliveryDate, String status, double total, double deposit) {
+    public Order(int id, int customerId, Date orderDate, Date deliveryDate, String status,
+                 double total, double deposit) {
+        this(id, customerId, orderDate, deliveryDate, status, total, deposit, null, null, null);
+    }
+
+    public Order(int id, int customerId, Date orderDate, Date deliveryDate, String status,
+                 double total, double deposit, String productType,
+                 String depositImage, String fullImage) {
         this.id = id;
         this.customerId = customerId;
         this.orderDate = orderDate;
@@ -25,6 +34,9 @@ public class Order {
         this.status = status;
         this.total = total;
         this.deposit = deposit;
+        this.productType = productType;
+        this.depositImage = depositImage;
+        this.fullImage = fullImage;
     }
 
     public int getId() { return id; }
@@ -49,4 +61,8 @@ public class Order {
     public void setDeposit(double deposit) { this.deposit = deposit; }
     public String getProductType() { return productType; }
     public void setProductType(String productType) { this.productType = productType; }
+    public String getDepositImage() { return depositImage; }
+    public void setDepositImage(String depositImage) { this.depositImage = depositImage; }
+    public String getFullImage() { return fullImage; }
+    public void setFullImage(String fullImage) { this.fullImage = fullImage; }
 }
