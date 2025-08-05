@@ -15,7 +15,7 @@
                             <p><strong>Khách hàng:</strong> ${order.customerName}</p>
                             <p><strong>Ngày đặt:</strong> <fmt:formatDate value="${order.orderDate}" pattern="dd-MM-yyyy"/></p>
                             <p><strong>Ngày giao:</strong> <fmt:formatDate value="${order.deliveryDate}" pattern="dd-MM-yyyy"/></p>
-                            <p><strong>Trạng thái:</strong> ${order.status}</p>
+                            <p><strong>Trạng thái:</strong> <span id="orderStatus">${order.status}</span></p>
                         </div>
                         <div class="col-md-6">
                             <p><strong>Tổng tiền:</strong> <fmt:formatNumber value="${order.total}" type="number" groupingUsed="true"/> ₫</p>
@@ -35,7 +35,6 @@
                         <th>Đơn giá</th>
                         <th>Số lượng</th>
                         <th>Ghi chú</th>
-                        <th>Số đo</th>
                         <th></th>
                     </tr>
                     </thead>
@@ -47,7 +46,6 @@
                             <td><fmt:formatNumber value="${d.unitPrice}" type="number" groupingUsed="true"/> ₫</td>
                             <td>${d.quantity}</td>
                             <td>${d.note}</td>
-                            <td class="measure-cell" data-id="${d.id}"><span class="text-muted">Đang tải...</span></td>
                             <td>
                                 <button class="btn btn-outline-info btn-sm view-detail me-1"
                                         title="Xem"
@@ -59,7 +57,8 @@
                                         title="Sửa"
                                         data-detail-id="${d.id}"
                                         data-product-type-id="${d.productTypeId}"
-                                        data-quantity="${d.quantity}">
+                                        data-quantity="${d.quantity}"
+                                        data-unit-price="${d.unitPrice}">
                                     <i class="bi bi-pencil-square"></i>
                                 </button>
                             </td>
@@ -69,8 +68,8 @@
                 </table>
             </c:if>
             <div class="d-flex gap-2 mb-3">
-                <a href="#" class="btn btn-outline-primary btn-sm"><i class="fa fa-pen"></i> Cập nhật trạng thái</a>
-                <button type="button" class="btn btn-outline-success btn-sm" data-bs-toggle="modal" data-bs-target="#uploadPaymentModal"><i class="fa fa-coins"></i> Thêm thanh toán</button>
+                <button type="button" class="btn btn-outline-primary btn-sm" id="toggleStatusBtn" data-id="${order.id}"><i class="fa fa-pen"></i> Cập nhật trạng thái</button>
+                <button type="button" class="btn btn-outline-success btn-sm" data-bs-toggle="modal" data-bs-target="#uploadPaymentModal" data-order-id="${order.id}"><i class="fa fa-coins"></i> Thêm thanh toán</button>
                 <a href="#" class="btn btn-outline-secondary btn-sm"><i class="fa fa-print"></i> In phiếu</a>
             </div>
             <c:if test="${not empty order.depositImage || not empty order.fullImage}">
@@ -109,13 +108,28 @@
       </div>
       <div class="modal-body">
         <div class="row g-3 mb-3">
-          <div class="col-md-8">
+          <div class="col-md-6">
             <label class="form-label">Loại sản phẩm</label>
             <input type="text" class="form-control" id="vdProductTypeName" disabled>
           </div>
+          <div class="col-md-6">
+            <label class="form-label">Tên vải</label>
+            <input type="text" class="form-control" id="vdMaterialName" disabled>
+          </div>
+        </div>
+
+        <div class="row g-3 mb-3">
           <div class="col-md-4">
             <label class="form-label">Số lượng</label>
             <input type="number" class="form-control" id="vdQuantity" disabled>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Đơn giá</label>
+            <input type="text" class="form-control" id="vdUnitPrice" disabled>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Ghi chú</label>
+            <input type="text" class="form-control" id="vdNote" disabled>
           </div>
         </div>
 
@@ -151,7 +165,17 @@
               <input type="number" class="form-control" name="quantity" id="edQuantity" min="1" required>
             </div>
           </div>
-
+          <div class="row g-3 mb-3">
+            <div class="col-md-6">
+              <label class="form-label">Đơn giá</label>
+              <input type="number" class="form-control" name="unitPrice" id="edUnitPrice" step="1000" min="0" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Ghi chú</label>
+              <input type="text" class="form-control" name="note" id="edNote">
+            </div>
+          </div>
+          
           <h6 class="text-muted mb-2"><i class="bi bi-rulers"></i> Thông tin số đo</h6>
           <div class="row gy-3" id="edMeasurements"></div>
         </div>
@@ -243,6 +267,7 @@
     document.addEventListener('DOMContentLoaded', () => {
       const mtUrl      = '<c:url value="/order-details/measurements"/>'; // GET id => JSON
       const orderUpdateUrl = '<c:url value="/orders/update-amount"/>';
+      const toggleStatusUrl = '<c:url value="/orders/toggle-status"/>';
       const editModal  = new bootstrap.Modal(document.getElementById('editDetailModal'));
       const viewModal  = new bootstrap.Modal(document.getElementById('viewDetailModal'));
       const orderModal = new bootstrap.Modal(document.getElementById('editOrderModal'));
@@ -250,35 +275,25 @@
       const $fields    = document.getElementById('edMeasurements');
       const $viewFields = document.getElementById('vdMeasurements');
       const orderForm  = document.getElementById('editOrderForm');
+      const statusBtn  = document.getElementById('toggleStatusBtn');
+      const statusText = document.getElementById('orderStatus');
+      const addPaymentBtn = document.querySelector('[data-bs-toggle="modal"][data-bs-target="#uploadPaymentModal"]');
 
-      document.querySelectorAll('.measure-cell').forEach(async cell => {
-        const id = cell.dataset.id;
-        cell.innerHTML = '<span class="text-muted">Đang tải...</span>';
-        try {
-          const res = await fetch(`${mtUrl}?id=${id}`);
-          if (res.status === 400) {
-            cell.innerHTML = '<span class="text-muted">Không có</span>';
-            return;
-          }
-          if (!res.ok) throw new Error('HTTP ' + res.status);
-          const list = await res.json();
-          if (!Array.isArray(list) || list.length === 0) {
-            cell.innerHTML = '<span class="text-muted">Không có</span>';
-          } else {
-            cell.innerHTML = list.map(m => `${m.name}: ${m.value}${m.unit ? ' ' + m.unit : ''}`).join('<br>');
-          }
-        } catch (e) {
-          console.error(e);
-          cell.innerHTML = '<span class="text-muted">Không có</span>';
-        }
-      });
+      const formatValue = v => {
+        const num = Number(v);
+        if (Number.isNaN(num)) return '';
+        return Number.isInteger(num) ? num.toString() : num.toFixed(1);
+      };
 
       document.querySelectorAll('.view-detail').forEach(btn => btn.addEventListener('click', async () => {
         const detailId = btn.dataset.detailId;
-        const ptName   = btn.closest('tr').querySelector('td:nth-child(1)').textContent.trim();
+        const cells    = btn.closest('tr').querySelectorAll('td');
 
-        document.getElementById('vdProductTypeName').value = ptName;
-        document.getElementById('vdQuantity').value = btn.dataset.quantity;
+        document.getElementById('vdProductTypeName').value = cells[0].textContent.trim();
+        document.getElementById('vdMaterialName').value   = cells[1].textContent.trim();
+        document.getElementById('vdUnitPrice').value      = cells[2].textContent.trim();
+        document.getElementById('vdQuantity').value       = cells[3].textContent.trim();
+        document.getElementById('vdNote').value           = cells[4].textContent.trim();
 
         $viewFields.innerHTML = '<p class="text-muted">Đang tải...</p>';
         try {
@@ -319,6 +334,9 @@
         document.getElementById('edDetailId').value = detailId;
         document.getElementById('edProductTypeName').value = ptName;
         document.getElementById('edQuantity').value = btn.dataset.quantity;
+        document.getElementById('edUnitPrice').value = btn.dataset.unitPrice;
+        const noteText = btn.closest('tr').querySelector('td:nth-child(5)').textContent.trim();
+        document.getElementById('edNote').value = noteText;
 
         $fields.innerHTML = '<p class="text-muted">Đang tải...</p>';
         try {
@@ -354,35 +372,74 @@
 
       $form.addEventListener('submit', async (e) => {
         e.preventDefault();
-        const formData = new URLSearchParams(new FormData($form));
+        const formData = new URLSearchParams(new FormData($form)).toString();
         try {
-          const resp = await fetch($form.action, { method: 'POST', headers: {'Content-Type':'application/x-www-form-urlencoded'}, body: formData });
-          if (!resp.ok) throw new Error('HTTP '+resp.status);
+          const resp = await fetch($form.action, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: formData
+          });
+          if (!resp.ok) throw new Error('HTTP ' + resp.status);
           location.reload();
         } catch (err) {
           alert('Lưu thất bại'); console.error(err);
         }
       });
 
-      document.getElementById('editOrderBtn')?.addEventListener('click', e => {
-        const btn = e.currentTarget;
-        document.getElementById('orderId').value = btn.dataset.id;
-        document.getElementById('orderTotal').value = btn.dataset.total;
-        document.getElementById('orderDeposit').value = btn.dataset.deposit;
-        orderModal.show();
-      });
+      const editOrderBtn = document.getElementById('editOrderBtn');
+      if (editOrderBtn) {
+        editOrderBtn.addEventListener('click', function (e) {
+          const btn = e.currentTarget;
+          document.getElementById('orderId').value = btn.dataset.id;
+          document.getElementById('orderTotal').value = btn.dataset.total;
+          document.getElementById('orderDeposit').value = btn.dataset.deposit;
+          orderModal.show();
+        });
+      }
+      
+      if (addPaymentBtn) {
+        addPaymentBtn.addEventListener('click', function () {
+          const orderId = this.dataset.orderId;
+          document.querySelector('#uploadPaymentModal input[name="orderId"]').value = orderId;
+        });
+      }
+
+
 
       orderForm.addEventListener('submit', async e => {
         e.preventDefault();
-        const data = new URLSearchParams(new FormData(orderForm));
+        const data = new URLSearchParams(new FormData(orderForm)).toString();
         try {
-          const resp = await fetch(orderUpdateUrl, { method: 'POST', headers: {'Content-Type':'application/x-www-form-urlencoded'}, body: data });
-          if (!resp.ok) throw new Error('HTTP ' + resp.status);
+          const resp = await fetch(orderUpdateUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: data
+          });
           location.reload();
         } catch (err) {
           alert('Cập nhật thất bại'); console.error(err);
         }
       });
+      
+      if (statusBtn) {
+        statusBtn.addEventListener('click', async function (e) {
+          e.preventDefault();
+          const orderId = this.dataset.id;
+          try {
+            const resp = await fetch(toggleStatusUrl, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+              body: `id=${orderId}`
+            });
+            if (!resp.ok) throw new Error('HTTP ' + resp.status);
+            const data = await resp.json();
+            statusText.textContent = data.status;
+          } catch (err) {
+            alert('Cập nhật trạng thái thất bại');
+            console.error(err);
+          }
+        });
+      }
     });
 </script>
 
