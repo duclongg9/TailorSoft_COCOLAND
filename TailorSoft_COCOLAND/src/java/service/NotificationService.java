@@ -43,7 +43,7 @@ public class NotificationService {
             .append("Tiền đã thanh toán: ").append(order.getDeposit()).append("\n")
             .append("Ngày đặt: ").append(DF.format(order.getOrderDate())).append("\n")
             .append("Ngày hẹn: ").append(DF.format(order.getDeliveryDate())).append("\n\n")
-            .append("Cảm ơn bạn đã ủng hộ cửa hàng may JohnyDung!");
+            .append("Cảm ơn bạn!");
         SendMail.sendMail(toEmail, subject, body.toString());
         LOGGER.info("Sent order email to " + toEmail);
     }

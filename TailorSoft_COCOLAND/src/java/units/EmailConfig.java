@@ -6,6 +6,9 @@ import java.util.Properties;
 public class EmailConfig {
     private static final Properties props = new Properties();
 
+    private static final String ENV_EMAIL = System.getenv("GMAIL_USER");
+    private static final String ENV_PASSWORD = System.getenv("GMAIL_PASS");
+
     static {
         try (InputStream input = EmailConfig.class.getClassLoader().getResourceAsStream("email.properties")) {
             if (input != null) {
@@ -17,10 +20,10 @@ public class EmailConfig {
     }
 
     public static String getEmail() {
-        return props.getProperty("email");
+        return ENV_EMAIL != null ? ENV_EMAIL : props.getProperty("email");
     }
 
     public static String getPassword() {
-        return props.getProperty("password");
+        return ENV_PASSWORD != null ? ENV_PASSWORD : props.getProperty("password");
     }
 }
