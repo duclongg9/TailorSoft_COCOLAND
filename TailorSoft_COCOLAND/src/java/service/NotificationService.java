@@ -12,7 +12,6 @@ import jakarta.mail.internet.MimeMessage;
 import model.Order;
 import model.OrderDetail;
 
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -31,8 +30,9 @@ import java.util.stream.Collectors;
 
 public class NotificationService {
     private static final Logger LOGGER = Logger.getLogger(NotificationService.class.getName());
-    private static final String GMAIL_USER = System.getenv("duclongg9@gmail.com");
-    private static final String GMAIL_PASS = System.getenv("hgxf dloo glyx jlrm");
+    // Thay đổi tên biến môi trường ở đây
+    private static final String GMAIL_USER = System.getenv("duclongg9@gmail.com");  // Email của bạn (ví dụ: duclongg9@gmail.com)
+    private static final String GMAIL_PASS = System.getenv("hgxf dloo glyx jlrm");  // Mật khẩu ứng dụng Gmail
     private static final String ZALO_ACCESS_TOKEN = System.getenv("ZALO_ACCESS_TOKEN");
     private static final String ZALO_TEMPLATE_ID = System.getenv("ZALO_TEMPLATE_ID");
     private static final SimpleDateFormat DF = new SimpleDateFormat("dd/MM/yyyy");
@@ -73,7 +73,7 @@ public class NotificationService {
         message.setFrom(new InternetAddress(GMAIL_USER));
         message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail));
         message.setSubject(subject);
-        message.setText(body.toString());
+        message.setText(body.toString(), "UTF-8");  // Đảm bảo mã hóa UTF-8
 
         Transport.send(message);
         LOGGER.info("Sent order email to " + toEmail);
@@ -129,7 +129,6 @@ public class NotificationService {
             LOGGER.info("ZNS response: HTTP " + code + " - " + resp);
         } catch (IOException ex) {
             LOGGER.log(Level.WARNING, "Send ZNS failed", ex);
-
         }
     }
 
@@ -151,4 +150,3 @@ public class NotificationService {
         return digits;
     }
 }
-
