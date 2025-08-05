@@ -1,6 +1,11 @@
 <%@ page pageEncoding="UTF-8" contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ page import="com.google.gson.Gson" %>
+<%
+  Object msObj = request.getAttribute("measurements");
+  String measurementsJson = msObj != null ? new Gson().toJson(msObj) : "{}";
+%>
 <c:set var="pageTitle" value="Chi tiết đơn hàng"/>
 <jsp:include page="/jsp/common/header.jsp"/>
 <jsp:include page="/jsp/common/sidebar.jsp"/>
@@ -258,6 +263,8 @@
 </div>
 
 <script>
+    const measurements = <%= measurementsJson %>;
+
     function showPayment(src) {
         document.getElementById('paymentModalImage').src = src;
         const modal = new bootstrap.Modal(document.getElementById('paymentModal'));
@@ -265,7 +272,6 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-      const mtUrl      = '<c:url value="/order-details/measurements"/>'; // GET id => JSON
       const orderUpdateUrl = '<c:url value="/orders/update-amount"/>';
       const toggleStatusUrl = '<c:url value="/orders/toggle-status"/>';
       const editModal  = new bootstrap.Modal(document.getElementById('editDetailModal'));
@@ -285,7 +291,7 @@
         return Number.isInteger(num) ? num.toString() : num.toFixed(1);
       };
 
-      document.querySelectorAll('.view-detail').forEach(btn => btn.addEventListener('click', async () => {
+      document.querySelectorAll('.view-detail').forEach(btn => btn.addEventListener('click', () => {
         const detailId = btn.dataset.detailId;
         const cells    = btn.closest('tr').querySelectorAll('td');
 
@@ -295,39 +301,26 @@
         document.getElementById('vdQuantity').value       = cells[3].textContent.trim();
         document.getElementById('vdNote').value           = cells[4].textContent.trim();
 
-        $viewFields.innerHTML = '<p class="text-muted">Đang tải...</p>';
-        try {
-          const res  = await fetch(`${mtUrl}?id=${detailId}`);
-          if (res.status === 400) {
-            $viewFields.innerHTML = '<p class="text-muted">Không có số đo.</p>';
-          } else if (!res.ok) {
-            throw new Error('HTTP ' + res.status);
-          } else {
-            const list = await res.json();
-            if (!Array.isArray(list) || list.length === 0) {
-              $viewFields.innerHTML = '<p class="text-muted">Không có số đo.</p>';
-            } else {
-              $viewFields.innerHTML = '';
-              list.forEach(m => {
-                const col = document.createElement('div');
-                col.className = 'col-md-6';
-                col.innerHTML = `
-                  <label class="form-label">${m.name} (${m.unit})</label>
-                  <input type="text" class="form-control" value="${formatValue(m.value)}" disabled>
-                `;
-                $viewFields.appendChild(col);
-              });
-            }
-          }
-        } catch (e) {
-          console.error(e);
-          $viewFields.innerHTML = '<p class="text-danger">Không tải được số đo.</p>';
+        const list = measurements[detailId];
+        if (!Array.isArray(list) || list.length === 0) {
+          $viewFields.innerHTML = '<p class="text-muted">Không có số đo.</p>';
+        } else {
+          $viewFields.innerHTML = '';
+          list.forEach(m => {
+            const col = document.createElement('div');
+            col.className = 'col-md-6';
+            col.innerHTML = `
+              <label class="form-label">${m.name} (${m.unit})</label>
+              <input type="text" class="form-control" value="${formatValue(m.value)}" disabled>
+            `;
+            $viewFields.appendChild(col);
+          });
         }
 
         viewModal.show();
       }));
 
-      document.querySelectorAll('.edit-detail').forEach(btn => btn.addEventListener('click', async () => {
+      document.querySelectorAll('.edit-detail').forEach(btn => btn.addEventListener('click', () => {
         const detailId = btn.dataset.detailId;
         const ptName   = btn.closest('tr').querySelector('td:nth-child(1)').textContent.trim();
 
@@ -338,33 +331,20 @@
         const noteText = btn.closest('tr').querySelector('td:nth-child(5)').textContent.trim();
         document.getElementById('edNote').value = noteText;
 
-        $fields.innerHTML = '<p class="text-muted">Đang tải...</p>';
-        try {
-          const res  = await fetch(`${mtUrl}?id=${detailId}`);
-          if (res.status === 400) {
-            $fields.innerHTML = '<p class="text-muted">Không có số đo.</p>';
-          } else if (!res.ok) {
-            throw new Error('HTTP ' + res.status);
-          } else {
-            const list = await res.json();
-            if (!Array.isArray(list) || list.length === 0) {
-              $fields.innerHTML = '<p class="text-muted">Không có số đo.</p>';
-            } else {
-              $fields.innerHTML = '';
-              list.forEach(m => {
-                const col = document.createElement('div');
-                col.className = 'col-md-6';
-                col.innerHTML = `
-                  <label class="form-label">${m.name} (${m.unit})</label>
-                  <input type="number" class="form-control" step="0.1" name="m_${m.id}" value="${formatValue(m.value)}" required>
-                `;
-                $fields.appendChild(col);
-              });
-            }
-          }
-        } catch (e) {
-          console.error(e);
-          $fields.innerHTML = '<p class="text-danger">Không tải được số đo.</p>';
+        const list = measurements[detailId];
+        if (!Array.isArray(list) || list.length === 0) {
+          $fields.innerHTML = '<p class="text-muted">Không có số đo.</p>';
+        } else {
+          $fields.innerHTML = '';
+          list.forEach(m => {
+            const col = document.createElement('div');
+            col.className = 'col-md-6';
+            col.innerHTML = `
+              <label class="form-label">${m.name} (${m.unit})</label>
+              <input type="number" class="form-control" step="0.1" name="m_${m.id}" value="${formatValue(m.value)}" required>
+            `;
+            $fields.appendChild(col);
+          });
         }
 
         editModal.show();
