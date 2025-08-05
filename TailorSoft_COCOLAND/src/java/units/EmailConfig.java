@@ -20,10 +20,12 @@ public class EmailConfig {
     }
 
     public static String getEmail() {
-        return ENV_EMAIL != null ? ENV_EMAIL : props.getProperty("email");
+        String email = ENV_EMAIL != null ? ENV_EMAIL : props.getProperty("email");
+        return email != null ? email.trim() : null;
     }
 
     public static String getPassword() {
-        return ENV_PASSWORD != null ? ENV_PASSWORD : props.getProperty("password");
+        String pass = ENV_PASSWORD != null ? ENV_PASSWORD : props.getProperty("password");
+        return pass != null ? pass.replaceAll("\\s+", "") : null;
     }
 }
