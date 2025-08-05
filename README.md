@@ -14,7 +14,7 @@
 Chạy `ant compile` để biên dịch dự án và `ant test` để chạy các kiểm thử mặc định. Điều chỉnh thông tin kết nối trong `src/java/dao/connect/DBConnect.java` cho môi trường của bạn.
 
 ### Gửi thông báo đơn hàng
-Ứng dụng có hỗ trợ gửi email và Zalo ZNS khi tạo đơn hàng. Cấu hình thông tin đăng nhập qua biến môi trường:
+Ứng dụng có hỗ trợ gửi email và Zalo ZNS khi tạo đơn hàng. Cấu hình thông tin đăng nhập qua biến môi trường hoặc file `src/conf/email.properties`:
 
 ```
 GMAIL_USER=<tài khoản Gmail>
@@ -23,7 +23,7 @@ ZALO_ACCESS_TOKEN=<token của OA>
 ZALO_TEMPLATE_ID=<template id được Zalo cấp>
 ```
 
-Nếu các biến này không được thiết lập, chức năng gửi thông báo sẽ bị bỏ qua và ghi log cảnh báo.
+Nếu các biến này không được thiết lập, hệ thống sẽ đọc thông tin từ `src/conf/email.properties`. Nếu vẫn không có, chức năng gửi thông báo sẽ bị bỏ qua và ghi log cảnh báo.
 
 #### Thiết lập Gmail
 1. Bật **2-Step Verification** cho tài khoản Gmail dùng để gửi.
