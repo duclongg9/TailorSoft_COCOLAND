@@ -73,8 +73,15 @@ public class OrderCreateController extends HttpServlet {
                             String idx = k.substring("productTypeId".length());
                             int ptId = Integer.parseInt(request.getParameter(k));
                             int qty = Integer.parseInt(request.getParameter("quantity" + idx));
-                            int materialId = Integer.parseInt(request.getParameter("materialId_" + idx));
-                            double used = Double.parseDouble(request.getParameter("materialQty_" + idx));
+                            String materialIdParam = request.getParameter("materialId_" + idx);
+                            String materialQtyParam = request.getParameter("materialQty_" + idx);
+                            if (materialIdParam == null || materialQtyParam == null ||
+                                    materialIdParam.isBlank() || materialQtyParam.isBlank()) {
+                                LOGGER.log(Level.WARNING, "Missing material data for item {0}", idx);
+                                return;
+                            }
+                            int materialId = Integer.parseInt(materialIdParam);
+                            double used = Double.parseDouble(materialQtyParam);
                             String note = request.getParameter("note" + idx);
 
                             Material material = mDao.findById(materialId);
