@@ -35,7 +35,6 @@
                         <th>Đơn giá</th>
                         <th>Số lượng</th>
                         <th>Ghi chú</th>
-                        <th>Số đo</th>
                         <th></th>
                     </tr>
                     </thead>
@@ -47,7 +46,6 @@
                             <td><fmt:formatNumber value="${d.unitPrice}" type="number" groupingUsed="true"/> ₫</td>
                             <td>${d.quantity}</td>
                             <td>${d.note}</td>
-                            <td class="measure-cell" data-id="${d.id}"><span class="text-muted">Đang tải...</span></td>
                             <td>
                                 <button class="btn btn-outline-info btn-sm view-detail me-1"
                                         title="Xem"
@@ -110,13 +108,28 @@
       </div>
       <div class="modal-body">
         <div class="row g-3 mb-3">
-          <div class="col-md-8">
+          <div class="col-md-6">
             <label class="form-label">Loại sản phẩm</label>
             <input type="text" class="form-control" id="vdProductTypeName" disabled>
           </div>
+          <div class="col-md-6">
+            <label class="form-label">Tên vải</label>
+            <input type="text" class="form-control" id="vdMaterialName" disabled>
+          </div>
+        </div>
+
+        <div class="row g-3 mb-3">
           <div class="col-md-4">
             <label class="form-label">Số lượng</label>
             <input type="number" class="form-control" id="vdQuantity" disabled>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Đơn giá</label>
+            <input type="text" class="form-control" id="vdUnitPrice" disabled>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Ghi chú</label>
+            <input type="text" class="form-control" id="vdNote" disabled>
           </div>
         </div>
 
@@ -272,34 +285,15 @@
         return Number.isInteger(num) ? num.toString() : num.toFixed(1);
       };
 
-      document.querySelectorAll('.measure-cell').forEach(async cell => {
-        const id = cell.dataset.id;
-        cell.innerHTML = '<span class="text-muted">Đang tải...</span>';
-        try {
-          const res = await fetch(`${mtUrl}?id=${id}`);
-          if (res.status === 400) {
-            cell.innerHTML = '<span class="text-muted">Không có</span>';
-            return;
-          }
-          if (!res.ok) throw new Error('HTTP ' + res.status);
-          const list = await res.json();
-          if (!Array.isArray(list) || list.length === 0) {
-            cell.innerHTML = '<span class="text-muted">Không có</span>';
-          } else {
-            cell.innerHTML = list.map(m => `${m.name}: ${formatValue(m.value)}${m.unit ? ' ' + m.unit : ''}`).join('<br>');
-          }
-        } catch (e) {
-          console.error(e);
-          cell.innerHTML = '<span class="text-muted">Không có</span>';
-        }
-      });
-
       document.querySelectorAll('.view-detail').forEach(btn => btn.addEventListener('click', async () => {
         const detailId = btn.dataset.detailId;
-        const ptName   = btn.closest('tr').querySelector('td:nth-child(1)').textContent.trim();
+        const cells    = btn.closest('tr').querySelectorAll('td');
 
-        document.getElementById('vdProductTypeName').value = ptName;
-        document.getElementById('vdQuantity').value = btn.dataset.quantity;
+        document.getElementById('vdProductTypeName').value = cells[0].textContent.trim();
+        document.getElementById('vdMaterialName').value   = cells[1].textContent.trim();
+        document.getElementById('vdUnitPrice').value      = cells[2].textContent.trim();
+        document.getElementById('vdQuantity').value       = cells[3].textContent.trim();
+        document.getElementById('vdNote').value           = cells[4].textContent.trim();
 
         $viewFields.innerHTML = '<p class="text-muted">Đang tải...</p>';
         try {
