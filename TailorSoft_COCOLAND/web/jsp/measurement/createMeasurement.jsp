@@ -39,9 +39,9 @@ document.getElementById('productType').addEventListener('change', function(){
                 const div = document.createElement('div');
                 div.className = 'mb-3';
                 div.innerHTML =
-                    `<label class="form-label">${mt.name} (${mt.unit})</label>`+
-                    `<input type="number" step="0.1" name="value_${mt.id}" class="form-control"/>`+
-                    `<input type="text" name="note_${mt.id}" class="form-control mt-1" placeholder="Ghi chú"/>`;
+                    '<label class="form-label">' + mt.name + ' (' + mt.unit + ')</label>'+
+                    '<input type="number" step="0.1" name="value_' + mt.id + '" class="form-control"/>'+
+                    '<input type="text" name="note_' + mt.id + '" class="form-control mt-1" placeholder="Ghi chú"/>';
                 container.appendChild(div);
             });
         });

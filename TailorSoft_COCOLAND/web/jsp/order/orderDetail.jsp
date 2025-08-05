@@ -309,10 +309,9 @@
           list.forEach(m => {
             const col = document.createElement('div');
             col.className = 'col-md-6';
-            col.innerHTML = `
-              <label class="form-label">${m.name} (${m.unit})</label>
-              <input type="text" class="form-control" value="${formatValue(m.value)}" disabled>
-            `;
+            col.innerHTML =
+              '<label class="form-label">' + m.name + ' (' + m.unit + ')</label>' +
+              '<input type="text" class="form-control" value="' + formatValue(m.value) + '" disabled>';
             $viewFields.appendChild(col);
           });
         }
@@ -339,10 +338,10 @@
           list.forEach(m => {
             const col = document.createElement('div');
             col.className = 'col-md-6';
-            col.innerHTML = `
-              <label class="form-label">${m.name} (${m.unit})</label>
-              <input type="number" class="form-control" step="0.1" name="m_${m.id}" value="${formatValue(m.value)}" required>
-            `;
+            col.innerHTML =
+              '<label class="form-label">' + m.name + ' (' + m.unit + ')</label>' +
+              '<input type="number" class="form-control" step="0.1" name="m_' + m.id +
+              '" value="' + formatValue(m.value) + '" required>';
             $fields.appendChild(col);
           });
         }
@@ -409,7 +408,7 @@
             const resp = await fetch(toggleStatusUrl, {
               method: 'POST',
               headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-              body: `id=${orderId}`
+              body: 'id=' + orderId
             });
             if (!resp.ok) throw new Error('HTTP ' + resp.status);
             const data = await resp.json();
