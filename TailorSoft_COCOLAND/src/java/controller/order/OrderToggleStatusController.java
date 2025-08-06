@@ -1,8 +1,10 @@
 package controller.order;
 
 import dao.order.OrderDAO;
+import dao.customer.CustomerDAO;
 import model.Order;
 import model.OrderDetail;
+import model.Customer;
 import service.NotificationService;
 
 import jakarta.servlet.http.HttpServlet;
@@ -16,6 +18,7 @@ import java.util.logging.Logger;
 public class OrderToggleStatusController extends HttpServlet {
     private static final Logger LOGGER = Logger.getLogger(OrderToggleStatusController.class.getName());
     private final OrderDAO dao = new OrderDAO();
+    private final CustomerDAO customerDAO = new CustomerDAO();
     private final NotificationService notificationService = new NotificationService();
 
     @Override
@@ -41,8 +44,9 @@ public class OrderToggleStatusController extends HttpServlet {
 
         if ("Hoan thanh".equals(next)) {
             try {
+                Customer customer = customerDAO.findById(o.getCustomerId());
                 List<OrderDetail> details = dao.findDetailsByOrder(id);
-                notificationService.sendOrderEmail(o.getCustomerEmail(), o, details);
+                notificationService.sendOrderEmail(customer, o, details);
                 notificationService.sendOrderZns(o.getCustomerPhone(), o, details);
             } catch (Exception e) {
                 LOGGER.log(Level.WARNING, "Send notification failed", e);

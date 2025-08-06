@@ -6,6 +6,7 @@ import jakarta.mail.MessagingException;
 import java.io.UnsupportedEncodingException;
 import model.Order;
 import model.OrderDetail;
+import model.Customer;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -30,20 +31,38 @@ public class NotificationService {
     private static final String ZALO_TEMPLATE_ID = System.getenv("ZALO_TEMPLATE_ID");
     private static final SimpleDateFormat DF = new SimpleDateFormat("dd/MM/yyyy");
 
-    public void sendOrderEmail(String toEmail, Order order, List<OrderDetail> details) throws MessagingException, UnsupportedEncodingException {
-        if (toEmail == null || toEmail.isBlank()) {
+    public void sendOrderEmail(Customer customer, Order order, List<OrderDetail> details) throws MessagingException, UnsupportedEncodingException {
+        if (customer == null || customer.getEmail() == null || customer.getEmail().isBlank()) {
             LOGGER.warning("Recipient email is empty; skip sending email");
             return;
         }
-        String subject = "Thông tin đơn hàng #" + order.getId();
+        String toEmail = customer.getEmail();
+        String subject = "[COCOLAND] Xác nhận đơn hàng #" + order.getId() + " – Cảm ơn " + customer.getName();
         StringBuilder body = new StringBuilder();
-        body.append("Chào quý khách,\n\n")
-            .append("Sản phẩm đã đặt: ").append(formatItems(details)).append("\n")
-            .append("Tổng tiền: ").append(order.getTotal()).append("\n")
-            .append("Tiền đã thanh toán: ").append(order.getDeposit()).append("\n")
-            .append("Ngày đặt: ").append(DF.format(order.getOrderDate())).append("\n")
-            .append("Ngày hẹn: ").append(DF.format(order.getDeliveryDate())).append("\n\n")
-            .append("Cảm ơn bạn!");
+        body.append("Kính chào ").append(customer.getName()).append(",\n\n")
+            .append("Cảm ơn Quý khách đã tin chọn COCOLAND. Chúng tôi xin gửi tới Quý khách thông tin đơn hàng vừa đặt ngày ")
+            .append(DF.format(order.getOrderDate())).append(" như sau:\n\n")
+            .append("Thông tin đơn hàng:\n\n")
+            .append("• Mã đơn hàng: ").append(order.getId()).append("\n")
+            .append("• Sản phẩm:\n");
+        for (OrderDetail d : details) {
+            body.append("  • ").append(d.getProductType()).append(" x").append(d.getQuantity()).append("\n");
+        }
+        body.append("• Tổng tiền: ").append(order.getTotal()).append(" VND\n")
+            .append("- Tiền cọc đã thanh toán: ").append(order.getDeposit()).append(" VND\n")
+            .append("• Địa chỉ giao hàng: ")
+            .append(customer.getAddress() != null ? customer.getAddress() : "").append("\n\n")
+            .append("Trạng thái đơn hàng: ").append(order.getStatus()).append("\n")
+            .append("Ngày giao dự kiến: ").append(DF.format(order.getDeliveryDate())).append("\n\n")
+            .append("Nếu cần hỗ trợ, xin vui lòng liên hệ:\n")
+            .append("• Điện thoại: 03.8888888.65\n")
+            .append("• Email: support@cocoland.vn\n")
+            .append("• Zalo/WeChat: @cocoland_support\n\n")
+            .append("Chúng tôi luôn nỗ lực mang đến sản phẩm may đo chuẩn, phù hợp với nhu cầu riêng của từng khách hàng.\n")
+            .append("Cảm ơn Quý khách đã đồng hành cùng COCOLAND!\n\n")
+            .append("Trân trọng,\n")
+            .append("Nguyễn Hoàng Thái Thịnh\n")
+            .append("Bộ phận Chăm sóc Khách hàng – COCOLAND");
         SendMail.sendMail(toEmail, subject, body.toString());
         LOGGER.info("Sent order email to " + toEmail);
     }
