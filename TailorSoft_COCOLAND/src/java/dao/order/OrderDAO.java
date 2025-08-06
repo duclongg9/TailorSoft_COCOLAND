@@ -120,7 +120,11 @@ public class OrderDAO {
             try (PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
                 ps.setInt(1, detail.getOrderId());
                 ps.setString(2, detail.getProductType());
-                ps.setInt(3, detail.getMaterialId());
+                if (detail.getMaterialId() > 0) {
+                    ps.setInt(3, detail.getMaterialId());
+                } else {
+                    ps.setNull(3, Types.INTEGER);
+                }
                 ps.setString(4, detail.getMaterialName());
                 ps.setDouble(5, detail.getUnitPrice());
                 ps.setInt(6, detail.getQuantity());
@@ -138,7 +142,11 @@ public class OrderDAO {
                  PreparedStatement ps = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
                 ps.setInt(1, detail.getOrderId());
                 ps.setString(2, detail.getProductType());
-                ps.setInt(3, detail.getMaterialId());
+                if (detail.getMaterialId() > 0) {
+                    ps.setInt(3, detail.getMaterialId());
+                } else {
+                    ps.setNull(3, Types.INTEGER);
+                }
                 ps.setString(4, detail.getMaterialName());
                 ps.setDouble(5, detail.getUnitPrice());
                 ps.setInt(6, detail.getQuantity());

@@ -87,6 +87,9 @@ public class OrderCreateController extends HttpServlet {
                             String note = request.getParameter("note" + idx);
 
                             Material material = materialId > 0 ? mDao.findById(materialId) : null;
+                            if (material == null) {
+                                materialId = 0;
+                            }
 
                             OrderDetail d = new OrderDetail();
                             d.setOrderId(orderId);
