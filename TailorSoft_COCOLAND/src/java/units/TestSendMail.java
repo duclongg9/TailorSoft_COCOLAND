@@ -11,7 +11,7 @@ package units;
 public class TestSendMail {
      public static void main(String[] args) {
         try {
-            String toEmail = "phuongdung17012006@gmail.com"; // Email bạn muốn nhận để test
+            String toEmail = "duclongg9@gmail.com"; // Email bạn muốn nhận để test
             String subject = "Tailor Cocoland";
             String messageText = "Xin chào, đây là email test gửi từ Java";
 
