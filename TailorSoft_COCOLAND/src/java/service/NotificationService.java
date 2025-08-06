@@ -48,6 +48,25 @@ public class NotificationService {
         LOGGER.info("Sent order email to " + toEmail);
     }
 
+    public void sendOrderCompletionEmail(String toEmail, Order order, List<OrderDetail> details) throws MessagingException, UnsupportedEncodingException {
+        if (toEmail == null || toEmail.isBlank()) {
+            LOGGER.warning("Recipient email is empty; skip sending email");
+            return;
+        }
+        String subject = "Đơn hàng #" + order.getId() + " đã hoàn thành";
+        StringBuilder body = new StringBuilder();
+        body.append("Chào quý khách,\n\n")
+            .append("Đơn hàng của bạn đã hoàn thành.\n")
+            .append("Sản phẩm đã đặt: ").append(formatItems(details)).append("\n")
+            .append("Tổng tiền: ").append(order.getTotal()).append("\n")
+            .append("Tiền đã thanh toán: ").append(order.getDeposit()).append("\n")
+            .append("Ngày đặt: ").append(DF.format(order.getOrderDate())).append("\n")
+            .append("Ngày hẹn: ").append(DF.format(order.getDeliveryDate())).append("\n\n")
+            .append("Cảm ơn bạn!");
+        SendMail.sendMail(toEmail, subject, body.toString());
+        LOGGER.info("Sent order completion email to " + toEmail);
+    }
+
     public void sendOrderZns(String phone, Order order, List<OrderDetail> details) {
         if (ZALO_ACCESS_TOKEN == null || ZALO_TEMPLATE_ID == null) {
             LOGGER.warning("Zalo credentials not set; skip sending ZNS");
