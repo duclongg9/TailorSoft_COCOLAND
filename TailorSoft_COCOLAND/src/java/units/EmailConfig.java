@@ -1,31 +1,30 @@
 package units;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
 public class EmailConfig {
+
     private static final Properties props = new Properties();
 
-    private static final String ENV_EMAIL = System.getenv("GMAIL_USER");
-    private static final String ENV_PASSWORD = System.getenv("GMAIL_PASS");
-
     static {
-        try (InputStream input = EmailConfig.class.getClassLoader().getResourceAsStream("email.properties")) {
-            if (input != null) {
-                props.load(input);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+        try {
+            // Đường dẫn tới file trong thư mục conf (cùng cấp với thư mục java)
+            FileInputStream input = new FileInputStream("src/conf/email.properties");
+            props.load(input);
+        } catch (IOException e) {
+            System.err.println("❌ Không đọc được file email.properties: " + e.getMessage());
         }
     }
 
     public static String getEmail() {
-        String email = ENV_EMAIL != null ? ENV_EMAIL : props.getProperty("email");
-        return email != null ? email.trim() : null;
+        return props.getProperty("email");
     }
 
     public static String getPassword() {
-        String pass = ENV_PASSWORD != null ? ENV_PASSWORD : props.getProperty("password");
-        return pass != null ? pass.replaceAll("\\s+", "") : null;
+        return props.getProperty("password");
     }
+
 }
