@@ -20,6 +20,12 @@ public class EmailConfig {
         }
     }
 
+    public static boolean isConfigured() {
+        String email = props.getProperty("email");
+        String password = props.getProperty("password");
+        return email != null && !email.isBlank() && password != null && !password.isBlank();
+    }
+
     public static String getEmail() {
         String email = props.getProperty("email");
         if (email == null || email.isBlank()) {
