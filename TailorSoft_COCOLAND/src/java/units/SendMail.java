@@ -9,6 +9,18 @@ public class SendMail {
     public static void sendMail(String toEmail, String subject, String messageText) throws MessagingException, UnsupportedEncodingException {
         final String fromEmail = EmailConfig.getEmail();
         final String password = EmailConfig.getPassword();
+        
+        if (fromEmail == null || fromEmail.isBlank()) {
+            throw new MessagingException(
+                    "Sender email is not configured. Set GMAIL_USER or provide email in email.properties.");
+        }
+
+        if (password == null || password.isBlank()) {
+            throw new MessagingException(
+                    "Sender password is not configured. Set GMAIL_PASS or provide password in email.properties.");
+        }
+
+
 
         Properties props = new Properties();
         props.put("mail.smtp.host", "smtp.gmail.com");
