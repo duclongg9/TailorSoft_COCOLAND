@@ -12,7 +12,7 @@ import model.Measurement;
 import model.Material;
 import model.Customer;
 
-import service.NotificationService;
+import units.SendMail;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -134,12 +134,27 @@ public class OrderCreateController extends HttpServlet {
 
                 Customer customer = customerDAO.findById(customerId);
                 List<OrderDetail> details = orderDAO.findDetailsByOrder(orderId);
-                NotificationService notify = new NotificationService();
                 try {
-                    notify.sendOrderEmail(customer.getEmail(), order, details);
-                    notify.sendOrderZns(customer.getPhone(), order, details);
+                    String subject = "Thông tin đơn hàng #" + orderId;
+                    StringBuilder body = new StringBuilder();
+                    body.append("Xin chào ")
+                        .append(customer.getName())
+                        .append(",\n\nĐơn hàng của bạn đã được tạo với các sản phẩm:\n");
+                    for (OrderDetail d : details) {
+                        body.append("- ")
+                            .append(d.getProductType())
+                            .append(" x")
+                            .append(d.getQuantity())
+                            .append("\n");
+                    }
+                    body.append("\nTổng tiền: ")
+                        .append(order.getTotal())
+                        .append("\nĐã đặt cọc: ")
+                        .append(order.getDeposit())
+                        .append("\n\nCảm ơn bạn đã đặt hàng!");
+                    SendMail.sendMail(customer.getEmail(), subject, body.toString());
                 } catch (Exception e) {
-                    LOGGER.log(Level.WARNING, "Send notification failed", e);
+                    LOGGER.log(Level.WARNING, "Send email failed", e);
                 }
 
                 response.sendRedirect(request.getContextPath() + "/orders?msg=created");
