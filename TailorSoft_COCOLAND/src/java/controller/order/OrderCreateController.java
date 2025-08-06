@@ -73,18 +73,20 @@ public class OrderCreateController extends HttpServlet {
                             String idx = k.substring("productTypeId".length());
                             int ptId = Integer.parseInt(request.getParameter(k));
                             int qty = Integer.parseInt(request.getParameter("quantity" + idx));
+
                             String materialIdParam = request.getParameter("materialId_" + idx);
                             String materialQtyParam = request.getParameter("materialQty_" + idx);
-                            if (materialIdParam == null || materialQtyParam == null ||
-                                    materialIdParam.isBlank() || materialQtyParam.isBlank()) {
-                                LOGGER.log(Level.WARNING, "Missing material data for item {0}", idx);
-                                return;
+                            int materialId = 0;
+                            double used = 0;
+                            if (materialIdParam != null && !materialIdParam.isBlank()) {
+                                materialId = Integer.parseInt(materialIdParam);
                             }
-                            int materialId = Integer.parseInt(materialIdParam);
-                            double used = Double.parseDouble(materialQtyParam);
+                            if (materialQtyParam != null && !materialQtyParam.isBlank()) {
+                                used = Double.parseDouble(materialQtyParam);
+                            }
                             String note = request.getParameter("note" + idx);
 
-                            Material material = mDao.findById(materialId);
+                            Material material = materialId > 0 ? mDao.findById(materialId) : null;
 
                             OrderDetail d = new OrderDetail();
                             d.setOrderId(orderId);
@@ -98,7 +100,9 @@ public class OrderCreateController extends HttpServlet {
                             int detailId;
                             try {
                                 detailId = orderDAO.insertDetail(d);
-                                mDao.decreaseQuantity(materialId, used);
+                                if (material != null && used > 0) {
+                                    mDao.decreaseQuantity(materialId, used);
+                                }
                             } catch (SQLException e) {
                                 throw new RuntimeException(e);
                             }
