@@ -31,10 +31,10 @@ public class NotificationService {
     private static final String ZALO_TEMPLATE_ID = System.getenv("ZALO_TEMPLATE_ID");
     private static final SimpleDateFormat DF = new SimpleDateFormat("dd/MM/yyyy");
 
-    public void sendOrderEmail(Customer customer, Order order, List<OrderDetail> details) throws MessagingException, UnsupportedEncodingException {
+    public boolean sendOrderEmail(Customer customer, Order order, List<OrderDetail> details) {
         if (customer == null || customer.getEmail() == null || customer.getEmail().isBlank()) {
             LOGGER.warning("Recipient email is empty; skip sending email");
-            return;
+            return false;
         }
         String toEmail = customer.getEmail();
         String subject = "[COCOLAND] Xác nhận đơn hàng #" + order.getId() + " – Cảm ơn " + customer.getName();
@@ -63,8 +63,14 @@ public class NotificationService {
             .append("Trân trọng,\n")
             .append("Nguyễn Hoàng Thái Thịnh\n")
             .append("Bộ phận Chăm sóc Khách hàng – COCOLAND");
-        SendMail.sendMail(toEmail, subject, body.toString());
-        LOGGER.info("Sent order email to " + toEmail);
+        try {
+            SendMail.sendMail(toEmail, subject, body.toString());
+            LOGGER.info("Sent order email to " + toEmail);
+            return true;
+        } catch (IllegalStateException | MessagingException | UnsupportedEncodingException ex) {
+            LOGGER.log(Level.WARNING, "Send order email failed", ex);
+            return false;
+        }
     }
 
     public void sendOrderZns(String phone, Order order, List<OrderDetail> details) {

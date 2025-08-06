@@ -132,11 +132,10 @@ public class OrderCreateController extends HttpServlet {
                 Customer customer = customerDAO.findById(customerId);
                 List<OrderDetail> details = orderDAO.findDetailsByOrder(orderId);
                 NotificationService notify = new NotificationService();
-                try {
-                    notify.sendOrderEmail(customer, order, details);
-                    notify.sendOrderZns(customer.getPhone(), order, details);
-                } catch (Exception e) {
-                    LOGGER.log(Level.WARNING, "Send notification failed", e);
+                boolean emailSent = notify.sendOrderEmail(customer, order, details);
+                notify.sendOrderZns(customer.getPhone(), order, details);
+                if (!emailSent) {
+                    LOGGER.warning("Order email not sent");
                 }
 
                 response.sendRedirect(request.getContextPath() + "/orders?msg=created");
