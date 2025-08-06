@@ -21,19 +21,19 @@ public class EmailConfig {
     }
 
     public static String getEmail() {
-        String envEmail = System.getenv("GMAIL_USER");
-        if (envEmail != null && !envEmail.isBlank()) {
-            return envEmail;
+        String email = props.getProperty("email");
+        if (email == null || email.isBlank()) {
+            throw new IllegalStateException("Missing 'email' in email.properties");
         }
-        return props.getProperty("email");
+        return email;
     }
 
     public static String getPassword() {
-        String envPass = System.getenv("GMAIL_PASS");
-        if (envPass != null && !envPass.isBlank()) {
-            return envPass;
+        String password = props.getProperty("password");
+        if (password == null || password.isBlank()) {
+            throw new IllegalStateException("Missing 'password' in email.properties");
         }
-        return props.getProperty("password");
+        return password;
     }
 
 }
