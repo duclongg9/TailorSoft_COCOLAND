@@ -1,8 +1,10 @@
 package controller.order;
 
 import dao.order.OrderDAO;
+import dao.customer.CustomerDAO;
 import model.Order;
 import model.OrderDetail;
+import model.Customer;
 import service.NotificationService;
 
 import jakarta.servlet.ServletException;
@@ -18,6 +20,7 @@ import java.util.logging.Logger;
 public class OrderUpdateAmountController extends HttpServlet {
     private static final Logger LOGGER = Logger.getLogger(OrderUpdateAmountController.class.getName());
     private final OrderDAO orderDAO = new OrderDAO();
+    private final CustomerDAO customerDAO = new CustomerDAO();
     private final NotificationService notificationService = new NotificationService();
 
     @Override
@@ -42,8 +45,9 @@ public class OrderUpdateAmountController extends HttpServlet {
                 order.setTotal(total);
                 order.setDeposit(deposit);
                 try {
+                    Customer customer = customerDAO.findById(order.getCustomerId());
                     List<OrderDetail> details = orderDAO.findDetailsByOrder(orderId);
-                    notificationService.sendOrderEmail(order.getCustomerEmail(), order, details);
+                    notificationService.sendOrderEmail(customer, order, details);
                     notificationService.sendOrderZns(order.getCustomerPhone(), order, details);
                 } catch (Exception e) {
                     LOGGER.log(Level.WARNING, "Send notification failed", e);

@@ -56,7 +56,7 @@ Số điện thoại gửi ZNS phải ở dạng `84xxxxxxxxx`; phương thức 
 Ví dụ gọi trong luồng xử lý đơn hàng:
 ```java
 NotificationService ns = new NotificationService();
-ns.sendOrderEmail("duclongg9@gmail.com", order, details);
+ns.sendOrderEmail(customer, order, details);
 ns.sendOrderZns("84388888865", order, details);
 ```
 

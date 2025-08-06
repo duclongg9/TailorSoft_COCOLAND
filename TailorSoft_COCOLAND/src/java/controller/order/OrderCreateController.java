@@ -73,7 +73,6 @@ public class OrderCreateController extends HttpServlet {
                             String idx = k.substring("productTypeId".length());
                             int ptId = Integer.parseInt(request.getParameter(k));
                             int qty = Integer.parseInt(request.getParameter("quantity" + idx));
-<<<<<<< HEAD
 
                             String materialIdParam = request.getParameter("materialId_" + idx);
                             String materialQtyParam = request.getParameter("materialQty_" + idx);
@@ -85,10 +84,6 @@ public class OrderCreateController extends HttpServlet {
                             if (materialQtyParam != null && !materialQtyParam.isBlank()) {
                                 used = Double.parseDouble(materialQtyParam);
                             }
-=======
-                            int materialId = Integer.parseInt(request.getParameter("materialId_" + idx));
-                            double used = Double.parseDouble(request.getParameter("materialQty_" + idx));
->>>>>>> parent of eadeeb7 (Merge remote-tracking branch 'origin/main')
                             String note = request.getParameter("note" + idx);
 
                             Material material = materialId > 0 ? mDao.findById(materialId) : null;
@@ -138,7 +133,7 @@ public class OrderCreateController extends HttpServlet {
                 List<OrderDetail> details = orderDAO.findDetailsByOrder(orderId);
                 NotificationService notify = new NotificationService();
                 try {
-                    notify.sendOrderEmail(customer.getEmail(), order, details);
+                    notify.sendOrderEmail(customer, order, details);
                     notify.sendOrderZns(customer.getPhone(), order, details);
                 } catch (Exception e) {
                     LOGGER.log(Level.WARNING, "Send notification failed", e);
