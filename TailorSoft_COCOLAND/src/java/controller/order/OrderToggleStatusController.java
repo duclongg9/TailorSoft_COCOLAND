@@ -42,7 +42,7 @@ public class OrderToggleStatusController extends HttpServlet {
         if ("Hoan thanh".equals(next)) {
             try {
                 List<OrderDetail> details = dao.findDetailsByOrder(id);
-                notificationService.sendOrderCompletionEmail(o.getCustomerEmail(), o, details);
+                notificationService.sendOrderEmail(o.getCustomerEmail(), o, details);
                 notificationService.sendOrderZns(o.getCustomerPhone(), o, details);
             } catch (Exception e) {
                 LOGGER.log(Level.WARNING, "Send notification failed", e);
