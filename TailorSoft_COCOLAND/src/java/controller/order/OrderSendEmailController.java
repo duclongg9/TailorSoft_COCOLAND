@@ -36,12 +36,12 @@ public class OrderSendEmailController extends HttpServlet {
         try {
             Customer customer = customerDAO.findById(order.getCustomerId());
             List<OrderDetail> details = orderDAO.findDetailsByOrder(orderId);
-            notificationService.sendOrderEmail(customer, order, details);
+            boolean emailSent = notificationService.sendOrderEmail(customer, order, details);
             notificationService.sendOrderZns(order.getCustomerPhone(), order, details);
+            resp.setStatus(emailSent ? HttpServletResponse.SC_OK : HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         } catch (Exception e) {
             LOGGER.log(Level.WARNING, "Send notification failed", e);
-            throw new ServletException(e);
+            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
-        resp.setStatus(HttpServletResponse.SC_OK);
     }
 }

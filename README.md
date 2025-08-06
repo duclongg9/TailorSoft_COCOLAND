@@ -14,31 +14,17 @@
 Chạy `ant compile` để biên dịch dự án và `ant test` để chạy các kiểm thử mặc định. Điều chỉnh thông tin kết nối trong `src/java/dao/connect/DBConnect.java` cho môi trường của bạn.
 
 ### Gửi thông báo đơn hàng
-Ứng dụng có hỗ trợ gửi email và Zalo ZNS khi tạo đơn hàng. Cấu hình thông tin đăng nhập qua biến môi trường hoặc file `src/conf/email.properties`:
-
-```
-GMAIL_USER=<tài khoản Gmail>
-GMAIL_PASS=<mật khẩu ứng dụng Gmail>
-ZALO_ACCESS_TOKEN=<token của OA>
-ZALO_TEMPLATE_ID=<template id được Zalo cấp>
-```
-
-Nếu các biến này không được thiết lập, hệ thống sẽ đọc thông tin từ `src/conf/email.properties`. Nếu vẫn không có, chức năng gửi thông báo sẽ bị bỏ qua và ghi log cảnh báo.
+Ứng dụng có hỗ trợ gửi email và Zalo ZNS khi tạo đơn hàng.
 
 #### Thiết lập Gmail
-1. Bật **2-Step Verification** cho tài khoản Gmail dùng để gửi.
-2. Tạo **App Password** loại `Mail`, thiết bị `Other`; ghi lại 16 ký tự mật khẩu.
-3. Khai báo biến môi trường:
-   - Linux/Mac:
-     ```bash
-     export GMAIL_USER="duclongg9@gmail.com"
-     export GMAIL_PASS="APP_PASS"
-     ```
-   - Windows PowerShell:
-     ```powershell
-     setx GMAIL_USER "duclongg9@gmail.com"
-     setx GMAIL_PASS "APP_PASS"
-     ```
+Tạo file `src/conf/email.properties` và điền thông tin đăng nhập:
+
+```
+email=duclongg9@gmail.com
+password=APP_PASS
+```
+
+Nếu file này không tồn tại hoặc thiếu khóa, hệ thống sẽ bỏ qua việc gửi email và ghi log cảnh báo.
 
 #### Thiết lập Zalo ZNS
 1. Đăng ký/đăng nhập **Zalo Official Account** tại https://oa.zalo.me/manage.

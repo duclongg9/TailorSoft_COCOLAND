@@ -11,6 +11,10 @@ package units;
 public class TestSendMail {
      public static void main(String[] args) {
         try {
+            if (!EmailConfig.isConfigured()) {
+                System.err.println("Email credentials not configured; create src/conf/email.properties");
+                return;
+            }
             String toEmail = "duclongg9@gmail.com"; // Email bạn muốn nhận để test
             String subject = "Tailor Cocoland";
             String messageText = "Xin chào, đây là email test gửi từ Java";
