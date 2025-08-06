@@ -36,6 +36,7 @@ public class NotificationService {
         if (customer == null || customer.getEmail() == null || customer.getEmail().isBlank()) {
             LOGGER.warning("Recipient email is empty; skip sending email");
             return false;
+
         }
         if (!EmailConfig.isConfigured()) {
             LOGGER.warning("Email credentials not configured; skip sending email");
