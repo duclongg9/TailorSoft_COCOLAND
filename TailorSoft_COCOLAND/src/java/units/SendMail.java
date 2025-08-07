@@ -4,17 +4,20 @@ import jakarta.mail.*;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Properties;
 
 /**
- * Hàm tiện ích gửi email (text/plain UTF‑8).
+ * Utility: send plain-text UTF-8 email.
  */
 public class SendMail {
     public static void sendMail(String toEmail, String subject, String messageText) throws MessagingException, UnsupportedEncodingException {
-        final String fromEmail = EmailConfig.getEmail();
-        final String password = EmailConfig.getPassword();
+        final String fromEmail = System.getProperty("email");
+        final String password = System.getProperty("password");
+
+        if (fromEmail == null || fromEmail.isBlank() || password == null || password.isBlank()) {
+            throw new IllegalStateException("Email credentials not set. Please set system properties 'email' and 'password'.");
+        }
 
         Properties props = new Properties();
         props.put("mail.smtp.host", "smtp.gmail.com");
@@ -26,15 +29,16 @@ public class SendMail {
         Session session = Session.getInstance(props, new Authenticator() {
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication(from, pwd);
+                return new PasswordAuthentication(fromEmail, password);
             }
         });
 
         Message msg = new MimeMessage(session);
-        msg.setFrom(new InternetAddress(from, "COCOLAND"));
-        msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to));
+        msg.setFrom(new InternetAddress(fromEmail, "COCOLAND"));
+        msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail));
         msg.setSubject(subject);
-        msg.setText(text);
+        msg.setText(messageText);
+
         Transport.send(msg);
     }
 }
