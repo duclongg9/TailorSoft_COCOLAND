@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
  */
 public class NotificationService {
     private static final Logger LOG = Logger.getLogger(NotificationService.class.getName());
-    private static final SimpleDateFormat DF = new SimpleDateFormat("dd/MM/yyyy");
+    private static final SimpleDateFormat DF = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 
     private static final String ZALO_ACCESS_TOKEN = System.getenv("ZALO_ACCESS_TOKEN");
     private static final String ZALO_TEMPLATE_ID  = System.getenv("ZALO_TEMPLATE_ID");
@@ -67,15 +67,17 @@ public class NotificationService {
         String items = dts.stream()
                 .map(d -> "• " + d.getProductType() + " x" + d.getQuantity())
                 .collect(Collectors.joining("\n"));
+        double remaining = o.getTotal() - o.getDeposit();
         return new StringBuilder()
                 .append("Kính chào ").append(c.getName()).append(",\n\n")
-                .append("Đơn hàng của Quý khách ngày ").append(DF.format(o.getOrderDate())).append(" như sau:\n\n")
+                .append("Thông tin đơn hàng #").append(o.getId()).append(":\n")
                 .append(items).append("\n\n")
-                .append("Tổng tiền: ").append(o.getTotal()).append(" VND\n")
-                .append("Đã thanh toán (cọc): ").append(o.getDeposit()).append(" VND\n")
-                .append("Địa chỉ giao hàng: ").append(Optional.ofNullable(c.getAddress()).orElse("(chưa cập nhật)"))
-                .append("\nNgày giao dự kiến: ").append(DF.format(o.getDeliveryDate()))
-                .append("\n\nCám ơn Quý khách đã tin tưởng COCOLAND!")
+                .append("Thời gian đặt hàng: ").append(DF.format(o.getOrderDate())).append("\n")
+                .append("Thời gian giao hàng dự kiến: ").append(DF.format(o.getDeliveryDate())).append("\n")
+                .append("Tổng giá trị: ").append(o.getTotal()).append(" VND\n")
+                .append("Số tiền đã cọc: ").append(o.getDeposit()).append(" VND\n")
+                .append("Số tiền còn lại: ").append(remaining).append(" VND\n\n")
+                .append("Cám ơn Quý khách đã tin tưởng COCOLAND!")
                 .toString();
     }
 
