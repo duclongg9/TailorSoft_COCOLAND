@@ -11,6 +11,9 @@ import java.util.Properties;
  * Utility: send plain-text UTF-8 email.
  */
 public class SendMail {
+    public static void sendMail(String to, String subject, String messageText) throws MessagingException, UnsupportedEncodingException {
+        final String from = EmailConfig.getEmail();
+        final String pwd = EmailConfig.getPassword();
     public static void sendMail(String toEmail, String subject, String messageText) throws MessagingException, UnsupportedEncodingException {
         final String fromEmail = System.getProperty("email");
         final String password = System.getProperty("password");
@@ -23,7 +26,7 @@ public class SendMail {
         props.put("mail.smtp.host", "smtp.gmail.com");
         props.put("mail.smtp.port", "587");
         props.put("mail.smtp.auth", "true");
-        props.put("mail.smtp.starttls.enable", "true");
+        props.put("mail.smtp.starttls.enable","true");
         props.put("mail.mime.charset", "UTF-8");
 
         Session session = Session.getInstance(props, new Authenticator() {
@@ -37,6 +40,7 @@ public class SendMail {
         msg.setFrom(new InternetAddress(fromEmail, "COCOLAND"));
         msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail));
         msg.setSubject(subject);
+        msg.setText(messageText);
         msg.setText(messageText);
 
         Transport.send(msg);
