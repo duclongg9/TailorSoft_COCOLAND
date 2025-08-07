@@ -4,42 +4,30 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+/**
+ * Đọc thông tin email từ file resources/email.properties.
+ */
 public class EmailConfig {
-
     private static final Properties props = new Properties();
 
     static {
-        try (InputStream input = EmailConfig.class.getClassLoader().getResourceAsStream("email.properties")) {
-            if (input != null) {
-                props.load(input);
-            } else {
-                System.err.println("⚠️ Không tìm thấy file email.properties trong classpath.");
-            }
+        try (InputStream in = EmailConfig.class.getClassLoader().getResourceAsStream("email.properties")) {
+            if (in != null) props.load(in);
+            else System.err.println("⚠️  email.properties not found");
         } catch (IOException e) {
-            System.err.println("❌ Lỗi khi đọc email.properties: " + e.getMessage());
+            System.err.println("❌  Failed to load email.properties: " + e.getMessage());
         }
     }
 
     public static boolean isConfigured() {
-        String email = props.getProperty("email");
-        String password = props.getProperty("password");
-        return email != null && !email.isBlank() && password != null && !password.isBlank();
+        return !getEmail().isBlank() && !getPassword().isBlank();
     }
 
     public static String getEmail() {
-        String email = props.getProperty("email");
-        if (email == null || email.isBlank()) {
-            throw new IllegalStateException("Missing 'email' in email.properties");
-        }
-        return email;
+        return props.getProperty("email", "");
     }
 
     public static String getPassword() {
-        String password = props.getProperty("password");
-        if (password == null || password.isBlank()) {
-            throw new IllegalStateException("Missing 'password' in email.properties");
-        }
-        return password;
+        return props.getProperty("password", "");
     }
-
 }

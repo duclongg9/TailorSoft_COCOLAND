@@ -1,55 +1,58 @@
 package controller.order;
 
-import dao.order.OrderDAO;
 import dao.customer.CustomerDAO;
-import model.Order;
-import model.OrderDetail;
-import model.Customer;
-import service.NotificationService;
-
+import dao.order.OrderDAO;
+import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import model.Customer;
+import model.Order;
+import model.OrderDetail;
+import service.NotificationService;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Chuyển trạng thái đơn hàng và gửi thông báo khi hoàn thành.
+ */
+@WebServlet("/orders/toggle-status")
 public class OrderToggleStatusController extends HttpServlet {
-    private static final Logger LOGGER = Logger.getLogger(OrderToggleStatusController.class.getName());
-    private final OrderDAO dao = new OrderDAO();
+    private static final Logger LOG = Logger.getLogger(OrderToggleStatusController.class.getName());
+
+    private final OrderDAO orderDAO = new OrderDAO();
     private final CustomerDAO customerDAO = new CustomerDAO();
-    private final NotificationService notificationService = new NotificationService();
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        String idParam = req.getParameter("id");
         int id;
         try {
-            id = Integer.parseInt(idParam);
+            id = Integer.parseInt(req.getParameter("id"));
         } catch (NumberFormatException e) {
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
             return;
         }
 
-        Order o = dao.findById(id);
-        if (o == null) {
+        Order order = orderDAO.findById(id);
+        if (order == null) {
             resp.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
 
-        String next = "Dang may".equals(o.getStatus()) ? "Hoan thanh" : "Dang may";
-        dao.updateStatus(id, next);
-        o.setStatus(next);
+        String next = "Dang may".equals(order.getStatus()) ? "Hoan thanh" : "Dang may";
+        orderDAO.updateStatus(id, next);
+        order.setStatus(next);
 
         if ("Hoan thanh".equals(next)) {
             try {
-                Customer customer = customerDAO.findById(o.getCustomerId());
-                List<OrderDetail> details = dao.findDetailsByOrder(id);
-                notificationService.sendOrderEmail(customer, o, details);
-                notificationService.sendOrderZns(o.getCustomerPhone(), o, details);
+                Customer customer = customerDAO.findById(order.getCustomerId());
+                List<OrderDetail> details = orderDAO.findDetailsByOrder(id);
+                new NotificationService().notifyOrder(customer, order, details);
             } catch (Exception e) {
-                LOGGER.log(Level.WARNING, "Send notification failed", e);
+                LOG.log(Level.WARNING, "Send notification failed", e);
             }
         }
 
