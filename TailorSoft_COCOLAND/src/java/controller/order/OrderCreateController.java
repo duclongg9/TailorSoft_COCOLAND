@@ -74,6 +74,47 @@ public class OrderCreateController extends HttpServlet {
                 order.setId(orderDAO.insert(order));
                 buildOrderDetails(req, orderDAO, measurementDAO, connMaterialDAO, order);
 
+                            Material material = materialId > 0 ? mDao.findById(materialId) : null;
+
+                            OrderDetail d = new OrderDetail();
+                            d.setOrderId(orderId);
+                            d.setProductTypeId(ptId);
+                            d.setProductType(productTypeDAO.cacheFindName(ptId));
+                            d.setMaterialId(materialId);
+                            d.setMaterialName(material != null ? material.getName() : "");
+                            d.setUnitPrice(material != null ? material.getPrice() : 0);
+                            d.setQuantity(qty);
+                            d.setNote(note);
+                            int detailId;
+                            try {
+                                detailId = orderDAO.insertDetail(d);
+                                if (material != null && used > 0) {
+                                    mDao.decreaseQuantity(materialId, used);
+                                }
+                            } catch (SQLException e) {
+                                throw new RuntimeException(e);
+                            }
+
+                            String pre = "item" + idx + "_m";
+                            params.keySet().stream()
+                                    .filter(p -> p.startsWith(pre))
+                                    .forEach(p -> {
+                                        int mtId = Integer.parseInt(p.substring(pre.length()));
+                                        double val = Double.parseDouble(request.getParameter(p));
+                                        Measurement m = new Measurement();
+                                        m.setCustomerId(customerId);
+                                        m.setProductTypeId(ptId);
+                                        m.setMeasurementTypeId(mtId);
+                                        m.setValue(val);
+                                        m.setOrderDetailId(detailId);
+                                        try {
+                                            measurementDAO.insert(m);
+                                        } catch (SQLException e) {
+                                            throw new RuntimeException(e);
+                                        }
+                                    });
+                        });
+
                 conn.commit();
 
                 List<OrderDetail> details = orderDAO.findDetailsByOrder(order.getId());
