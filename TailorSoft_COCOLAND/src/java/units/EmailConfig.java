@@ -10,6 +10,9 @@ import java.util.Properties;
 public class EmailConfig {
     private static final Properties props = new Properties();
 
+    private static final String ENV_EMAIL = System.getenv("GMAIL_USER");
+    private static final String ENV_PASSWORD = System.getenv("GMAIL_PASS");
+
     static {
         try (InputStream in = EmailConfig.class.getClassLoader().getResourceAsStream("email.properties")) {
             if (in != null) props.load(in);
