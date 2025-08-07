@@ -1,46 +1,38 @@
 package units;
 
-import java.util.Properties;
 import jakarta.mail.*;
-import jakarta.mail.internet.*;
+import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeMessage;
 import java.io.UnsupportedEncodingException;
+import java.util.Properties;
 
+/**
+ * Hàm tiện ích gửi email (text/plain UTF‑8).
+ */
 public class SendMail {
-    public static void sendMail(String toEmail, String subject, String messageText) throws MessagingException, UnsupportedEncodingException {
-        final String fromEmail = EmailConfig.getEmail();
-        final String password = EmailConfig.getPassword();
-        
-        if (fromEmail == null || fromEmail.isBlank()) {
-            throw new MessagingException(
-                    "Sender email is not configured. Set GMAIL_USER or provide email in email.properties.");
-        }
-
-        if (password == null || password.isBlank()) {
-            throw new MessagingException(
-                    "Sender password is not configured. Set GMAIL_PASS or provide password in email.properties.");
-        }
-
-
+    public static void sendMail(String to, String subject, String messageText) throws MessagingException, UnsupportedEncodingException {
+        final String from = EmailConfig.getEmail();
+        final String pwd = EmailConfig.getPassword();
 
         Properties props = new Properties();
         props.put("mail.smtp.host", "smtp.gmail.com");
         props.put("mail.smtp.port", "587");
         props.put("mail.smtp.auth", "true");
-        props.put("mail.smtp.starttls.enable", "true");
+        props.put("mail.smtp.starttls.enable","true");
+        props.put("mail.mime.charset", "UTF-8");
 
-        Session session = Session.getInstance(props, new jakarta.mail.Authenticator() {
+        Session session = Session.getInstance(props, new Authenticator() {
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication(fromEmail, password);
+                return new PasswordAuthentication(from, pwd);
             }
         });
 
         Message msg = new MimeMessage(session);
-        msg.setFrom(new InternetAddress(fromEmail, "TailorSoft"));
-        msg.setRecipient(Message.RecipientType.TO, new InternetAddress(toEmail));
+        msg.setFrom(new InternetAddress(from, "COCOLAND"));
+        msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to));
         msg.setSubject(subject);
         msg.setText(messageText);
-
         Transport.send(msg);
     }
 }

@@ -1,30 +1,40 @@
 package units;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+/**
+ * Đọc thông tin email từ file resources/email.properties.
+ */
 public class EmailConfig {
 
     private static final Properties props = new Properties();
 
     static {
-        try {
-            // Đường dẫn tới file trong thư mục conf (cùng cấp với thư mục java)
-            FileInputStream input = new FileInputStream("src/conf/email.properties");
-            props.load(input);
+        try (InputStream in = EmailConfig.class.getClassLoader().getResourceAsStream("conf/email.properties")) {
+            if (in != null) {
+                props.load(in);
+            } else {
+                System.err.println("email.properties not found");
+            }
         } catch (IOException e) {
-            System.err.println("❌ Không đọc được file email.properties: " + e.getMessage());
+            System.err.println(" Failed to load email.properties: " + e.getMessage());
         }
     }
 
+    public static boolean isConfigured() {
+        return !getEmail().isBlank() && !getPassword().isBlank();
+    }
+
     public static String getEmail() {
-        return props.getProperty("email");
+        return props.getProperty("email", "");
     }
 
     public static String getPassword() {
-        return props.getProperty("password");
+        return props.getProperty("password", "");
     }
-
+    
+    
+    
 }
