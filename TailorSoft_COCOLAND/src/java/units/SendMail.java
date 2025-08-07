@@ -7,9 +7,6 @@ import java.io.UnsupportedEncodingException;
 
 public class SendMail {
     public static void sendMail(String toEmail, String subject, String messageText) throws MessagingException, UnsupportedEncodingException {
-        if (!EmailConfig.isConfigured()) {
-            throw new IllegalStateException("Email credentials not configured");
-        }
         final String fromEmail = EmailConfig.getEmail();
         final String password = EmailConfig.getPassword();
 
