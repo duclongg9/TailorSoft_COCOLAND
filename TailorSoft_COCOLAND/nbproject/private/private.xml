@@ -3,17 +3,16 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/K:/TailorSoft_COCOLAND/TailorSoft_COCOLAND/src/java/controller/order/OrderUpdateAmountController.java</file>
-            <file>file:/K:/TailorSoft_COCOLAND/TailorSoft_COCOLAND/src/java/units/SendMail.java</file>
-            <file>file:/K:/TailorSoft_COCOLAND/TailorSoft_COCOLAND/src/java/units/EmailConfig.java</file>
-            <file>file:/K:/TailorSoft_COCOLAND/TailorSoft_COCOLAND/src/java/controller/order/OrderToggleStatusController.java</file>
-            <file>file:/K:/TailorSoft_COCOLAND/TailorSoft_COCOLAND/nbproject/build-impl.xml</file>
-            <file>file:/K:/TailorSoft_COCOLAND/TailorSoft_COCOLAND/src/java/controller/order/OrderCreateController.java</file>
             <file>file:/K:/TailorSoft_COCOLAND/TailorSoft_COCOLAND/web/WEB-INF/web.xml</file>
-            <file>file:/K:/TailorSoft_COCOLAND/TailorSoft_COCOLAND/src/java/units/TestSendMail.java</file>
+            <file>file:/K:/TailorSoft_COCOLAND/TailorSoft_COCOLAND/src/java/units/EmailConfig.java</file>
+            <file>file:/K:/TailorSoft_COCOLAND/TailorSoft_COCOLAND/src/java/controller/order/OrderCreateController.java</file>
+            <file>file:/K:/TailorSoft_COCOLAND/TailorSoft_COCOLAND/nbproject/build-impl.xml</file>
             <file>file:/K:/TailorSoft_COCOLAND/TailorSoft_COCOLAND/src/java/controller/order/OrderSendEmailController.java</file>
-            <file>file:/K:/TailorSoft_COCOLAND/TailorSoft_COCOLAND/src/conf/email.properties</file>
+            <file>file:/K:/TailorSoft_COCOLAND/TailorSoft_COCOLAND/src/java/controller/order/OrderToggleStatusController.java</file>
+            <file>file:/K:/TailorSoft_COCOLAND/TailorSoft_COCOLAND/src/java/controller/order/OrderUpdateAmountController.java</file>
+            <file>file:/K:/TailorSoft_COCOLAND/TailorSoft_COCOLAND/src/java/units/TestSendMail.java</file>
             <file>file:/K:/TailorSoft_COCOLAND/TailorSoft_COCOLAND/src/conf/MANIFEST.MF</file>
+            <file>file:/K:/TailorSoft_COCOLAND/TailorSoft_COCOLAND/src/java/units/SendMail.java</file>
         </group>
     </open-files>
 </project-private>

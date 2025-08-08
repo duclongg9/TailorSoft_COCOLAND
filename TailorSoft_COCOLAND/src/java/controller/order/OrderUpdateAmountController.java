@@ -3,7 +3,6 @@ package controller.order;
 import dao.customer.CustomerDAO;
 import dao.order.OrderDAO;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -21,7 +20,6 @@ import java.util.logging.Logger;
 /**
  * Cập nhật tiền cọc/tổng tiền; gửi mail nếu đã thanh toán đủ.
  */
-@WebServlet("/orders/update-amount")
 public class OrderUpdateAmountController extends HttpServlet {
     private static final Logger LOG = Logger.getLogger(OrderUpdateAmountController.class.getName());
 

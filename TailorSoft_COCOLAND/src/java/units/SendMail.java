@@ -4,7 +4,6 @@ import jakarta.mail.*;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Properties;
 
@@ -38,7 +37,7 @@ public class SendMail {
         msg.setFrom(new InternetAddress(fromEmail, "COCOLAND"));
         msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail));
         msg.setSubject(subject);
-        msg.setText(text);
+        msg.setText(messageText);  // <--- Sửa đúng biến này
         Transport.send(msg);
     }
 }

@@ -3,7 +3,7 @@ package controller.order;
 import dao.customer.CustomerDAO;
 import dao.order.OrderDAO;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
+
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -19,7 +19,7 @@ import java.util.logging.Logger;
 /**
  * Gửi lại thông tin đơn hàng cho khách (email + ZNS) theo yêu cầu.
  */
-@WebServlet("/orders/send-email")
+
 public class OrderSendEmailController extends HttpServlet {
     private static final Logger LOG = Logger.getLogger(OrderSendEmailController.class.getName());
 

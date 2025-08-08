@@ -7,7 +7,6 @@ import dao.measurement.MeasurementDAO;
 import dao.order.OrderDAO;
 import dao.producttype.ProductTypeDAO;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -26,8 +25,8 @@ import java.util.logging.Logger;
 /**
  * Tạo mới đơn hàng và gửi thông báo cho khách hàng.
  */
-@WebServlet("/orders/create")
 public class OrderCreateController extends HttpServlet {
+
     private static final Logger LOG = Logger.getLogger(OrderCreateController.class.getName());
     private static final SimpleDateFormat DF = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -73,47 +72,6 @@ public class OrderCreateController extends HttpServlet {
 
                 order.setId(orderDAO.insert(order));
                 buildOrderDetails(req, orderDAO, measurementDAO, connMaterialDAO, order);
-
-                            Material material = materialId > 0 ? mDao.findById(materialId) : null;
-
-                            OrderDetail d = new OrderDetail();
-                            d.setOrderId(orderId);
-                            d.setProductTypeId(ptId);
-                            d.setProductType(productTypeDAO.cacheFindName(ptId));
-                            d.setMaterialId(materialId);
-                            d.setMaterialName(material != null ? material.getName() : "");
-                            d.setUnitPrice(material != null ? material.getPrice() : 0);
-                            d.setQuantity(qty);
-                            d.setNote(note);
-                            int detailId;
-                            try {
-                                detailId = orderDAO.insertDetail(d);
-                                if (material != null && used > 0) {
-                                    mDao.decreaseQuantity(materialId, used);
-                                }
-                            } catch (SQLException e) {
-                                throw new RuntimeException(e);
-                            }
-
-                            String pre = "item" + idx + "_m";
-                            params.keySet().stream()
-                                    .filter(p -> p.startsWith(pre))
-                                    .forEach(p -> {
-                                        int mtId = Integer.parseInt(p.substring(pre.length()));
-                                        double val = Double.parseDouble(request.getParameter(p));
-                                        Measurement m = new Measurement();
-                                        m.setCustomerId(customerId);
-                                        m.setProductTypeId(ptId);
-                                        m.setMeasurementTypeId(mtId);
-                                        m.setValue(val);
-                                        m.setOrderDetailId(detailId);
-                                        try {
-                                            measurementDAO.insert(m);
-                                        } catch (SQLException e) {
-                                            throw new RuntimeException(e);
-                                        }
-                                    });
-                        });
 
                 conn.commit();
 
@@ -195,11 +153,11 @@ public class OrderCreateController extends HttpServlet {
 
     private int optionalInt(HttpServletRequest req, String name, int def) {
         String v = req.getParameter(name);
-        return v == null || v.isBlank() ? def : Integer.parseInt(v);
+        return v == null || v.trim().isEmpty() ? def : Integer.parseInt(v);
     }
 
     private double optionalDouble(HttpServletRequest req, String name, double def) {
         String v = req.getParameter(name);
-        return v == null || v.isBlank() ? def : Double.parseDouble(v);
+        return v == null || v.trim().isEmpty() ? def : Double.parseDouble(v);
     }
 }

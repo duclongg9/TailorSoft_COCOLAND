@@ -2,7 +2,6 @@ package controller.order;
 
 import dao.customer.CustomerDAO;
 import dao.order.OrderDAO;
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -19,7 +18,7 @@ import java.util.logging.Logger;
 /**
  * Chuyển trạng thái đơn hàng và gửi thông báo khi hoàn thành.
  */
-@WebServlet("/orders/toggle-status")
+
 public class OrderToggleStatusController extends HttpServlet {
     private static final Logger LOG = Logger.getLogger(OrderToggleStatusController.class.getName());
 
