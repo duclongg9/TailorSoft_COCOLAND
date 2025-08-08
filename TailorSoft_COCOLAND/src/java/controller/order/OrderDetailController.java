@@ -1,5 +1,6 @@
 package controller.order;
 
+import com.google.gson.Gson;
 import dao.order.OrderDAO;
 import dao.measurement.MeasurementDAO;
 import model.Order;
@@ -38,9 +39,11 @@ public class OrderDetailController extends HttpServlet {
             msMap.put(d.getId(), mDao.findByOrderDetail(d.getId()));
         }
 
+        String msJson = new Gson().toJson(msMap);
+
         request.setAttribute("order", order);
         request.setAttribute("details", details);
-        request.setAttribute("measurements", msMap);
+        request.setAttribute("measurementsJson", msJson);
         request.getRequestDispatcher("/jsp/order/orderDetail.jsp").forward(request, response);
     }
 }
