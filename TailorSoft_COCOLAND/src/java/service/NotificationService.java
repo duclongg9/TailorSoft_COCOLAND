@@ -51,7 +51,7 @@ public class NotificationService {
         }
 
         String to = customer.getEmail();
-        String subject = "[COCOLAND] Xác nhận đơn hàng #" + order.getId();
+        String subject = buildEmailSubject(customer, order);
         String body = buildEmailBody(customer, order, details);
         try {
             SendMail.sendMail(to, subject, body);
@@ -65,20 +65,51 @@ public class NotificationService {
 
     private String buildEmailBody(Customer c, Order o, List<OrderDetail> dts) {
         String items = dts.stream()
-                .map(d -> "• " + d.getProductType() + " x" + d.getQuantity())
+                .map(d -> "• " + d.getProductType() + " × " + d.getQuantity())
                 .collect(Collectors.joining("\n"));
         double remaining = o.getTotal() - o.getDeposit();
         return new StringBuilder()
-                .append("Kính chào ").append(c.getName()).append(",\n\n")
-                .append("Thông tin đơn hàng #").append(o.getId()).append(":\n")
-                .append(items).append("\n\n")
-                .append("Thời gian đặt hàng: ").append(DF.format(o.getOrderDate())).append("\n")
-                .append("Thời gian giao hàng dự kiến: ").append(DF.format(o.getDeliveryDate())).append("\n")
-                .append("Tổng giá trị: ").append(o.getTotal()).append(" VND\n")
-                .append("Số tiền đã cọc: ").append(o.getDeposit()).append(" VND\n")
-                .append("Số tiền còn lại: ").append(remaining).append(" VND\n\n")
-                .append("Cám ơn Quý khách đã tin tưởng COCOLAND!")
+                .append("Kính gửi anh/chị ").append(c.getName()).append(",\n\n")
+                .append("Cảm ơn Quý khách đã tin tưởng và đặt hàng tại COCOLAND.\n\n")
+                .append("Thông tin đơn hàng của Quý khách:\n\n")
+                .append("Mã đơn hàng: #").append(o.getId()).append("\n")
+                .append("Sản phẩm:\n").append(items).append("\n")
+                .append("Ngày đặt hàng: ").append(DF.format(o.getOrderDate())).append("\n")
+                .append("Ngày giao dự kiến: ").append(DF.format(o.getDeliveryDate())).append("\n")
+                .append("Tổng giá trị đơn hàng: ").append(o.getTotal()).append(" VND\n")
+                .append("Tổng tiền cọc đã thanh toán: ").append(o.getDeposit()).append(" VND\n")
+                .append("Số tiền còn lại: ").append(remaining).append(" VND\n")
+                .append("Trạng thái đơn hàng: ").append(friendlyStatus(o.getStatus())).append("\n")
+                .append("Địa chỉ giao hàng: ").append(c.getAddress()).append("\n\n")
+                .append("Chúng tôi sẽ liên hệ với Quý khách để xác nhận lại thông tin và tiến hành các bước tiếp theo.\n\n")
+                .append("Nếu Quý khách có bất kỳ thắc mắc nào, vui lòng liên hệ với chúng tôi\n")
+                .append("nếu cần hỗ trợ, xin vui lòng liên hệ:\n")
+                .append("• Điện thoại: 0xxx xxx xxx\n")
+                .append("• Email: support@cocoland.vn\n")
+                .append("• Zalo/WeChat: @cocoland_support\n")
+                .append("Một lần nữa, xin chân thành cảm ơn Quý khách đã lựa chọn COCOLAND!\n\n")
+                .append("Trân trọng,\n")
+                .append("Quản lý Nguyễn Hoàng Thái Thịnh\n")
+                .append("COCOLAND Team")
                 .toString();
+    }
+
+    private String buildEmailSubject(Customer c, Order o) {
+        String action = switch (o.getStatus() != null ? o.getStatus() : "") {
+            case "Hoan thanh" -> "Đã hoàn thành";
+            case "Don huy" -> "Đã hủy";
+            default -> "Xác nhận";
+        };
+        return "[COCOLAND] " + action + " đơn hàng #" + o.getId() + " – Cảm ơn " + c.getName();
+    }
+
+    private String friendlyStatus(String status) {
+        return switch (status != null ? status : "") {
+            case "Dang may" -> "Đang xử lý";
+            case "Hoan thanh" -> "Đã hoàn thành";
+            case "Don huy" -> "Đã hủy";
+            default -> status;
+        };
     }
 
     // -------- ZNS -------- //
