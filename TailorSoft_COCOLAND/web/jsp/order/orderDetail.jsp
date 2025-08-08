@@ -1,11 +1,6 @@
 <%@ page pageEncoding="UTF-8" contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ page import="com.google.gson.Gson" %>
-<%
-  Object msObj = request.getAttribute("measurements");
-  String measurementsJson = msObj != null ? new Gson().toJson(msObj) : "{}";
-%>
 <c:set var="pageTitle" value="Chi tiết đơn hàng"/>
 <jsp:include page="/jsp/common/header.jsp"/>
 <jsp:include page="/jsp/common/sidebar.jsp"/>
@@ -263,7 +258,7 @@
 </div>
 
 <script>
-    const measurements = <%= measurementsJson %>;
+    const measurements = ${measurementsJson};
 
     function showPayment(src) {
         document.getElementById('paymentModalImage').src = src;
