@@ -16,6 +16,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.logging.Level;
@@ -31,6 +32,9 @@ public class NotificationService {
 
     private static final String ZALO_ACCESS_TOKEN = System.getenv("ZALO_ACCESS_TOKEN");
     private static final String ZALO_TEMPLATE_ID  = System.getenv("ZALO_TEMPLATE_ID");
+
+    // Định dạng số tiền với dấu phân cách nghìn
+    private static final DecimalFormat currencyFormat = new DecimalFormat("#,###");
 
     // Public facade
     public void notifyOrder(Customer customer, Order order, List<OrderDetail> details) {
@@ -68,6 +72,12 @@ public class NotificationService {
                 .map(d -> "• " + d.getProductType() + " × " + d.getQuantity())
                 .collect(Collectors.joining("\n"));
         double remaining = o.getTotal() - o.getDeposit();
+        
+        // Định dạng số tiền
+        String formattedTotal = currencyFormat.format(o.getTotal());
+        String formattedDeposit = currencyFormat.format(o.getDeposit());
+        String formattedRemaining = currencyFormat.format(remaining);
+
         return new StringBuilder()
                 .append("Kính gửi anh/chị ").append(c.getName()).append(",\n\n")
                 .append("Cảm ơn Quý khách đã tin tưởng và đặt hàng tại COCOLAND.\n\n")
@@ -76,9 +86,9 @@ public class NotificationService {
                 .append("Sản phẩm:\n").append(items).append("\n")
                 .append("Ngày đặt hàng: ").append(DF.format(o.getOrderDate())).append("\n")
                 .append("Ngày giao dự kiến: ").append(DF.format(o.getDeliveryDate())).append("\n")
-                .append("Tổng giá trị đơn hàng: ").append(o.getTotal()).append(" VND\n")
-                .append("Tổng tiền cọc đã thanh toán: ").append(o.getDeposit()).append(" VND\n")
-                .append("Số tiền còn lại: ").append(remaining).append(" VND\n")
+                .append("Tổng giá trị đơn hàng: ").append(formattedTotal).append(" VND\n")
+                .append("Tổng tiền cọc đã thanh toán: ").append(formattedDeposit).append(" VND\n")
+                .append("Số tiền còn lại: ").append(formattedRemaining).append(" VND\n")
                 .append("Trạng thái đơn hàng: ").append(friendlyStatus(o.getStatus())).append("\n")
                 .append("Địa chỉ giao hàng: ").append(c.getAddress()).append("\n\n")
                 .append("Chúng tôi sẽ liên hệ với Quý khách để xác nhận lại thông tin và tiến hành các bước tiếp theo.\n\n")
