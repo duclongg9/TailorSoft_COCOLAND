@@ -24,12 +24,13 @@ public class MaterialListController extends HttpServlet {
             } catch (NumberFormatException ignored) {
             }
         }
-        List<Material> all = materialDAO.findAll();
-        int total = all.size();
-        int from = Math.max(0, (page - 1) * PAGE_SIZE);
-        int to = Math.min(from + PAGE_SIZE, total);
-        List<Material> materials = all.subList(from, to);
+        int total = materialDAO.count();
         int totalPages = (int) Math.ceil(total / (double) PAGE_SIZE);
+        if (page > totalPages) {
+            page = totalPages == 0 ? 1 : totalPages;
+        }
+        int from = Math.max(0, (page - 1) * PAGE_SIZE);
+        List<Material> materials = materialDAO.findRange(from, PAGE_SIZE);
         request.setAttribute("materials", materials);
         request.setAttribute("currentPage", page);
         request.setAttribute("totalPages", totalPages);

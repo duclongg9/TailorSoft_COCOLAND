@@ -31,6 +31,42 @@ public class ProductTypeDAO {
         return list;
     }
 
+    public int count() {
+        String sql = "SELECT COUNT(*) FROM loai_san_pham";
+        try (Connection conn = DBConnect.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public List<ProductType> findRange(int offset, int limit) {
+        List<ProductType> list = new ArrayList<>();
+        String sql = "SELECT ma_loai, ten_loai, ky_hieu FROM loai_san_pham ORDER BY ma_loai LIMIT ? OFFSET ?";
+        try (Connection conn = DBConnect.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, limit);
+            ps.setInt(2, offset);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    ProductType pt = new ProductType();
+                    pt.setId(rs.getInt("ma_loai"));
+                    pt.setName(rs.getString("ten_loai"));
+                    pt.setCode(rs.getString("ky_hieu"));
+                    list.add(pt);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
     public ProductType findById(int id) {
         String sql = "SELECT ma_loai, ten_loai, ky_hieu FROM loai_san_pham WHERE ma_loai = ?";
         try (Connection conn = DBConnect.getConnection();

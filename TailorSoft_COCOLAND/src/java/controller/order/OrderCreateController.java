@@ -29,6 +29,8 @@ public class OrderCreateController extends HttpServlet {
 
     private static final Logger LOG = Logger.getLogger(OrderCreateController.class.getName());
     private static final SimpleDateFormat DF = new SimpleDateFormat("yyyy-MM-dd");
+    static final int MAX_ITEMS = 100;
+    static final int MAX_MATERIAL_TYPES = 50;
 
     private final CustomerDAO customerDAO = new CustomerDAO();
     private final ProductTypeDAO productTypeDAO = new ProductTypeDAO();
@@ -90,20 +92,32 @@ public class OrderCreateController extends HttpServlet {
     }
 
     // ---------- Helpers ---------- //
-    private void buildOrderDetails(HttpServletRequest req,
+    void buildOrderDetails(HttpServletRequest req,
                                    OrderDAO orderDAO,
                                    MeasurementDAO measurementDAO,
                                    MaterialDAO matDAO,
                                    Order order) throws SQLException {
         Map<String, String[]> params = req.getParameterMap();
+        int itemCount = 0;
+        Set<Integer> materialIds = new HashSet<>();
         for (String key : params.keySet()) {
             if (!key.startsWith("productTypeId")) continue;
+            itemCount++;
+            if (itemCount > MAX_ITEMS) {
+                throw new IllegalArgumentException("Too many products in a single order");
+            }
             String idx = key.substring("productTypeId".length());
 
             int ptId = intParam(req, key);
             int qty = intParam(req, "quantity" + idx);
 
             int materialId = optionalInt(req, "materialId_" + idx, 0);
+            if (materialId > 0) {
+                materialIds.add(materialId);
+                if (materialIds.size() > MAX_MATERIAL_TYPES) {
+                    throw new IllegalArgumentException("Too many fabric types in a single order");
+                }
+            }
             double usedQty = optionalDouble(req, "materialQty_" + idx, 0);
             Material material = materialId > 0 ? matDAO.findById(materialId) : null;
 

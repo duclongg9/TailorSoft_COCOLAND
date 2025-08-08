@@ -41,6 +41,46 @@ public class MaterialDAO {
         return list;
     }
 
+    public int count() {
+        String sql = "SELECT COUNT(*) FROM kho_vai";
+        try (Connection c = DBConnect.getConnection();
+             PreparedStatement ps = c.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public List<Material> findRange(int offset, int limit) {
+        List<Material> list = new ArrayList<>();
+        String sql = "SELECT ma_vai, ten_vai, mau_sac, xuat_xu, gia_thanh, so_luong, hinh_hoa_don FROM kho_vai ORDER BY ma_vai LIMIT ? OFFSET ?";
+        try (Connection c = DBConnect.getConnection();
+             PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setInt(1, limit);
+            ps.setInt(2, offset);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Material m = new Material();
+                    m.setId(rs.getInt("ma_vai"));
+                    m.setName(rs.getString("ten_vai"));
+                    m.setColor(rs.getString("mau_sac"));
+                    m.setOrigin(rs.getString("xuat_xu"));
+                    m.setPrice(rs.getDouble("gia_thanh"));
+                    m.setQuantity(rs.getDouble("so_luong"));
+                    m.setInvoiceImage(rs.getString("hinh_hoa_don"));
+                    list.add(m);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
     public void insert(Material material) {
         String sql = "INSERT INTO kho_vai(ten_vai, mau_sac, xuat_xu, gia_thanh, so_luong, hinh_hoa_don) VALUES(?,?,?,?,?,?)";
         try (Connection c = DBConnect.getConnection();
