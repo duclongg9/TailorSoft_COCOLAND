@@ -84,12 +84,12 @@ public class NotificationService {
                 .append("Chúng tôi sẽ liên hệ với Quý khách để xác nhận lại thông tin và tiến hành các bước tiếp theo.\n\n")
                 .append("Nếu Quý khách có bất kỳ thắc mắc nào, vui lòng liên hệ với chúng tôi\n")
                 .append("nếu cần hỗ trợ, xin vui lòng liên hệ:\n")
-                .append("• Điện thoại: 0xxx xxx xxx\n")
+                .append("• Điện thoại: 038 8888 8865\n")
                 .append("• Email: support@cocoland.vn\n")
                 .append("• Zalo/WeChat: @cocoland_support\n")
                 .append("Một lần nữa, xin chân thành cảm ơn Quý khách đã lựa chọn COCOLAND!\n\n")
                 .append("Trân trọng,\n")
-                .append("Quản lý Nguyễn Hoàng Thái Thịnh\n")
+                .append("CEO Nguyễn Hoàng Thái Thịnh\n")
                 .append("COCOLAND Team")
                 .toString();
     }

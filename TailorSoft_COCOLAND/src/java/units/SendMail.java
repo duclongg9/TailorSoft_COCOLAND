@@ -5,6 +5,7 @@ import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 
 /**
@@ -33,11 +34,12 @@ public class SendMail {
             }
         });
 
-        Message msg = new MimeMessage(session);
-        msg.setFrom(new InternetAddress(fromEmail, "COCOLAND"));
+        MimeMessage msg = new MimeMessage(session);
+        msg.setFrom(new InternetAddress(fromEmail, "COCOLAND", StandardCharsets.UTF_8.name()));
         msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail));
         msg.setSubject(subject);
-        msg.setText(messageText);  // <--- Sửa đúng biến này
+        msg.setSubject(subject, StandardCharsets.UTF_8.name());
+        msg.setText(messageText, StandardCharsets.UTF_8.name());
         Transport.send(msg);
     }
 }
