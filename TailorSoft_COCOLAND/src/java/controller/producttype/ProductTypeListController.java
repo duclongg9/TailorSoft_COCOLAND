@@ -27,12 +27,13 @@ public class ProductTypeListController extends HttpServlet {
             } catch (NumberFormatException ignored) {
             }
         }
-        List<ProductType> all = productTypeDAO.findAll();
-        int total = all.size();
-        int from = Math.max(0, (page - 1) * PAGE_SIZE);
-        int to = Math.min(from + PAGE_SIZE, total);
-        List<ProductType> list = all.subList(from, to);
+        int total = productTypeDAO.count();
         int totalPages = (int) Math.ceil(total / (double) PAGE_SIZE);
+        if (page > totalPages) {
+            page = totalPages == 0 ? 1 : totalPages;
+        }
+        int from = Math.max(0, (page - 1) * PAGE_SIZE);
+        List<ProductType> list = productTypeDAO.findRange(from, PAGE_SIZE);
         Map<Integer, List<MeasurementType>> map = new HashMap<>();
         for (ProductType pt : list) {
             map.put(pt.getId(), productTypeDAO.findMeasurementTypes(pt.getId()));
