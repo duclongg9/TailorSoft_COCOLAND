@@ -30,7 +30,7 @@ public class MaterialController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Material> get(@PathVariable Integer id) {
+    public ResponseEntity<Material> get(@PathVariable("id") Integer id) {
         return materialRepo.findById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
@@ -42,7 +42,7 @@ public class MaterialController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Material> update(@PathVariable Integer id, @RequestBody Material body) {
+    public ResponseEntity<Material> update(@PathVariable("id") Integer id, @RequestBody Material body) {
         return materialRepo.findById(id).map(m -> {
             m.setName(body.getName());
             m.setColor(body.getColor());
@@ -56,7 +56,7 @@ public class MaterialController {
     }
 
     @PostMapping("/{id}/upload-image")
-    public ResponseEntity<Material> uploadImage(@PathVariable Integer id,
+    public ResponseEntity<Material> uploadImage(@PathVariable("id") Integer id,
                                                 @RequestParam("file") MultipartFile file) throws IOException {
         return materialRepo.findById(id).map(m -> {
             try {
@@ -70,7 +70,7 @@ public class MaterialController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Integer id) {
+    public ResponseEntity<Void> delete(@PathVariable("id") Integer id) {
         if (!materialRepo.existsById(id)) return ResponseEntity.notFound().build();
         materialRepo.deleteById(id);
         return ResponseEntity.noContent().build();

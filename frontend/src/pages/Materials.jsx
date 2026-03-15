@@ -67,6 +67,20 @@ export default function Materials() {
     } catch { showToast('Lỗi tải ảnh'); }
   };
 
+  const [stockModal, setStockModal] = useState(null);
+  const [addQty, setAddQty] = useState('');
+
+  const handleAddStock = async (e) => {
+    e.preventDefault();
+    if (!addQty || isNaN(addQty)) return;
+    const newQty = (stockModal.quantity || 0) + Number(addQty);
+    try {
+      await updateMaterial(stockModal.id, { ...stockModal, quantity: newQty });
+      showToast(`Đã thêm ${addQty} ${stockModal.unit || 'm'}`);
+      setStockModal(null); setAddQty(''); load();
+    } catch { showToast('Lỗi khi cập nhật kho'); }
+  };
+
   /* Client-side filter */
   const filtered = list.filter(m => {
     const matchSearch = !search || m.name?.toLowerCase().includes(search.toLowerCase()) || m.roll?.toLowerCase().includes(search.toLowerCase());
@@ -104,14 +118,14 @@ export default function Materials() {
         <>
           <div className="material-grid">
             {paged.map(m => (
-              <div key={m.id} className="material-card">
+              <div key={m.id} className="material-card" onClick={() => setModal({ type: 'view', item: m })}>
                 {/* Fabric image */}
                 <div className="mat-img">
                   {m.imageUrl
                     ? <img src={imgUrl(m.imageUrl)} alt={m.name} />
                     : <span style={{ fontSize: 32 }}>🧵</span>}
                   {/* Upload overlay */}
-                  <label className="mat-img-overlay">
+                  <label className="mat-img-overlay" onClick={e => e.stopPropagation()}>
                     📷
                     <input type="file" hidden accept="image/*" onChange={e => handleImageUpload(m.id, e.target.files[0])} />
                   </label>
@@ -119,12 +133,18 @@ export default function Materials() {
                 <div className="mat-info">
                   <div className="mat-name">{m.name}</div>
                   <div className="mat-color">{m.color || '—'}</div>
-                  {m.roll && <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2 }}>Mã: {m.roll}</div>}
+                  {m.roll && <div style={{ fontSize: 13, color: 'var(--text-muted)', marginTop: 2 }}>Mã: {m.roll}</div>}
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 10 }}>
-                    <span className={`status-pill ${m.quantity <= 10 ? 's-cancel' : 's-done'}`} style={{ fontSize: 12 }}>
-                      {m.quantity} {m.unit || 'm'}
+                    <span 
+                      className={`status-pill ${m.quantity <= 10 ? 's-cancel' : 's-done'}`} 
+                      style={{ fontSize: 13, cursor: 'pointer' }}
+                      onClick={(e) => { e.stopPropagation(); setStockModal(m); }}
+                      title="Bấm để nhập thêm"
+                    >
+                      {m.quantity} {m.unit || 'm'} +
                     </span>
-                    <button className="btn btn-ghost btn-xs" style={{ fontSize: 12 }} onClick={() => { setForm(m); setModal(m); }}>Sửa</button>
+                    <button className="btn btn-ghost btn-xs" style={{ fontSize: 13 }} 
+                      onClick={(e) => { e.stopPropagation(); setForm(m); setModal({ type: 'edit', item: m }); }}>Sửa</button>
                   </div>
                 </div>
               </div>
@@ -134,62 +154,130 @@ export default function Materials() {
         </>
       )}
 
+      {/* Stock Modal */}
+      {stockModal && (
+        <div className="modal-overlay" onClick={() => setStockModal(null)}>
+          <div className="modal modal-sm" onClick={e => e.stopPropagation()} style={{ maxWidth: 400 }}>
+            <span className="modal-drag" />
+            <div className="modal-hdr">
+              <h3>Nhập thêm: {stockModal.name}</h3>
+              <button className="modal-close" onClick={() => setStockModal(null)}>✕</button>
+            </div>
+            <form onSubmit={handleAddStock}>
+              <div className="modal-body">
+                <p style={{ marginBottom: 16, fontSize: 15, color: 'var(--text-muted)' }}>
+                  Tồn hiện tại: <strong>{stockModal.quantity} {stockModal.unit}</strong>
+                </p>
+                <div className="form-group">
+                  <label className="form-label">Số lượng nhập thêm ({stockModal.unit})</label>
+                  <input className="form-input" type="number" step="0.1" autoFocus required
+                    value={addQty} onChange={e => setAddQty(e.target.value)} placeholder="0.0" />
+                </div>
+              </div>
+              <div className="modal-footer">
+                <button type="button" className="btn btn-ghost" onClick={() => setStockModal(null)}>Huỷ</button>
+                <button type="submit" className="btn btn-primary">Xác nhận cộng</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
       {modal && (
         <div className="modal-overlay" onClick={() => setModal(null)}>
           <div className="modal" onClick={e => e.stopPropagation()}>
             <span className="modal-drag" />
             <div className="modal-hdr">
-              <h3>{modal === 'create' ? 'Nhập vải mới' : 'Cập nhật vải'}</h3>
+              <h3>
+                {modal === 'create' ? 'Nhập vải mới' : (modal.type === 'view' ? 'Chi tiết vải' : 'Cập nhật vải')}
+              </h3>
               <button className="modal-close" onClick={() => setModal(null)}>✕</button>
             </div>
-            <form onSubmit={handleSubmit}>
+
+            {modal.type === 'view' ? (
               <div className="modal-body">
-                <div className="form-row">
-                  <div className="form-group">
-                    <label className="form-label">Tên vải *</label>
-                    <input className="form-input" required value={form.name} onChange={F('name')} />
+                <div style={{ display: 'flex', gap: 24, marginBottom: 20 }}>
+                  <div style={{ width: 140, height: 180, borderRadius: 12, background: 'var(--bg-warm)', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', border: '1px solid var(--border)' }}>
+                    {modal.item.imageUrl 
+                      ? <img src={imgUrl(modal.item.imageUrl)} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      : <span style={{ fontSize: 48 }}>🧵</span>
+                    }
                   </div>
-                  <div className="form-group">
-                    <label className="form-label">Màu sắc</label>
-                    <input className="form-input" value={form.color} onChange={F('color')} />
-                  </div>
-                </div>
-                <div className="form-row">
-                  <div className="form-group">
-                    <label className="form-label">Mã quyển</label>
-                    <input className="form-input" value={form.roll} onChange={F('roll')} />
-                  </div>
-                  <div className="form-group">
-                    <label className="form-label">Xuất xứ</label>
-                    <input className="form-input" value={form.origin} onChange={F('origin')} />
-                  </div>
-                </div>
-                <div className="form-row">
-                  <CurrencyInput
-                    label="Giá nhập (₫/đvị)"
-                    value={form.price}
-                    onChange={val => setForm(f => ({ ...f, price: val }))}
-                    style={{ flex: 1 }}
-                  />
-                  <div className="form-group">
-                    <label className="form-label">Số lượng tồn</label>
-                    <input className="form-input" type="number" step="0.1" value={form.quantity} onChange={F('quantity')} />
+                  <div style={{ flex: 1 }}>
+                    <h4 style={{ fontFamily: 'var(--serif)', fontSize: 28, marginBottom: 8 }}>{modal.item.name}</h4>
+                    <div style={{ fontSize: 18, color: 'var(--accent)', fontWeight: 600, marginBottom: 4 }}>{modal.item.color}</div>
+                    <div style={{ fontSize: 16, color: 'var(--text-muted)' }}>Mã quyển: {modal.item.roll || '—'}</div>
+                    <div style={{ fontSize: 16, color: 'var(--text-muted)', marginTop: 4 }}>Xuất xứ: {modal.item.origin || '—'}</div>
+                    
+                    <div style={{ marginTop: 20, display: 'flex', gap: 12 }}>
+                      <div style={{ flex: 1, padding: 12, background: 'var(--bg-warm)', borderRadius: 10 }}>
+                        <div className="stat-label">Đơn giá</div>
+                        <div style={{ fontWeight: 700, fontSize: 18 }}>{modal.item.price?.toLocaleString('vi-VN')} ₫</div>
+                      </div>
+                      <div style={{ flex: 1, padding: 12, background: 'var(--bg-warm)', borderRadius: 10 }}>
+                        <div className="stat-label">Tồn kho</div>
+                        <div style={{ fontWeight: 700, fontSize: 18, color: modal.item.quantity <= 10 ? 'var(--danger)' : 'var(--success)' }}>
+                          {modal.item.quantity} {modal.item.unit}
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
-                <div className="form-group">
-                  <label className="form-label">Đơn vị</label>
-                  <select className="form-input" value={form.unit} onChange={F('unit')}>
-                    <option value="m">Mét (m)</option>
-                    <option value="kg">Kilogram (kg)</option>
-                    <option value="yard">Yard</option>
-                  </select>
+                <div className="modal-footer">
+                  <button className="btn btn-ghost" onClick={() => setModal(null)}>Đóng</button>
+                  <button className="btn btn-primary" onClick={() => { setForm(modal.item); setModal({ type: 'edit', item: modal.item }); }}>Chỉnh sửa</button>
                 </div>
               </div>
-              <div className="modal-footer">
-                <button type="button" className="btn btn-ghost" onClick={() => setModal(null)}>Huỷ</button>
-                <button type="submit" className="btn btn-primary">Lưu</button>
-              </div>
-            </form>
+            ) : (
+              <form onSubmit={handleSubmit}>
+                <div className="modal-body">
+                  <div className="form-row">
+                    <div className="form-group">
+                      <label className="form-label">Tên vải *</label>
+                      <input className="form-input" required value={form.name} onChange={F('name')} />
+                    </div>
+                    <div className="form-group">
+                      <label className="form-label">Màu sắc</label>
+                      <input className="form-input" value={form.color} onChange={F('color')} />
+                    </div>
+                  </div>
+                  <div className="form-row">
+                    <div className="form-group">
+                      <label className="form-label">Mã quyển</label>
+                      <input className="form-input" value={form.roll} onChange={F('roll')} />
+                    </div>
+                    <div className="form-group">
+                      <label className="form-label">Xuất xứ</label>
+                      <input className="form-input" value={form.origin} onChange={F('origin')} />
+                    </div>
+                  </div>
+                  <div className="form-row">
+                    <CurrencyInput
+                      label="Giá nhập (₫/đvị)"
+                      value={form.price}
+                      onChange={val => setForm(f => ({ ...f, price: val }))}
+                      style={{ flex: 1 }}
+                    />
+                    <div className="form-group">
+                      <label className="form-label">Số lượng tồn</label>
+                      <input className="form-input" type="number" step="0.1" value={form.quantity} onChange={F('quantity')} />
+                    </div>
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">Đơn vị</label>
+                    <select className="form-input" value={form.unit} onChange={F('unit')}>
+                      <option value="m">Mét (m)</option>
+                      <option value="kg">Kilogram (kg)</option>
+                      <option value="yard">Yard</option>
+                    </select>
+                  </div>
+                </div>
+                <div className="modal-footer">
+                  <button type="button" className="btn btn-ghost" onClick={() => setModal(null)}>Huỷ</button>
+                  <button type="submit" className="btn btn-primary">Lưu</button>
+                </div>
+              </form>
+            )}
           </div>
         </div>
       )}

@@ -29,7 +29,7 @@ public class OrderController {
 
     // =============== LIST ===============
     @GetMapping
-    public List<Order> list(@RequestParam(required = false) String status) {
+    public List<Order> list(@RequestParam(name = "status", required = false) String status) {
         List<Order> orders = (status != null && !status.isBlank())
                 ? orderRepo.findByStatus(status)
                 : orderRepo.findAll();
@@ -40,7 +40,7 @@ public class OrderController {
 
     // =============== GET ONE ===============
     @GetMapping("/{id}")
-    public ResponseEntity<Order> get(@PathVariable Integer id) {
+    public ResponseEntity<Order> get(@PathVariable("id") Integer id) {
         return orderRepo.findById(id).map(o -> ResponseEntity.ok(enrich(o)))
                 .orElse(ResponseEntity.notFound().build());
     }
@@ -113,7 +113,7 @@ public class OrderController {
     // =============== UPDATE STATUS ===============
     @PatchMapping("/{id}/status")
     public ResponseEntity<Order> updateStatus(
-            @PathVariable Integer id,
+            @PathVariable("id") Integer id,
             @RequestBody Map<String, String> body) {
         return orderRepo.findById(id).map(o -> {
             o.setStatus(body.get("status"));
@@ -130,7 +130,7 @@ public class OrderController {
     // =============== UPDATE AMOUNT ===============
     @PatchMapping("/{id}/amount")
     public ResponseEntity<Order> updateAmount(
-            @PathVariable Integer id,
+            @PathVariable("id") Integer id,
             @RequestBody Map<String, Double> body) {
         return orderRepo.findById(id).map(o -> {
             if (body.containsKey("total")) o.setTotal(body.get("total"));
@@ -142,7 +142,7 @@ public class OrderController {
     // =============== UPDATE DELIVERY DATE ===============
     @PatchMapping("/{id}/delivery-date")
     public ResponseEntity<Order> updateDeliveryDate(
-            @PathVariable Integer id,
+            @PathVariable("id") Integer id,
             @RequestBody Map<String, String> body) {
         return orderRepo.findById(id).map(o -> {
             if (body.containsKey("deliveryDate")) {
@@ -157,7 +157,7 @@ public class OrderController {
     // =============== UPLOAD IMAGES ===============
     @PostMapping("/{id}/upload-deposit")
     public ResponseEntity<Order> uploadDeposit(
-            @PathVariable Integer id,
+            @PathVariable("id") Integer id,
             @RequestParam("file") MultipartFile file) throws IOException {
         return orderRepo.findById(id).map(o -> {
             try {
@@ -172,7 +172,7 @@ public class OrderController {
 
     @PostMapping("/{id}/upload-full")
     public ResponseEntity<Order> uploadFull(
-            @PathVariable Integer id,
+            @PathVariable("id") Integer id,
             @RequestParam("file") MultipartFile file) throws IOException {
         return orderRepo.findById(id).map(o -> {
             try {
@@ -187,7 +187,7 @@ public class OrderController {
 
     // =============== RESEND EMAIL ===============
     @PostMapping("/{id}/send-email")
-    public ResponseEntity<Void> sendEmail(@PathVariable Integer id) {
+    public ResponseEntity<Void> sendEmail(@PathVariable("id") Integer id) {
         return orderRepo.findById(id).map(o -> {
             customerRepo.findById(o.getCustomerId()).ifPresent(c -> {
                 List<OrderDetail> details = detailRepo.findByOrderId(id);
@@ -199,14 +199,14 @@ public class OrderController {
 
     // =============== ORDER DETAILS ===============
     @GetMapping("/{id}/details")
-    public ResponseEntity<List<OrderDetail>> details(@PathVariable Integer id) {
+    public ResponseEntity<List<OrderDetail>> details(@PathVariable("id") Integer id) {
         if (!orderRepo.existsById(id)) return ResponseEntity.notFound().build();
         return ResponseEntity.ok(detailRepo.findByOrderId(id));
     }
 
     @PutMapping("/details/{detailId}")
     public ResponseEntity<OrderDetail> updateDetail(
-            @PathVariable Integer detailId,
+            @PathVariable("detailId") Integer detailId,
             @RequestBody OrderDetail body) {
         return detailRepo.findById(detailId).map(d -> {
             d.setProductType(body.getProductType());

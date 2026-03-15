@@ -19,8 +19,8 @@ public class MeasurementController {
 
     @GetMapping
     public List<Measurement> list(
-            @RequestParam(required = false) Integer customerId,
-            @RequestParam(required = false) Integer orderDetailId) {
+            @RequestParam(name = "customerId", required = false) Integer customerId,
+            @RequestParam(name = "orderDetailId", required = false) Integer orderDetailId) {
 
         List<Measurement> items;
         if (orderDetailId != null) {
@@ -49,7 +49,7 @@ public class MeasurementController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Measurement> update(@PathVariable Integer id, @RequestBody Measurement body) {
+    public ResponseEntity<Measurement> update(@PathVariable("id") Integer id, @RequestBody Measurement body) {
         return measurementRepo.findById(id).map(m -> {
             m.setValue(body.getValue());
             m.setNote(body.getNote());
@@ -58,7 +58,7 @@ public class MeasurementController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Integer id) {
+    public ResponseEntity<Void> delete(@PathVariable("id") Integer id) {
         if (!measurementRepo.existsById(id)) return ResponseEntity.notFound().build();
         measurementRepo.deleteById(id);
         return ResponseEntity.noContent().build();

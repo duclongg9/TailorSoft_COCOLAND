@@ -33,12 +33,12 @@ public class ProductTypeController {
     }
 
     @GetMapping("/api/product-types/{id}")
-    public ResponseEntity<ProductType> getProductType(@PathVariable Integer id) {
+    public ResponseEntity<ProductType> getProductType(@PathVariable("id") Integer id) {
         return productTypeRepo.findById(id).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 
     @PutMapping("/api/product-types/{id}")
-    public ResponseEntity<ProductType> updateProductType(@PathVariable Integer id, @RequestBody ProductType body) {
+    public ResponseEntity<ProductType> updateProductType(@PathVariable("id") Integer id, @RequestBody ProductType body) {
         return productTypeRepo.findById(id).map(pt -> {
             pt.setName(body.getName());
             pt.setCode(body.getCode());
@@ -48,7 +48,7 @@ public class ProductTypeController {
     }
 
     @PostMapping("/api/product-types/{id}/upload-image")
-    public ResponseEntity<ProductType> uploadImage(@PathVariable Integer id,
+    public ResponseEntity<ProductType> uploadImage(@PathVariable("id") Integer id,
                                                    @RequestParam("file") MultipartFile file) throws IOException {
         return productTypeRepo.findById(id).map(pt -> {
             try {
@@ -62,7 +62,7 @@ public class ProductTypeController {
     }
 
     @DeleteMapping("/api/product-types/{id}")
-    public ResponseEntity<Void> deleteProductType(@PathVariable Integer id) {
+    public ResponseEntity<Void> deleteProductType(@PathVariable("id") Integer id) {
         if (!productTypeRepo.existsById(id)) return ResponseEntity.notFound().build();
         productTypeRepo.deleteById(id);
         return ResponseEntity.noContent().build();
@@ -71,7 +71,7 @@ public class ProductTypeController {
     // ---- Measurement Types ----
     @GetMapping("/api/measurement-types")
     public List<MeasurementType> listMeasurementTypes(
-            @RequestParam(required = false) Integer productTypeId) {
+            @RequestParam(name = "productTypeId", required = false) Integer productTypeId) {
         if (productTypeId != null) {
             return measurementTypeRepo.findByProductTypeId(productTypeId);
         }
@@ -85,7 +85,7 @@ public class ProductTypeController {
 
     @PutMapping("/api/measurement-types/{id}")
     public ResponseEntity<MeasurementType> updateMeasurementType(
-            @PathVariable Integer id, @RequestBody MeasurementType body) {
+            @PathVariable("id") Integer id, @RequestBody MeasurementType body) {
         return measurementTypeRepo.findById(id).map(mt -> {
             mt.setName(body.getName());
             mt.setUnit(body.getUnit());
@@ -96,7 +96,7 @@ public class ProductTypeController {
     }
 
     @DeleteMapping("/api/measurement-types/{id}")
-    public ResponseEntity<Void> deleteMeasurementType(@PathVariable Integer id) {
+    public ResponseEntity<Void> deleteMeasurementType(@PathVariable("id") Integer id) {
         if (!measurementTypeRepo.existsById(id)) return ResponseEntity.notFound().build();
         measurementTypeRepo.deleteById(id);
         return ResponseEntity.noContent().build();
