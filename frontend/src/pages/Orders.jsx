@@ -95,11 +95,10 @@ export default function Orders() {
       </div>
 
       {/* Status Filter */}
-      <div className="hide-scrollbar" style={{ display: 'flex', gap: 8, marginBottom: 16, overflowX: 'auto', paddingBottom: 4 }}>
+      <div className="filter-grid">
         {FILTERS.map(([v, l]) => (
           <button key={v}
             className={`btn btn-sm ${filter === v ? 'btn-primary' : 'btn-ghost'}`}
-            style={{ whiteSpace: 'nowrap' }}
             onClick={() => { setFilter(v); setPage(1); }}>{l}</button>
         ))}
       </div>
@@ -177,8 +176,6 @@ export default function Orders() {
         </>
       )}
 
-      {/* Floating Button on Mobile */}
-      <button className="btn-fab" onClick={() => navigate('/orders/new')}>+</button>
       
       {toast && <div className="toast">{toast}</div>}
     </>
