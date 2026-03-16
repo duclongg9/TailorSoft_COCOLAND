@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getOrders, updateStatus, sendEmail } from '../api';
+import { getOrders } from '../api';
 
 const fmt  = (n) => n != null ? Number(n).toLocaleString('vi-VN') + ' ₫' : '—';
 const fmtD = (d) => d ? new Date(d).toLocaleDateString('vi-VN') : '—';
@@ -38,22 +38,22 @@ const Pagination = ({ page, total, perPage, onChange }) => {
 export default function Orders() {
   const navigate = useNavigate();
   const [orders, setOrders] = useState([]);
-  const [filter, setFilter] = useState('');
-  const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
-  const [toast, setToast]   = useState('');
-  const [page, setPage]     = useState(1);
+  const [filter, setFilter] = useState('');
+  const [search, setSearch]     = useState('');
   const [dateFrom, setDateFrom] = useState('');
   const [dateTo, setDateTo]     = useState('');
+  const [page, setPage]         = useState(1);
+  const [toast, setToast]       = useState('');
 
-  const load = (st = '') => {
+  const load = () => {
     setLoading(true);
-    setPage(1);
-    getOrders(st).then(r => { setOrders(r.data); setLoading(false); }).catch(() => setLoading(false));
+    getOrders().then(r => { 
+      setOrders(r.data); 
+      setLoading(false); 
+    }).catch(() => setLoading(false));
   };
-  useEffect(() => { load(filter); }, [filter]);
-
-  const showToast = (m) => { setToast(m); setTimeout(() => setToast(''), 2500); };
+  useEffect(() => { load(); }, []);
 
   const getDisplayStatus = (o) => {
     if (o.status === 'Hoan thanh' && (o.total || 0) - (o.deposit || 0) > 0) {
@@ -62,14 +62,27 @@ export default function Orders() {
     return ST[o.status] ?? { label: o.status, cls: '', icon: '?', dot: '#888' };
   };
 
-  const filtered = (filter === 'Chua thanh toan'
-    ? orders.filter(o => o.status === 'Hoan thanh' && (o.total || 0) - (o.deposit || 0) > 0)
-    : orders
-  ).filter(o => {
-    const matchSearch = !search || (o.customerName || '').toLowerCase().includes(search.toLowerCase()) || String(o.id).includes(search);
-    const matchFrom = !dateFrom || (o.orderDate && o.orderDate >= dateFrom);
-    const matchTo = !dateTo || (o.orderDate && o.orderDate <= dateTo);
-    return matchSearch && matchFrom && matchTo;
+  const filtered = orders.filter(o => {
+    // 1. Status filter
+    if (filter === 'Dang may' && o.status !== 'Dang may') return false;
+    if (filter === 'Hoan thanh' && o.status !== 'Hoan thanh') return false;
+    if (filter === 'Don huy' && o.status !== 'Don huy') return false;
+    if (filter === 'Chua thanh toan') {
+      const isPending = o.status === 'Hoan thanh' && (o.total || 0) - (o.deposit || 0) > 0;
+      if (!isPending) return false;
+    }
+
+    // 2. Search
+    const matchSearch = !search || 
+      (o.customerName || '').toLowerCase().includes(search.toLowerCase()) || 
+      String(o.id).includes(search);
+    if (!matchSearch) return false;
+
+    // 3. Date range
+    if (dateFrom && o.orderDate < dateFrom) return false;
+    if (dateTo && o.orderDate > dateTo) return false;
+
+    return true;
   });
 
   const paged = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
@@ -78,16 +91,16 @@ export default function Orders() {
     <>
       <div className="page-hdr">
         <h2>Đơn hàng</h2>
-        <button className="btn btn-primary" onClick={() => navigate('/orders/new')}>+ Tạo đơn mới</button>
+        <button className="btn btn-primary btn-top" onClick={() => navigate('/orders/new')}>+ Tạo đơn mới</button>
       </div>
 
-      {/* Filters */}
+      {/* Status Filter */}
       <div className="hide-scrollbar" style={{ display: 'flex', gap: 8, marginBottom: 16, overflowX: 'auto', paddingBottom: 4 }}>
         {FILTERS.map(([v, l]) => (
           <button key={v}
             className={`btn btn-sm ${filter === v ? 'btn-primary' : 'btn-ghost'}`}
             style={{ whiteSpace: 'nowrap' }}
-            onClick={() => setFilter(v)}>{l}</button>
+            onClick={() => { setFilter(v); setPage(1); }}>{l}</button>
         ))}
       </div>
 
@@ -98,14 +111,14 @@ export default function Orders() {
             value={search} onChange={e => { setSearch(e.target.value); setPage(1); }} />
           
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-            <div>
-              <label className="form-label" style={{ fontSize: 10, marginBottom: 4 }}>Từ ngày</label>
-              <input type="date" className="form-input" style={{ height: 42, fontSize: 13, padding: '0 8px' }} 
+            <div style={{ border: '1px solid var(--border)', borderRadius: 8, padding: '4px 10px' }}>
+              <label className="stat-label" style={{ fontSize: 9 }}>Từ ngày</label>
+              <input type="date" className="form-input" style={{ height: 32, border: 'none', padding: 0, fontSize: 13 }} 
                 value={dateFrom} onChange={e => { setDateFrom(e.target.value); setPage(1); }} />
             </div>
-            <div>
-              <label className="form-label" style={{ fontSize: 10, marginBottom: 4 }}>Đến ngày</label>
-              <input type="date" className="form-input" style={{ height: 42, fontSize: 13, padding: '0 8px' }} 
+            <div style={{ border: '1px solid var(--border)', borderRadius: 8, padding: '4px 10px' }}>
+              <label className="stat-label" style={{ fontSize: 9 }}>Đến ngày</label>
+              <input type="date" className="form-input" style={{ height: 32, border: 'none', padding: 0, fontSize: 13 }} 
                 value={dateTo} onChange={e => { setDateTo(e.target.value); setPage(1); }} />
             </div>
           </div>
@@ -115,17 +128,15 @@ export default function Orders() {
       {loading ? (
         <div className="spinner-wrap"><div className="spinner" /></div>
       ) : filtered.length === 0 ? (
-        <div className="empty-state"><div className="icon">📋</div>Không có đơn hàng nào</div>
+        <div className="empty-state"><div className="icon">📋</div>Không tìm thấy đơn hàng nào</div>
       ) : (
         <>
-          {/* Order card grid */}
           <div className="order-grid">
             {paged.map(o => {
               const s = getDisplayStatus(o);
               const balance = (o.total || 0) - (o.deposit || 0);
               return (
                 <div key={o.id} className="order-card" onClick={() => navigate(`/orders/${o.id}`)}>
-                  {/* Color stripe */}
                   <div style={{ height: 5, background: s.dot, borderRadius: '14px 14px 0 0' }} />
                   <div className="card-body-internal" style={{ padding: '18px 20px' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
@@ -165,6 +176,10 @@ export default function Orders() {
           <Pagination page={page} total={filtered.length} perPage={PAGE_SIZE} onChange={setPage} />
         </>
       )}
+
+      {/* Floating Button on Mobile */}
+      <button className="btn-fab" onClick={() => navigate('/orders/new')}>+</button>
+      
       {toast && <div className="toast">{toast}</div>}
     </>
   );

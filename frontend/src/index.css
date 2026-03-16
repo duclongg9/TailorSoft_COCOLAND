@@ -379,9 +379,34 @@ h1, h2, h3, h4, .serif { font-family: var(--serif); letter-spacing: 0.01em; }
   color: var(--primary);
 }
 @media (max-width: 700px) {
-  .page-hdr h2 { display: none; } /* Ẩn tiêu đề trang vì đã có ở Topbar */
-  .page-hdr { margin-bottom: 20px; }
-  .page-hdr .btn { width: 100%; height: 54px; font-size: 14px; }
+  .page-hdr h2 { display: block; font-size: 32px; }
+  .page-hdr { margin-bottom: 24px; }
+  .page-hdr .btn-top { display: none; } /* Ẩn nút trên cùng trên mobile */
+}
+
+/* Floating Action Button */
+.btn-fab {
+  position: fixed;
+  bottom: 84px;
+  right: 20px;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: #fff;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  z-index: 100;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+.btn-fab:active { transform: scale(0.9); }
+@media (max-width: 700px) {
+  .btn-fab { display: flex; }
 }
 
 /* ─── CARDS ─── */
