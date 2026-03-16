@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'http://localhost:8080/api',
+  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8080/api',
   headers: { 'Content-Type': 'application/json' },
 });
 
@@ -77,4 +77,4 @@ export const uploadFile = (file) => {
 };
 
 export const imgUrl = (filename) =>
-  filename ? `http://localhost:8080/uploads/${filename}` : null;
+  filename ? `${import.meta.env.VITE_BASE_URL || 'http://localhost:8080'}/uploads/${filename}` : null;
