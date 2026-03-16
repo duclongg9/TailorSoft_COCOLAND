@@ -43,6 +43,8 @@ export default function Orders() {
   const [loading, setLoading] = useState(true);
   const [toast, setToast]   = useState('');
   const [page, setPage]     = useState(1);
+  const [dateFrom, setDateFrom] = useState('');
+  const [dateTo, setDateTo]     = useState('');
 
   const load = (st = '') => {
     setLoading(true);
@@ -63,7 +65,12 @@ export default function Orders() {
   const filtered = (filter === 'Chua thanh toan'
     ? orders.filter(o => o.status === 'Hoan thanh' && (o.total || 0) - (o.deposit || 0) > 0)
     : orders
-  ).filter(o => !search || (o.customerName || '').toLowerCase().includes(search.toLowerCase()) || String(o.id).includes(search));
+  ).filter(o => {
+    const matchSearch = !search || (o.customerName || '').toLowerCase().includes(search.toLowerCase()) || String(o.id).includes(search);
+    const matchFrom = !dateFrom || (o.orderDate && o.orderDate >= dateFrom);
+    const matchTo = !dateTo || (o.orderDate && o.orderDate <= dateTo);
+    return matchSearch && matchFrom && matchTo;
+  });
 
   const paged = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
@@ -75,7 +82,7 @@ export default function Orders() {
       </div>
 
       {/* Filters */}
-      <div style={{ display: 'flex', gap: 8, marginBottom: 16, overflowX: 'auto', paddingBottom: 4 }}>
+      <div className="hide-scrollbar" style={{ display: 'flex', gap: 8, marginBottom: 16, overflowX: 'auto', paddingBottom: 4 }}>
         {FILTERS.map(([v, l]) => (
           <button key={v}
             className={`btn btn-sm ${filter === v ? 'btn-primary' : 'btn-ghost'}`}
@@ -84,10 +91,25 @@ export default function Orders() {
         ))}
       </div>
 
-      {/* Search */}
-      <div className="card" style={{ marginBottom: 24, padding: '12px 16px' }}>
-        <input className="form-input" placeholder="Tìm theo tên khách hoặc mã đơn…"
-          value={search} onChange={e => { setSearch(e.target.value); setPage(1); }} />
+      {/* Search & Date Filter */}
+      <div className="card" style={{ marginBottom: 24, padding: '16px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+          <input className="form-input" placeholder="Tìm tên khách hoặc mã đơn…"
+            value={search} onChange={e => { setSearch(e.target.value); setPage(1); }} />
+          
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+            <div>
+              <label className="form-label" style={{ fontSize: 10, marginBottom: 4 }}>Từ ngày</label>
+              <input type="date" className="form-input" style={{ height: 42, fontSize: 13, padding: '0 8px' }} 
+                value={dateFrom} onChange={e => { setDateFrom(e.target.value); setPage(1); }} />
+            </div>
+            <div>
+              <label className="form-label" style={{ fontSize: 10, marginBottom: 4 }}>Đến ngày</label>
+              <input type="date" className="form-input" style={{ height: 42, fontSize: 13, padding: '0 8px' }} 
+                value={dateTo} onChange={e => { setDateTo(e.target.value); setPage(1); }} />
+            </div>
+          </div>
+        </div>
       </div>
 
       {loading ? (
@@ -105,7 +127,7 @@ export default function Orders() {
                 <div key={o.id} className="order-card" onClick={() => navigate(`/orders/${o.id}`)}>
                   {/* Color stripe */}
                   <div style={{ height: 5, background: s.dot, borderRadius: '14px 14px 0 0' }} />
-                  <div style={{ padding: '18px 20px' }}>
+                  <div className="card-body-internal" style={{ padding: '18px 20px' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
                       <div style={{ fontFamily: 'var(--serif)', fontSize: 22, fontWeight: 700, color: 'var(--accent)' }}>#{o.id}</div>
                       <span className={`status-pill ${s.cls}`} style={{ fontSize: 12 }}>{s.icon} {s.label}</span>
