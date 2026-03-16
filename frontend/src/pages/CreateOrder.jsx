@@ -148,7 +148,7 @@ export default function CreateOrder() {
         {/* Items */}
         {items.map((item, i) => (
           <div className="card card-pad" key={i} style={{ marginBottom: 20 }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20, flexWrap: 'wrap', gap: 10 }}>
               <div className="card-title" style={{ marginBottom: 0, paddingBottom: 0, borderBottom: 'none' }}>
                 Sản phẩm #{i + 1}
               </div>
@@ -198,7 +198,7 @@ export default function CreateOrder() {
             {item.measurementTypes.length > 0 && (
               <div style={{ marginTop: 10, padding: 20, background: 'var(--bg-warm)', borderRadius: 10 }}>
                 <span className="section-label">Thông số đo (cm)</span>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))', gap: 12 }}>
+                <div className="grid-2-1" style={{ gap: 12 }}>
                   {item.measurementTypes.map(mt => (
                     <div key={mt.id}>
                       <label className="form-label">{mt.name}</label>
@@ -220,10 +220,10 @@ export default function CreateOrder() {
         </button>
 
         {/* Sticky footer */}
-        <div style={{ position: 'sticky', bottom: 16, display: 'flex', gap: 12, background: 'var(--bg)', padding: '16px 0', borderTop: '1px solid var(--border)' }}>
-          <button type="button" className="btn btn-ghost" style={{ flex: 1 }} onClick={() => navigate('/orders')}>Huỷ bỏ</button>
-          <button type="submit" className="btn btn-primary" style={{ flex: 2 }} disabled={saving}>
-            {saving ? 'Đang xử lý…' : '✓ Xác nhận tạo đơn'}
+        <div style={{ position: 'sticky', bottom: 0, display: 'flex', gap: 10, background: 'var(--bg)', padding: '12px 0', borderTop: '1px solid var(--border)', zIndex: 10 }}>
+          <button type="button" className="btn btn-ghost" style={{ flex: 1, height: 44 }} onClick={() => navigate('/orders')}>Huỷ</button>
+          <button type="submit" className="btn btn-primary" style={{ flex: 2, height: 44 }} disabled={saving}>
+            {saving ? '...' : '✓ Tạo đơn'}
           </button>
         </div>
       </form>

@@ -16,8 +16,24 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        Path uploadPath = Paths.get(uploadDir).toAbsolutePath();
-        registry.addResourceHandler("/uploads/**")
-                .addResourceLocations("file:" + uploadPath + "/");
+        try {
+            Path uploadPath = Paths.get(uploadDir).toAbsolutePath();
+            if (!java.nio.file.Files.exists(uploadPath)) {
+                java.nio.file.Files.createDirectories(uploadPath);
+            }
+            
+            String location = "file:" + uploadPath.toString() + "/";
+            // On Linux/Docker, ensure it starts with /
+            if (!location.startsWith("file:/")) {
+                location = "file:/" + uploadPath.toString() + "/";
+            }
+
+            registry.addResourceHandler("/uploads/**")
+                    .addResourceLocations(location)
+                    .setCachePeriod(0); // Disable cache for dev/demo to see images immediately
+        } catch (Exception e) {
+            // Log error
+            System.err.println("Could not setup resource handler: " + e.getMessage());
+        }
     }
 }

@@ -134,8 +134,8 @@ h1, h2, h3, h4, .serif { font-family: var(--serif); letter-spacing: 0.01em; }
   gap: 20px;
   margin-bottom: 24px;
 }
-@media (max-width: 900px) { .order-grid { grid-template-columns: repeat(2, 1fr); } }
-@media (max-width: 580px) { .order-grid { grid-template-columns: 1fr; } }
+@media (max-width: 1100px) { .order-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 700px) { .order-grid { grid-template-columns: 1fr; } }
 
 .order-card {
   background: #fff;
@@ -146,6 +146,20 @@ h1, h2, h3, h4, .serif { font-family: var(--serif); letter-spacing: 0.01em; }
   transition: box-shadow .2s, transform .2s;
 }
 .order-card:hover { box-shadow: var(--shadow-md); transform: translateY(-3px); }
+
+.order-card-dates {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 12px;
+}
+@media (max-width: 400px) {
+  .order-card-dates { flex-direction: column; gap: 4px; text-align: center; }
+  .order-card-dates .arrow-icon { transform: rotate(90deg); margin: 4px 0 !important; }
+}
 
 /* ─── MATERIAL CARD GRID ─── */
 .material-grid {
@@ -351,6 +365,10 @@ h1, h2, h3, h4, .serif { font-family: var(--serif); letter-spacing: 0.01em; }
   font-family: var(--serif);
   letter-spacing: 0.02em;
   color: var(--primary);
+}
+@media (max-width: 600px) {
+  .page-hdr h2 { font-size: 32px; }
+  .page-hdr .btn { width: 100%; }
 }
 
 /* ─── CARDS ─── */
@@ -594,11 +612,14 @@ tbody tr:hover { background: rgba(184,151,46,.04); }
 @media (min-width: 640px) { .modal-drag { display: none; } }
 
 .modal-hdr {
-  padding: 28px 30px 20px;
+  padding: 24px 20px 16px;
   border-bottom: 1px solid var(--border);
   display: flex;
   align-items: center;
   justify-content: space-between;
+}
+@media (min-width: 640px) {
+  .modal-hdr { padding: 28px 30px 20px; }
 }
 .modal-hdr h3 {
   font-family: var(--serif);
@@ -780,3 +801,12 @@ tbody tr:hover { background: rgba(184,151,46,.04); }
 .text-danger   { color: var(--danger); }
 .font-serif    { font-family: var(--serif); }
 .fw-800        { font-weight: 800; }
+
+.grid-2-1 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+@media (max-width: 480px) {
+  .grid-2-1 { grid-template-columns: 1fr; }
+}

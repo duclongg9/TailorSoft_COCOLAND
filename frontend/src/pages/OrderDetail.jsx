@@ -109,11 +109,11 @@ export default function OrderDetail() {
 
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 28, flexWrap: 'wrap' }}>
-        <Link to="/orders" className="btn btn-ghost btn-sm">← Quay lại</Link>
-        <h2 style={{ flex: 1, fontFamily: 'var(--serif)', fontSize: 30, fontWeight: 700 }}>
-          Đơn hàng <span style={{ color: 'var(--accent)' }}>#{order.id}</span>
+        <Link to="/orders" className="btn btn-ghost btn-sm" style={{ padding: '0 12px' }}>←</Link>
+        <h2 style={{ flex: 1, fontFamily: 'var(--serif)', fontSize: 'clamp(24px, 5vw, 30px)', fontWeight: 700, margin: 0 }}>
+          Đơn <span style={{ color: 'var(--accent)' }}>#{order.id}</span>
         </h2>
-        <span className={`status-pill ${s.cls}`} style={{ fontSize: 15, padding: '10px 22px' }}>
+        <span className={`status-pill ${s.cls}`} style={{ fontSize: 13, padding: '8px 16px' }}>
           {s.icon} {s.label}
         </span>
       </div>
@@ -132,7 +132,7 @@ export default function OrderDetail() {
           )}
 
           {/* Dates section */}
-          <div style={{ marginTop: 16, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+          <div className="grid-2-1" style={{ marginTop: 16, gap: 10 }}>
             <div style={{ padding: 12, background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 8 }}>
               <div className="stat-label">Ngày đặt</div>
               <div style={{ fontWeight: 700, fontSize: 15 }}>{fmtD(order.orderDate)}</div>
@@ -219,7 +219,7 @@ export default function OrderDetail() {
         {/* Proofs */}
         <div className="card card-pad">
           <div className="card-title">Chứng từ</div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+          <div className="grid-2-1">
             {[
               { key: 'depositImage', label: 'Ảnh cọc', type: 'deposit' },
               { key: 'fullImage',    label: 'Ảnh chuyển đủ', type: 'full' },

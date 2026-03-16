@@ -112,12 +112,12 @@ export default function Orders() {
                     </div>
                     <div style={{ fontWeight: 700, fontSize: 17, marginBottom: 2 }}>{o.customerName || '—'}</div>
                     <div style={{ color: 'var(--text-muted)', fontSize: 14, marginBottom: 14 }}>{o.customerPhone}</div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 0', borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)', marginBottom: 12 }}>
+                    <div className="order-card-dates">
                       <div style={{ textAlign: 'center', flex: 1 }}>
                         <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: 3 }}>Đặt hàng</div>
                         <div style={{ fontSize: 14, fontWeight: 600 }}>{fmtD(o.orderDate)}</div>
                       </div>
-                      <div style={{ color: 'var(--accent)', fontSize: 20, margin: '0 10px' }}>→</div>
+                      <div className="arrow-icon" style={{ color: 'var(--accent)', fontSize: 20, margin: '0 10px' }}>→</div>
                       <div style={{ textAlign: 'center', flex: 1 }}>
                         <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: 3 }}>Giao hàng</div>
                         <div style={{ fontSize: 14, fontWeight: 600 }}>{fmtD(o.deliveryDate)}</div>
